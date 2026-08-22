@@ -16,7 +16,7 @@ import type { BehaviorPayload, TouchDiagnosticsBehaviorSafe } from '../liveguard
 
 export type Phase =
   | 'idle'
-  | 'showcase'
+  | 'landing'
   | 'integration'
   | 'select_protection'
   | 'prep'
@@ -52,7 +52,7 @@ export interface LiveGuardState {
 }
 
 export const initialState: LiveGuardState = {
-  phase: 'showcase',
+  phase: 'landing',
   sessionPublicId: '',
   testScope: 'cognitive-only',
   startedAt: null,
@@ -83,7 +83,7 @@ export const initialState: LiveGuardState = {
 };
 
 export type Action =
-  | { type: 'SHOW_SHOWCASE' }
+  | { type: 'SHOW_LANDING' }
   | { type: 'SHOW_INTEGRATION' }
   | { type: 'START_DEMO'; sessionPublicId: string }
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
@@ -105,10 +105,10 @@ export type Action =
   | { type: 'RESET' };
 
 const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
-  showcase: ['idle', 'integration', 'prep'],
-  integration: ['showcase', 'idle', 'prep'],
-  idle: ['select_protection', 'showcase', 'prep'],
-  select_protection: ['prep', 'idle', 'showcase'],
+  landing: ['idle', 'integration', 'prep'],
+  integration: ['landing', 'idle', 'prep'],
+  idle: ['select_protection', 'landing', 'prep'],
+  select_protection: ['prep', 'idle', 'landing'],
   prep: ['test_reflex', 'error'],
   test_reflex: ['test_colors', 'error'],
   test_colors: ['test_memory', 'error'],
@@ -119,8 +119,8 @@ const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
   device_signals: ['readiness', 'error'],
   readiness: ['submitting', 'error'],
   submitting: ['done', 'error'],
-  done: ['idle', 'showcase'],
-  error: ['idle', 'showcase'],
+  done: ['idle', 'landing'],
+  error: ['idle', 'landing'],
 };
 
 function isValidTransition(from: Phase, to: Phase): boolean {
@@ -131,9 +131,9 @@ function isValidTransition(from: Phase, to: Phase): boolean {
 
 export function liveguardReducer(state: LiveGuardState, action: Action): LiveGuardState {
   switch (action.type) {
-    case 'SHOW_SHOWCASE': {
-      if (!isValidTransition(state.phase, 'showcase')) return state;
-      return { ...state, phase: 'showcase' };
+    case 'SHOW_LANDING': {
+      if (!isValidTransition(state.phase, 'landing')) return state;
+      return { ...state, phase: 'landing' };
     }
 
     case 'SHOW_INTEGRATION': {
@@ -142,7 +142,7 @@ export function liveguardReducer(state: LiveGuardState, action: Action): LiveGua
     }
 
     case 'START_DEMO': {
-      // From showcase/integration → go to idle (which resolves session then proceeds)
+      // From landing/integration → go to idle (which resolves session then proceeds)
       if (!isValidTransition(state.phase, 'idle')) return state;
       return { ...state, phase: 'idle', sessionPublicId: action.sessionPublicId };
     }

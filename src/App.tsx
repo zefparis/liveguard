@@ -21,7 +21,7 @@ import { buildLiveGuardPayload } from './payload/buildLiveGuardPayload';
 import { submitLiveGuard } from './liveguard/api';
 
 import { IdleScreen } from './screens/IdleScreen';
-import { ShowcaseScreen } from './screens/ShowcaseScreen';
+import { LandingScreen } from './screens/LandingScreen';
 import { IntegrationScreen } from './screens/IntegrationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
@@ -74,8 +74,8 @@ export default function App() {
     dispatch({ type: 'SHOW_INTEGRATION' });
   }, []);
 
-  const handleBackToShowcase = useCallback(() => {
-    dispatch({ type: 'SHOW_SHOWCASE' });
+  const handleBackToLanding = useCallback(() => {
+    dispatch({ type: 'SHOW_LANDING' });
   }, []);
 
   const handleProtectionStart = useCallback((sessionPublicId: string, protectionCategory: string) => {
@@ -140,16 +140,16 @@ export default function App() {
           </div>
         )}
 
-        {/* Header indicator (shown on cognitive flow screens, not on showcase/integration) */}
-        {state.phase !== 'idle' && state.phase !== 'showcase' && state.phase !== 'integration' && (
+        {/* Header indicator (shown on cognitive flow screens, not on landing/integration) */}
+        {state.phase !== 'idle' && state.phase !== 'landing' && state.phase !== 'integration' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
           </div>
         )}
 
-        {state.phase === 'showcase' && (
-          <ShowcaseScreen
+        {state.phase === 'landing' && (
+          <LandingScreen
             onTryDemo={handleTryDemo}
             onShowIntegration={handleShowIntegration}
           />
@@ -157,7 +157,7 @@ export default function App() {
 
         {state.phase === 'integration' && (
           <IntegrationScreen
-            onBack={handleBackToShowcase}
+            onBack={handleBackToLanding}
             onTryDemo={handleTryDemo}
           />
         )}

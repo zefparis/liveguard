@@ -15,6 +15,17 @@
   "showcase.howItIntegrates": "How it integrates",
   "showcase.footer": "5 cognitive tests · about 60 seconds · no camera or microphone",
 
+  "landing.tilesLabel": "Examples of protected content",
+  "landing.heroTitle": "What matters to you deserves protection.",
+  "landing.heroSub": "An account, a document, a conversation — LiveGuard watches gently, never slowing you down.",
+  "landing.step1": "A few playful little exercises, designed to be enjoyable",
+  "landing.step2": "No camera, no microphone — just you and your screen",
+  "landing.step3": "Verification that stays with you, discreetly, for as long as you need it",
+  "landing.proof": "Already used in real-world conditions on UniPay",
+  "landing.ctaPrimary": "Try it — it only takes a moment",
+  "landing.ctaSecondary": "How it works",
+  "landing.partnerLink": "Are you a partner? See how to integrate LiveGuard →",
+
   "integration.back": "Back",
   "integration.backToShowcase": "Back to home",
   "integration.title": "How it integrates",
