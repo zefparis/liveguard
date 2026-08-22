@@ -134,12 +134,13 @@ function safeSuccess(data: Record<string, unknown>): Record<string, unknown> {
   };
 }
 
-function safeError(message: string): Record<string, unknown> {
+function safeError(message: string, detail?: string): Record<string, unknown> {
   return {
     ok: false,
     source: 'liveguard_mobile',
     status: 'failed',
     message,
+    ...(detail ? { detail } : {}),
   };
 }
 
@@ -249,7 +250,7 @@ export default async function liveguardVerifyHandler(
   const apiKey = process.env.HV_API_KEY;
   if (!apiKey) {
     safeLog('error', { msg: 'CONFIG_ERROR', reason: 'HV_API_KEY not set' });
-    res.status(500).json(safeError('Server misconfigured'));
+    res.status(500).json(safeError('Server misconfigured', 'HV_API_KEY environment variable is not set. Configure it in Vercel project settings → Environment Variables.'));
     return;
   }
 
