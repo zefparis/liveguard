@@ -1,0 +1,784 @@
+/* ============================================================
+ * LiveGuard — Design System
+ *
+ * Neutral palette with a single discrete blue accent.
+ * No campaign cyan/violet — sober, system-aware.
+ *
+ * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
+ * Patents Pending FR2514274 | FR2514546
+ * ============================================================ */
+
+:root {
+  /* Neutral surfaces */
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #334155;
+  --surface-3: #475569;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-secondary: #cbd5e1;
+
+  /* Single accent — soft blue */
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-subtle: rgba(59, 130, 246, 0.12);
+
+  /* Status */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* Layout */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --max-width: 430px;
+
+  /* Header indicator */
+  --indicator-green: #22c55e;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --surface-3: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-secondary: #334155;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-subtle: rgba(59, 130, 246, 0.08);
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg);
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ─── Header indicator ──────────────────────────────────────────── */
+
+.lg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.lg-header-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--indicator-green);
+  flex-shrink: 0;
+}
+
+.lg-header-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────── */
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border: 1px solid var(--surface-3);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-2);
+}
+
+/* ─── Cards ─────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--surface-2);
+}
+
+.card-selectable {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 2px solid var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-selectable:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.card-selectable.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.card-selectable-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-selectable-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ─── Typography ────────────────────────────────────────────────── */
+
+.title-lg {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+
+.title-md {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ─── Phase header (progress segments) ──────────────────────────── */
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0;
+}
+
+.phase-segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-2);
+  transition: background 0.2s ease;
+}
+
+.phase-segment.done {
+  background: var(--accent);
+}
+
+.phase-segment.current {
+  background: var(--accent);
+  opacity: 0.6;
+}
+
+.phase-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 8px;
+}
+
+.phase-instruction {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ─── Test components (preserved from demoguard) ────────────────── */
+
+.test-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.test-stimulus {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--text);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-letter {
+  font-size: 96px;
+  font-weight: 700;
+  color: var(--text);
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-instruction {
+  font-size: 16px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.test-button {
+  padding: 16px 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  min-width: 200px;
+}
+
+.test-button:hover {
+  background: var(--accent-hover);
+}
+
+.test-button:active {
+  transform: scale(0.96);
+}
+
+.test-button.secondary {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.test-button.secondary:hover {
+  background: var(--surface-3);
+}
+
+/* ─── Stroop ────────────────────────────────────────────────────── */
+
+.stroop-word {
+  font-size: 64px;
+  font-weight: 800;
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stroop-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.stroop-option {
+  padding: 16px;
+  border: 2px solid var(--surface-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  text-align: center;
+}
+
+.stroop-option:hover {
+  border-color: var(--accent);
+}
+
+.stroop-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* ─── N-Back ────────────────────────────────────────────────────── */
+
+.nback-letter {
+  font-size: 96px;
+  font-weight: 700;
+  color: var(--text);
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nback-instruction {
+  font-size: 16px;
+  color: var(--text-secondary);
+  text-align: center;
+  min-height: 24px;
+}
+
+.nback-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.nback-btn {
+  padding: 12px 24px;
+  border: 2px solid var(--surface-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  min-width: 100px;
+}
+
+.nback-btn:hover {
+  border-color: var(--accent);
+}
+
+.nback-btn:active {
+  transform: scale(0.96);
+}
+
+.nback-feedback {
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+.nback-feedback.correct {
+  color: var(--success);
+}
+
+.nback-feedback.wrong {
+  color: var(--danger);
+}
+
+/* ─── Digit Span ────────────────────────────────────────────────── */
+
+.digit-display {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 8px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.digit-input {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.digit-key {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--surface-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.digit-key:hover {
+  border-color: var(--accent);
+}
+
+.digit-key:active {
+  transform: scale(0.95);
+}
+
+.digit-sequence {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 4px;
+  min-height: 40px;
+}
+
+/* ─── Trail Tap ─────────────────────────────────────────────────── */
+
+.trail-container {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.trail-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.trail-node {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.trail-node.tapped {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.trail-node.wrong {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ─── Reflex ────────────────────────────────────────────────────── */
+
+.reflex-target {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.reflex-target.active {
+  background: var(--accent);
+}
+
+.reflex-target.idle {
+  background: var(--surface-3);
+}
+
+/* ─── Done screen ───────────────────────────────────────────────── */
+
+.done-check {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.done-check svg {
+  width: 40px;
+  height: 40px;
+  color: #ffffff;
+}
+
+.done-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.done-stat-label {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.done-stat-value {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ─── Select protection ─────────────────────────────────────────── */
+
+.protection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.protection-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1px dashed var(--surface-3);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.protection-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Rotate overlay ────────────────────────────────────────────── */
+
+.rotate-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  text-align: center;
+  padding: 20px;
+}
+
+.rotate-overlay p {
+  margin-top: 16px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* ─── Error screen ──────────────────────────────────────────────── */
+
+.error-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.error-icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--danger);
+}
+
+.error-message {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* ─── Loading / submitting ──────────────────────────────────────── */
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--surface-2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Language pill ─────────────────────────────────────────────── */
+
+.lang-pill {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.lang-pill button {
+  padding: 4px 10px;
+  border: 1px solid var(--surface-2);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lang-pill button.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+/* ─── Shield icon (idle screen) ─────────────────────────────────── */
+
+.shield-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+}
+
+.shield-icon svg {
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+}
+
+/* ─── Info chips ────────────────────────────────────────────────── */
+
+.info-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--surface-2);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.info-chip svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex-shrink: 0;
+}

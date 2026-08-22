@@ -1,0 +1,252 @@
+/**
+ * LiveGuard — App.tsx (main orchestrator)
+ *
+ * Wires reducer + context + hooks + screens.
+ * All phase transitions go through the reducer.
+ *
+ * Adapted from demoguard: removed camera and voice phases.
+ * Flow: idle → select_protection → prep → 5 cognitive tests → review → device_signals → readiness → submitting → done
+ *
+ * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
+ * Patents Pending FR2514274 | FR2514546
+ */
+
+import { useReducer, useCallback, useEffect, useState } from 'react';
+import { liveguardReducer, initialState } from './state/liveguardReducer';
+import { LiveGuardProvider } from './state/liveguardContext';
+import { useBehaviorSession } from './hooks/useBehaviorSession';
+import { useLockedShell } from './hooks/useLockedShell';
+import { useContinuousSignals } from './hooks/useContinuousSignals';
+import { buildLiveGuardPayload } from './payload/buildLiveGuardPayload';
+import { submitLiveGuard } from './liveguard/api';
+
+import { IdleScreen } from './screens/IdleScreen';
+import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
+import { PrepScreen } from './screens/PrepScreen';
+import { ReflexScreen } from './screens/ReflexScreen';
+import { StroopScreen } from './screens/StroopScreen';
+import { DigitSpanScreen } from './screens/DigitSpanScreen';
+import { NBackScreen } from './screens/NBackScreen';
+import { TrailTapScreen } from './screens/TrailTapScreen';
+import { ReviewScreen } from './screens/ReviewScreen';
+import { DeviceSignalsScreen } from './screens/DeviceSignalsScreen';
+import { ReadinessScreen } from './screens/ReadinessScreen';
+import { SubmittingScreen } from './screens/SubmittingScreen';
+import { DoneScreen } from './screens/DoneScreen';
+import { ErrorScreen } from './screens/ErrorScreen';
+import { useI18n } from './i18n/I18nContext';
+
+export default function App() {
+  const { t } = useI18n();
+  const [state, dispatch] = useReducer(liveguardReducer, initialState);
+  const { session, reset, getPayload, getTouchDiagnostics } = useBehaviorSession();
+  const { lockedHeight, showRotateOverlay } = useLockedShell(state.phase);
+  const continuousSignals = useContinuousSignals();
+
+  // Track sessionPublicId from idle screen for select_protection
+  const [pendingSessionId, setPendingSessionId] = useState<string>('');
+
+  useEffect(() => {
+    continuousSignals.setPhase(state.phase);
+  }, [state.phase]);
+
+  const handleStart = useCallback((sessionPublicId: string, _testScope?: string | null) => {
+    setPendingSessionId(sessionPublicId);
+    dispatch({ type: 'SELECT_PROTECTION', sessionPublicId });
+  }, []);
+
+  const handleProtectionStart = useCallback((sessionPublicId: string, protectionCategory: string) => {
+    reset();
+    dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory });
+  }, [reset]);
+
+  const handleSubmit = useCallback(async () => {
+    dispatch({ type: 'SUBMIT' });
+
+    try {
+      const deviceSignals = continuousSignals.stop();
+      const behaviorPayload = getPayload();
+      const behaviorDiag = getTouchDiagnostics();
+
+      const stateWithSignals: typeof state = {
+        ...state,
+        signals: { ...state.signals, ...deviceSignals },
+      };
+
+      if (Object.keys(deviceSignals).length > 0) {
+        dispatch({ type: 'DEVICE_SIGNALS_COLLECTED', signals: deviceSignals });
+      }
+      dispatch({ type: 'BEHAVIOR_COLLECTED', payload: behaviorPayload, touchDiag: behaviorDiag });
+
+      const payload = buildLiveGuardPayload(stateWithSignals, behaviorPayload, behaviorDiag);
+      const response = await submitLiveGuard(payload);
+      dispatch({ type: 'RESPONSE_RECEIVED', response });
+    } catch (err) {
+      console.error('[LiveGuard] Submission failed:', err instanceof Error ? err.message : err, {
+        sessionPublicId: state.sessionPublicId,
+        phase: state.phase,
+      });
+      dispatch({ type: 'ERROR', reason: err instanceof Error ? err.message : 'Submission failed' });
+    }
+  }, [state, getPayload, getTouchDiagnostics, continuousSignals]);
+
+  const handleReset = useCallback(() => {
+    setPendingSessionId('');
+    dispatch({ type: 'RESET' });
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    dispatch({ type: 'RETRY_PHASE' });
+  }, []);
+
+  const contextValue = {
+    state,
+    dispatch,
+    behaviorSession: session,
+  };
+
+  const shellStyle = lockedHeight ? { height: `${lockedHeight}px` } : undefined;
+
+  return (
+    <LiveGuardProvider value={contextValue}>
+      <div className="app-shell" style={shellStyle}>
+        {showRotateOverlay && (
+          <div className="rotate-overlay">
+            <div>📱</div>
+            <p>{t('app.rotatePortrait')}</p>
+          </div>
+        )}
+
+        {/* Header indicator (shown on all non-idle screens) */}
+        {state.phase !== 'idle' && (
+          <div className="lg-header">
+            <div className="lg-header-dot" />
+            <span className="lg-header-text">Vérification de session</span>
+          </div>
+        )}
+
+        {state.phase === 'idle' && (
+          <IdleScreen onStart={handleStart} />
+        )}
+
+        {state.phase === 'select_protection' && (
+          <SelectProtectionScreen
+            sessionPublicId={pendingSessionId}
+            onStart={handleProtectionStart}
+          />
+        )}
+
+        {state.phase === 'prep' && (
+          <PrepScreen
+            onDeviceCollected={(device) => dispatch({ type: 'DEVICE_COLLECTED', device })}
+            onPermissionsCollected={(permissions) => dispatch({ type: 'PERMISSIONS_COLLECTED', permissions })}
+            onUserContinue={async (perms) => {
+              const sensorPerms = await continuousSignals.requestSensorPermissions({
+                motion: perms.motion,
+                orientation: perms.orientation,
+              });
+              await continuousSignals.start(sensorPerms);
+            }}
+            onReady={() => dispatch({ type: 'PREP_READY' })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'test_reflex' && (
+          <ReflexScreen
+            session={session}
+            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'reflex', signal })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'test_colors' && (
+          <StroopScreen
+            session={session}
+            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'stroop', signal })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'test_memory' && (
+          <DigitSpanScreen
+            session={session}
+            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'digit_span', signal })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'test_compare' && (
+          <NBackScreen
+            session={session}
+            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'n_back', signal })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'test_path' && (
+          <TrailTapScreen
+            session={session}
+            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'trail_tap', signal })}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'review' && (
+          <ReviewScreen
+            state={state}
+            behaviorPayload={state.behaviorPayload}
+            onContinue={() => {
+              const payload = getPayload();
+              const touchDiag = getTouchDiagnostics();
+              dispatch({ type: 'BEHAVIOR_COLLECTED', payload, touchDiag });
+              dispatch({ type: 'REVIEW_CONTINUE' });
+            }}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'device_signals' && (
+          <DeviceSignalsScreen
+            signals={state.signals}
+            onContinue={() => {
+              const deviceSignals = continuousSignals.stop();
+              if (Object.keys(deviceSignals).length > 0) {
+                dispatch({ type: 'DEVICE_SIGNALS_COLLECTED', signals: deviceSignals });
+              }
+              dispatch({ type: 'DEVICE_SIGNALS_CONTINUE' });
+            }}
+          />
+        )}
+
+        {state.phase === 'readiness' && (
+          <ReadinessScreen
+            state={state}
+            onSubmit={handleSubmit}
+            onError={(reason) => dispatch({ type: 'ERROR', reason })}
+          />
+        )}
+
+        {state.phase === 'submitting' && <SubmittingScreen />}
+
+        {state.phase === 'done' && (
+          <DoneScreen
+            response={state.response}
+            cognitiveSignals={state.cognitiveSignals}
+            startedAt={state.startedAt}
+            completedAt={state.completedAt}
+            onReset={handleReset}
+          />
+        )}
+
+        {state.phase === 'error' && (
+          <ErrorScreen
+            error={state.error ?? t('error.default')}
+            onRetry={handleRetry}
+            onReset={handleReset}
+          />
+        )}
+      </div>
+    </LiveGuardProvider>
+  );
+}
