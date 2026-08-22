@@ -7,8 +7,8 @@
  *
  * Two CTAs:
  *   - "Essayer" → onTryDemo (resolves session, dispatches START → 5 cognitive tests)
- *   - "Comment ça fonctionne" → smooth scroll to #steps section
- * Partner link → onShowIntegration (IntegrationScreen)
+ *   - "Comment ça fonctionne" → onShowHowItWorks (HowItWorksScreen)
+ * Partner link → onShowImplementation (ImplementationScreen)
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546

@@ -19,7 +19,6 @@ export type Phase =
   | 'landing'
   | 'how_it_works'
   | 'implementation'
-  | 'integration'
   | 'select_protection'
   | 'prep'
   | 'test_reflex'
@@ -88,7 +87,6 @@ export type Action =
   | { type: 'SHOW_LANDING' }
   | { type: 'SHOW_HOW_IT_WORKS' }
   | { type: 'SHOW_IMPLEMENTATION' }
-  | { type: 'SHOW_INTEGRATION' }
   | { type: 'START_DEMO'; sessionPublicId: string }
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
   | { type: 'START'; sessionPublicId: string; testScope?: string | null; protectionCategory?: string | null }
@@ -109,10 +107,9 @@ export type Action =
   | { type: 'RESET' };
 
 const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
-  landing: ['idle', 'how_it_works', 'implementation', 'integration', 'prep'],
+  landing: ['idle', 'how_it_works', 'implementation', 'prep'],
   how_it_works: ['landing', 'implementation', 'idle', 'prep'],
   implementation: ['landing', 'how_it_works', 'idle'],
-  integration: ['landing', 'idle', 'prep'],
   idle: ['select_protection', 'landing', 'prep'],
   select_protection: ['prep', 'idle', 'landing'],
   prep: ['test_reflex', 'error'],
@@ -150,11 +147,6 @@ export function liveguardReducer(state: LiveGuardState, action: Action): LiveGua
     case 'SHOW_IMPLEMENTATION': {
       if (!isValidTransition(state.phase, 'implementation')) return state;
       return { ...state, phase: 'implementation' };
-    }
-
-    case 'SHOW_INTEGRATION': {
-      if (!isValidTransition(state.phase, 'integration')) return state;
-      return { ...state, phase: 'integration' };
     }
 
     case 'START_DEMO': {

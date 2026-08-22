@@ -24,7 +24,6 @@ import { IdleScreen } from './screens/IdleScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { HowItWorksScreen } from './screens/HowItWorksScreen';
 import { ImplementationScreen } from './screens/ImplementationScreen';
-import { IntegrationScreen } from './screens/IntegrationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
 import { ReflexScreen } from './screens/ReflexScreen';
@@ -54,12 +53,11 @@ export default function App() {
     continuousSignals.setPhase(state.phase);
   }, [state.phase]);
 
-  // Deep links: /#integration, /#how-it-works, /#implementation
+  // Deep links: /#how-it-works, /#implementation (old /#integration redirects to /#implementation)
   useEffect(() => {
     const hash = window.location.hash;
-    if (hash === '#integration') dispatch({ type: 'SHOW_INTEGRATION' });
-    else if (hash === '#how-it-works') dispatch({ type: 'SHOW_HOW_IT_WORKS' });
-    else if (hash === '#implementation') dispatch({ type: 'SHOW_IMPLEMENTATION' });
+    if (hash === '#how-it-works') dispatch({ type: 'SHOW_HOW_IT_WORKS' });
+    else if (hash === '#implementation' || hash === '#integration') dispatch({ type: 'SHOW_IMPLEMENTATION' });
   }, []);
 
   const handleStart = useCallback((sessionPublicId: string, _testScope?: string | null) => {
@@ -148,7 +146,7 @@ export default function App() {
         )}
 
         {/* Header indicator (shown on cognitive flow screens, not on landing/info pages) */}
-        {state.phase !== 'idle' && state.phase !== 'landing' && state.phase !== 'integration'
+        {state.phase !== 'idle' && state.phase !== 'landing'
           && state.phase !== 'how_it_works' && state.phase !== 'implementation' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
@@ -174,13 +172,6 @@ export default function App() {
         {state.phase === 'implementation' && (
           <ImplementationScreen
             onBack={handleBackToLanding}
-          />
-        )}
-
-        {state.phase === 'integration' && (
-          <IntegrationScreen
-            onBack={handleBackToLanding}
-            onTryDemo={handleTryDemo}
           />
         )}
 
