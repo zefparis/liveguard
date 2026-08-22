@@ -5,6 +5,10 @@
       "destination": "/api/:path*"
     },
     {
+      "source": "/landing",
+      "destination": "/landing.html"
+    },
+    {
       "source": "/en",
       "destination": "/en/index.html"
     },
@@ -13,7 +17,7 @@
       "destination": "/en/index.html"
     },
     {
-      "source": "/((?!en).*)",
+      "source": "/((?!en|landing).*)",
       "destination": "/index.html"
     }
   ]
