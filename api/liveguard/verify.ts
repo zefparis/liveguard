@@ -58,7 +58,9 @@ function getAllowedOrigins(): Set<string> {
 
 function getUpstreamUrl(): string {
   const base = process.env.HYBRID_VECTOR_API_URL || 'https://hybrid-vector-api-owc4.onrender.com';
-  return `${base.replace(/\/+$/, '')}/liveguard/verify`;
+  // LiveGuard uses the same /demoguard/verify endpoint — the source field
+  // ('liveguard_mobile') distinguishes it from demoguard sessions.
+  return `${base.replace(/\/+$/, '')}/demoguard/verify`;
 }
 
 function getTenantId(): string {

@@ -60,6 +60,7 @@ export function buildLiveGuardPayload(
       signals,
       quality,
       ...(state.testScope ? { test_scope: state.testScope } : {}),
+      presentation_variant: 'liveguard',
     },
   };
 }
