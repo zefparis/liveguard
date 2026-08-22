@@ -304,7 +304,7 @@ describe('LiveGuard end-to-end mapping: payload → DB row → Label Studio task
       'orientation_changes',
     ];
     for (const col of featureColumns) {
-      expect(dbRow[col], `DB column ${col} should not be null`).not.toBeNull();
+      expect((dbRow as Record<string, unknown>)[col], `DB column ${col} should not be null`).not.toBeNull();
     }
   });
 

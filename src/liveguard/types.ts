@@ -148,6 +148,7 @@ export interface LiveGuardPayload {
     signals: LiveGuardSignals;
     quality: LiveGuardQuality;
     test_scope?: string;
+    presentation_variant?: string;
   };
 }
 
