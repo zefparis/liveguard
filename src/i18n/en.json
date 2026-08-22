@@ -27,6 +27,10 @@
   "landing.partnerLink": "Are you a partner? See how to integrate LiveGuard →",
 
   "hiw.title": "How LiveGuard works",
+  "hiw.continuousTitle": "Why continuous protection, not just at login?",
+  "hiw.continuousText": "Most fraud doesn't happen at the front door. A password protects the moment you sign in. But what happens after? A phone left unattended, a session left open, a SIM card hijacked mid-transaction — these are the moments fraudsters exploit, not the login itself. LiveGuard keeps watching after you sign in, exactly when it matters most: during the action itself. If something seems unusual — you left the app a moment too long, for example — a simple check is enough to confirm it's still you, before continuing.",
+  "hiw.learningTitle": "A system that learns, not a fixed secret",
+  "hiw.learningText": "We don't claim to have an impossible-to-fool system. We have a system that improves. Every real verification, performed by a real person, strengthens our ability to tell authentic human behavior apart from an imitation attempt. It's not a fixed formula we hope stays uncrackable forever — it's a living model that gets better with every use. The more LiveGuard is used, the more precise it becomes. It's protection that ages well.",
   "hiw.whyTitle": "Why playful exercises instead of a photo or your voice?",
   "hiw.whyText": "A face or a voice can be stolen — a photo, a recording, a deepfake. The way you react, tap, and remember is far harder to imitate. And most importantly: it avoids collecting sensitive biometric data nobody wants to give away.",
   "hiw.badDayTitle": "What if I'm having a bad day, or a new phone?",

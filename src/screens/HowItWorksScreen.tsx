@@ -121,6 +121,49 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation }: Props) {
         </ol>
       </section>
 
+      {/* ── Section: Continuous protection, not just at login ── */}
+      <section className="hiw-section">
+        <div className="hiw-section-icon" data-accent="blue" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <defs>
+              <linearGradient id="hiw-g-continuous" x1="6" y1="6" x2="26" y2="26">
+                <stop stopColor="#4f7cff"/><stop offset="1" stopColor="#22c8ee"/>
+              </linearGradient>
+            </defs>
+            <path d="M16 3.5 5.5 7.2v7c0 6.2 4.4 12 10.5 14.3C22.1 26.2 26.5 20.4 26.5 14.2v-7L16 3.5Z"
+                  stroke="url(#hiw-g-continuous)" strokeWidth="1.8" fill="none" strokeLinejoin="round"/>
+            <circle cx="16" cy="14" r="4" stroke="url(#hiw-g-continuous)" strokeWidth="1.5" fill="none"/>
+            <path d="M16 12.5V14l1.5 1.5" stroke="url(#hiw-g-continuous)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <h2 className="hiw-section-title">{t('hiw.continuousTitle')}</h2>
+        <p className="hiw-section-text">{t('hiw.continuousText')}</p>
+      </section>
+
+      {/* ── Section: Learning system, not a fixed secret ── */}
+      <section className="hiw-section">
+        <div className="hiw-section-icon" data-accent="cyan" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <defs>
+              <linearGradient id="hiw-g-loop" x1="6" y1="6" x2="26" y2="26">
+                <stop stopColor="#22c8ee"/><stop offset="1" stopColor="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+            <path d="M7 16a9 9 0 0 1 15.5-6.2" stroke="url(#hiw-g-loop)" strokeWidth="1.8"
+                  strokeLinecap="round" fill="none"/>
+            <path d="M25 16a9 9 0 0 1-15.5 6.2" stroke="url(#hiw-g-loop)" strokeWidth="1.8"
+                  strokeLinecap="round" fill="none"/>
+            <path d="M23 5.5 22.5 9.8 26.8 9.3" stroke="url(#hiw-g-loop)" strokeWidth="1.8"
+                  strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <path d="M9 26.5 9.5 22.2 5.2 22.7" stroke="url(#hiw-g-loop)" strokeWidth="1.8"
+                  strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            <circle cx="16" cy="16" r="2.5" fill="url(#hiw-g-loop)"/>
+          </svg>
+        </div>
+        <h2 className="hiw-section-title">{t('hiw.learningTitle')}</h2>
+        <p className="hiw-section-text">{t('hiw.learningText')}</p>
+      </section>
+
       {/* ── Section: Why exercises instead of photo/voice ── */}
       <section className="hiw-section">
         <div className="hiw-section-icon" data-accent="violet" aria-hidden="true">
