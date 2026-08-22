@@ -20,8 +20,11 @@ export const LIVEGUARD_REQUEST_TIMEOUT_MS = 10_000;
 // DemoGuard/NotABot in the cognitive_sessions table. The backend can
 // route by `source` field for analytics without mixing populations.
 // Falls back to a local lg_* ID on any network failure.
+// Must go through the API gateway (api.hcs-u7.org) — direct backend access
+// is blocked by gatewayGuard (DIRECT_ACCESS_FORBIDDEN).
 export const LIVEGUARD_SESSION_ENDPOINT =
-  'https://hcs-u7-backend-kk0n.onrender.com/api/cognitive/liveguard/session';
+  (import.meta.env.VITE_LIVEGUARD_SESSION_ENDPOINT as string | undefined) ||
+  'https://api.hcs-u7.org/api/cognitive/liveguard/session';
 
 // Production URL for QR code / dashboard links.
 // MUST be set via VITE_LIVEGUARD_URL env var after Vercel deployment.

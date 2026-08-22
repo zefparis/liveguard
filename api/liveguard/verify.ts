@@ -42,7 +42,13 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'https://localhost',
   'http://localhost:5173',
   'http://localhost:3001',
+  // LiveGuard production deployment
+  'https://liveguard-topaz.vercel.app',
 ];
+
+// Vercel preview deployment pattern: liveguard-<branch>-<hash>.vercel.app
+// Matches preview URLs generated on each push (e.g. liveguard-git-main-abc123.vercel.app)
+const VERCEL_PREVIEW_PATTERN = /^https:\/\/liveguard-[a-z0-9-]+\.vercel\.app$/;
 
 function getAllowedOrigins(): Set<string> {
   const set = new Set<string>(DEFAULT_ALLOWED_ORIGINS);
@@ -150,7 +156,7 @@ export default async function liveguardVerifyHandler(
   // ── CORS ──
   if (origin) {
     const allowed = getAllowedOrigins();
-    if (allowed.has(origin)) {
+    if (allowed.has(origin) || VERCEL_PREVIEW_PATTERN.test(origin)) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
       res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
