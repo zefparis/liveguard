@@ -113,6 +113,10 @@
 
   /* ── Base ──────────────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
@@ -590,7 +594,7 @@
   </section>
 
   <!-- 4 ─ Three steps -->
-  <section class="steps">
+  <section class="steps" id="steps">
     <ol class="step-list">
       <li class="step-card" data-accent="violet">
         <span class="step-num" aria-hidden="true">1</span>
@@ -665,11 +669,11 @@
 
   <!-- 6–7 ─ CTAs -->
   <div class="ctas">
-    <a class="btn btn-primary" href="#essayer">
+    <a class="btn btn-primary" href="/" data-i18n-wrap>
       <span data-i18n="cta.primary">Essayer, ça prend un instant</span>
       <span aria-hidden="true">→</span>
     </a>
-    <a class="btn btn-secondary" href="#fonctionnement">
+    <a class="btn btn-secondary" href="#steps" data-i18n-wrap>
       <span data-i18n="cta.secondary">Comment ça fonctionne</span>
       <span aria-hidden="true">→</span>
     </a>
