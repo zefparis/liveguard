@@ -23,7 +23,8 @@ export const LIVEGUARD_REQUEST_TIMEOUT_MS = 10_000;
 export const LIVEGUARD_SESSION_ENDPOINT =
   'https://hcs-u7-backend-kk0n.onrender.com/api/cognitive/liveguard/session';
 
-// Production URL for QR code / dashboard links
+// Production URL for QR code / dashboard links.
+// MUST be set via VITE_LIVEGUARD_URL env var after Vercel deployment.
+// No hardcoded default — liveguard.vercel.app belongs to an unrelated project.
 export const LIVEGUARD_PRODUCTION_URL =
-  (import.meta.env.VITE_LIVEGUARD_URL as string | undefined) ||
-  'https://liveguard.vercel.app';
+  (import.meta.env.VITE_LIVEGUARD_URL as string | undefined) || 'CONFIGURE_ME';
