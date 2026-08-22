@@ -1522,6 +1522,62 @@ body {
   font-weight: 600;
 }
 
+/* ── Done: indicator tiles ── */
+.done-indicators {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 24px;
+}
+
+.done-indicator {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.done-indicator svg {
+  color: var(--accent);
+}
+
+/* ── Done: detail toggle + panel ── */
+.done-detail-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--surface-2);
+  transition: color 0.15s;
+}
+
+.done-detail-toggle:hover {
+  color: var(--text);
+}
+
+.done-detail-panel {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 16px;
+}
+
 /* ─── Select protection ─────────────────────────────────────────── */
 
 .protection-list {

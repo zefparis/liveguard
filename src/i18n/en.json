@@ -168,11 +168,18 @@
 
   "done.title": "Verification complete",
   "done.message": "Your session has been successfully verified.",
+  "done.newTitle": "Done — you're verified.",
+  "done.newMessage": "Your behavioral profile is confirmed. LiveGuard keeps watching, discreetly, in the background.",
   "done.elapsedTime": "Elapsed time",
   "done.modulesCompleted": "Modules completed",
   "done.humanLikelihood": "Human likelihood",
   "done.qualityScore": "Quality score",
   "done.back": "Back to application",
+  "done.indExercises": "5 exercises",
+  "done.indProfile": "Profile confirmed",
+  "done.indPrivate": "Nothing recorded",
+  "done.showDetail": "View verification details",
+  "done.hideDetail": "Hide details",
 
   "error.title": "Error",
   "error.retry": "Retry",
