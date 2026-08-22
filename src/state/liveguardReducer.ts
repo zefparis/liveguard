@@ -16,6 +16,8 @@ import type { BehaviorPayload, TouchDiagnosticsBehaviorSafe } from '../liveguard
 
 export type Phase =
   | 'idle'
+  | 'showcase'
+  | 'integration'
   | 'select_protection'
   | 'prep'
   | 'test_reflex'
@@ -50,7 +52,7 @@ export interface LiveGuardState {
 }
 
 export const initialState: LiveGuardState = {
-  phase: 'idle',
+  phase: 'showcase',
   sessionPublicId: '',
   testScope: 'cognitive-only',
   startedAt: null,
@@ -81,6 +83,9 @@ export const initialState: LiveGuardState = {
 };
 
 export type Action =
+  | { type: 'SHOW_SHOWCASE' }
+  | { type: 'SHOW_INTEGRATION' }
+  | { type: 'START_DEMO'; sessionPublicId: string }
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
   | { type: 'START'; sessionPublicId: string; testScope?: string | null; protectionCategory?: string | null }
   | { type: 'PREP_READY' }
@@ -100,8 +105,10 @@ export type Action =
   | { type: 'RESET' };
 
 const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
-  idle: ['select_protection'],
-  select_protection: ['prep', 'idle'],
+  showcase: ['idle', 'integration', 'prep'],
+  integration: ['showcase', 'idle', 'prep'],
+  idle: ['select_protection', 'showcase', 'prep'],
+  select_protection: ['prep', 'idle', 'showcase'],
   prep: ['test_reflex', 'error'],
   test_reflex: ['test_colors', 'error'],
   test_colors: ['test_memory', 'error'],
@@ -112,8 +119,8 @@ const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
   device_signals: ['readiness', 'error'],
   readiness: ['submitting', 'error'],
   submitting: ['done', 'error'],
-  done: ['idle'],
-  error: ['idle'],
+  done: ['idle', 'showcase'],
+  error: ['idle', 'showcase'],
 };
 
 function isValidTransition(from: Phase, to: Phase): boolean {
@@ -124,6 +131,22 @@ function isValidTransition(from: Phase, to: Phase): boolean {
 
 export function liveguardReducer(state: LiveGuardState, action: Action): LiveGuardState {
   switch (action.type) {
+    case 'SHOW_SHOWCASE': {
+      if (!isValidTransition(state.phase, 'showcase')) return state;
+      return { ...state, phase: 'showcase' };
+    }
+
+    case 'SHOW_INTEGRATION': {
+      if (!isValidTransition(state.phase, 'integration')) return state;
+      return { ...state, phase: 'integration' };
+    }
+
+    case 'START_DEMO': {
+      // From showcase/integration → go to idle (which resolves session then proceeds)
+      if (!isValidTransition(state.phase, 'idle')) return state;
+      return { ...state, phase: 'idle', sessionPublicId: action.sessionPublicId };
+    }
+
     case 'SELECT_PROTECTION': {
       if (!isValidTransition(state.phase, 'select_protection')) return state;
       return { ...state, phase: 'select_protection', sessionPublicId: action.sessionPublicId };

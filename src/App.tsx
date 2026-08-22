@@ -21,6 +21,8 @@ import { buildLiveGuardPayload } from './payload/buildLiveGuardPayload';
 import { submitLiveGuard } from './liveguard/api';
 
 import { IdleScreen } from './screens/IdleScreen';
+import { ShowcaseScreen } from './screens/ShowcaseScreen';
+import { IntegrationScreen } from './screens/IntegrationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
 import { ReflexScreen } from './screens/ReflexScreen';
@@ -53,6 +55,20 @@ export default function App() {
   const handleStart = useCallback((sessionPublicId: string, _testScope?: string | null) => {
     setPendingSessionId(sessionPublicId);
     dispatch({ type: 'SELECT_PROTECTION', sessionPublicId });
+  }, []);
+
+  // Showcase → start demo directly (skip select_protection)
+  const handleTryDemo = useCallback((sessionPublicId: string) => {
+    reset();
+    dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory: 'demo' });
+  }, [reset]);
+
+  const handleShowIntegration = useCallback(() => {
+    dispatch({ type: 'SHOW_INTEGRATION' });
+  }, []);
+
+  const handleBackToShowcase = useCallback(() => {
+    dispatch({ type: 'SHOW_SHOWCASE' });
   }, []);
 
   const handleProtectionStart = useCallback((sessionPublicId: string, protectionCategory: string) => {
@@ -117,12 +133,26 @@ export default function App() {
           </div>
         )}
 
-        {/* Header indicator (shown on all non-idle screens) */}
-        {state.phase !== 'idle' && (
+        {/* Header indicator (shown on cognitive flow screens, not on showcase/integration) */}
+        {state.phase !== 'idle' && state.phase !== 'showcase' && state.phase !== 'integration' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
           </div>
+        )}
+
+        {state.phase === 'showcase' && (
+          <ShowcaseScreen
+            onTryDemo={handleTryDemo}
+            onShowIntegration={handleShowIntegration}
+          />
+        )}
+
+        {state.phase === 'integration' && (
+          <IntegrationScreen
+            onBack={handleBackToShowcase}
+            onTryDemo={handleTryDemo}
+          />
         )}
 
         {state.phase === 'idle' && (
