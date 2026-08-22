@@ -28,6 +28,42 @@
   --indicator-green: #22c55e;
 }
 
+/* ── Explicit theme override via data-theme on <html> ──
+   When the user toggles theme from the landing page, data-theme is set
+   on <html> and these rules take precedence over :root defaults and
+   the prefers-color-scheme media query. */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --camp-bg: #0f172a;
+  --camp-cyan: #3b82f6;
+  --camp-violet: #2563eb;
+  --camp-text: #f1f5f9;
+  --camp-text-secondary: #94a3b8;
+  --camp-segment-pending: #334155;
+  --camp-instruction-bg: rgba(59, 130, 246, 0.08);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --camp-bg: #f8fafc;
+  --camp-cyan: #3b82f6;
+  --camp-violet: #2563eb;
+  --camp-text: #0f172a;
+  --camp-text-secondary: #64748b;
+  --camp-segment-pending: #e2e8f0;
+  --camp-instruction-bg: rgba(59, 130, 246, 0.06);
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -35,8 +71,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* System preference fallback — only when no explicit data-theme is set */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #f8fafc;
     --surface: #ffffff;
     --surface-2: #f1f5f9;
@@ -1664,6 +1701,29 @@ body {
   margin: 0 auto;
   overflow-y: auto;
 }
+
+.integration-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.integration-theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--camp-segment-pending);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--camp-text-secondary);
+  transition: color .2s ease, transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.integration-theme-toggle:hover { color: var(--camp-text); }
+.integration-theme-toggle:active { transform: scale(.94); }
 
 .btn-back {
   display: flex;

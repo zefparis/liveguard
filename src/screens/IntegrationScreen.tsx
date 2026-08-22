@@ -13,6 +13,7 @@
  */
 
 import { useI18n } from '../i18n/I18nContext';
+import { useTheme } from '../hooks/useTheme';
 import { LanguagePill } from '../components/LanguagePill';
 
 interface Props {
@@ -44,6 +45,7 @@ function StepIcon({ n }: { n: number }) {
 
 export function IntegrationScreen({ onBack }: Props) {
   const { t } = useI18n();
+  const { theme, toggleTheme } = useTheme();
 
   const steps = [
     t('integration.step1'),
@@ -60,7 +62,24 @@ export function IntegrationScreen({ onBack }: Props) {
 
   return (
     <div className="screen integration-screen">
-      <LanguagePill />
+      <div className="integration-top-actions">
+        <LanguagePill />
+        <button type="button" className="integration-theme-toggle" onClick={toggleTheme}
+                aria-label={t('integration.back') === 'Retour' ? 'Basculer le thème' : 'Toggle theme'}>
+          {theme === 'light' ? (
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="18" height="18">
+              <path d="M20.4 14.2A8.5 8.5 0 0 1 9.8 3.6a8.5 8.5 0 1 0 10.6 10.6Z"
+                    stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="18" height="18">
+              <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.8"/>
+              <path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"
+                    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          )}
+        </button>
+      </div>
 
       <button className="btn-back" onClick={onBack}>
         <ArrowLeftIcon />

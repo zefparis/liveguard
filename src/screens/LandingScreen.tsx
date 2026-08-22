@@ -14,8 +14,9 @@
  * Patents Pending FR2514274 | FR2514546
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useI18n } from '../i18n/I18nContext';
+import { useTheme } from '../hooks/useTheme';
 import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 
 interface Props {
@@ -25,40 +26,8 @@ interface Props {
 
 export function LandingScreen({ onTryDemo, onShowIntegration }: Props) {
   const { t, locale, setLocale } = useI18n();
+  const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  // ── Theme: saved choice → system preference ──
-  useEffect(() => {
-    const saved = localStorage.getItem('lg_theme') as 'light' | 'dark' | null;
-    const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const initial = saved || system;
-    setTheme(initial);
-    document.documentElement.setAttribute('data-theme', initial);
-  }, []);
-
-  // Follow system changes only while no explicit choice
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('lg_theme')) {
-        const next = e.matches ? 'dark' : 'light';
-        setTheme(next);
-        document.documentElement.setAttribute('data-theme', next);
-      }
-    };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('lg_theme', next);
-      document.documentElement.setAttribute('data-theme', next);
-      return next;
-    });
-  }, []);
 
   // ── Session resolution (same logic as old ShowcaseScreen) ──
   const ensureSession = useCallback(async (): Promise<string> => {
