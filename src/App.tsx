@@ -22,6 +22,8 @@ import { submitLiveGuard } from './liveguard/api';
 
 import { IdleScreen } from './screens/IdleScreen';
 import { LandingScreen } from './screens/LandingScreen';
+import { HowItWorksScreen } from './screens/HowItWorksScreen';
+import { ImplementationScreen } from './screens/ImplementationScreen';
 import { IntegrationScreen } from './screens/IntegrationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
@@ -52,11 +54,12 @@ export default function App() {
     continuousSignals.setPhase(state.phase);
   }, [state.phase]);
 
-  // Deep link: /#integration → jump straight to the partner integration screen
+  // Deep links: /#integration, /#how-it-works, /#implementation
   useEffect(() => {
-    if (window.location.hash === '#integration') {
-      dispatch({ type: 'SHOW_INTEGRATION' });
-    }
+    const hash = window.location.hash;
+    if (hash === '#integration') dispatch({ type: 'SHOW_INTEGRATION' });
+    else if (hash === '#how-it-works') dispatch({ type: 'SHOW_HOW_IT_WORKS' });
+    else if (hash === '#implementation') dispatch({ type: 'SHOW_IMPLEMENTATION' });
   }, []);
 
   const handleStart = useCallback((sessionPublicId: string, _testScope?: string | null) => {
@@ -70,8 +73,12 @@ export default function App() {
     dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory: 'demo' });
   }, [reset]);
 
-  const handleShowIntegration = useCallback(() => {
-    dispatch({ type: 'SHOW_INTEGRATION' });
+  const handleShowHowItWorks = useCallback(() => {
+    dispatch({ type: 'SHOW_HOW_IT_WORKS' });
+  }, []);
+
+  const handleShowImplementation = useCallback(() => {
+    dispatch({ type: 'SHOW_IMPLEMENTATION' });
   }, []);
 
   const handleBackToLanding = useCallback(() => {
@@ -140,8 +147,9 @@ export default function App() {
           </div>
         )}
 
-        {/* Header indicator (shown on cognitive flow screens, not on landing/integration) */}
-        {state.phase !== 'idle' && state.phase !== 'landing' && state.phase !== 'integration' && (
+        {/* Header indicator (shown on cognitive flow screens, not on landing/info pages) */}
+        {state.phase !== 'idle' && state.phase !== 'landing' && state.phase !== 'integration'
+          && state.phase !== 'how_it_works' && state.phase !== 'implementation' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
@@ -151,7 +159,21 @@ export default function App() {
         {state.phase === 'landing' && (
           <LandingScreen
             onTryDemo={handleTryDemo}
-            onShowIntegration={handleShowIntegration}
+            onShowHowItWorks={handleShowHowItWorks}
+            onShowImplementation={handleShowImplementation}
+          />
+        )}
+
+        {state.phase === 'how_it_works' && (
+          <HowItWorksScreen
+            onTryDemo={handleTryDemo}
+            onShowImplementation={handleShowImplementation}
+          />
+        )}
+
+        {state.phase === 'implementation' && (
+          <ImplementationScreen
+            onBack={handleBackToLanding}
           />
         )}
 
