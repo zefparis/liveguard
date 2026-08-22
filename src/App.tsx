@@ -52,6 +52,13 @@ export default function App() {
     continuousSignals.setPhase(state.phase);
   }, [state.phase]);
 
+  // Deep link: /#integration → jump straight to the partner integration screen
+  useEffect(() => {
+    if (window.location.hash === '#integration') {
+      dispatch({ type: 'SHOW_INTEGRATION' });
+    }
+  }, []);
+
   const handleStart = useCallback((sessionPublicId: string, _testScope?: string | null) => {
     setPendingSessionId(sessionPublicId);
     dispatch({ type: 'SELECT_PROTECTION', sessionPublicId });

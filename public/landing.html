@@ -439,6 +439,25 @@
   }
   .btn-secondary:hover { background: var(--surface); }
 
+  /* ── Partner link (discrete, separate from user CTAs) ──────── */
+  .partner-link {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .partner-link a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-faint);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border-strong);
+    padding-bottom: 1px;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .partner-link a:hover {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+  }
+
   /* ── 8. Scroll indicator ───────────────────────────────────── */
   .scroll-hint {
     margin: auto auto 6px;
@@ -679,6 +698,11 @@
     </a>
   </div>
 
+  <!-- Partner link — separate from user-facing CTAs -->
+  <div class="partner-link">
+    <a href="/#integration" data-i18n="partner.link">Vous êtes un partenaire ? Voir comment intégrer LiveGuard →</a>
+  </div>
+
   <!-- 8 ─ Scroll indicator -->
   <div class="scroll-hint" aria-hidden="true">
     <span>
@@ -704,7 +728,8 @@
       "steps.3":       "Une vérification qui vous suit, discrètement, tant que vous en avez besoin",
       "proof":         "Déjà utilisé en conditions réelles sur UniPay",
       "cta.primary":   "Essayer, ça prend un instant",
-      "cta.secondary": "Comment ça fonctionne"
+      "cta.secondary": "Comment ça fonctionne",
+      "partner.link":  "Vous êtes un partenaire ? Voir comment intégrer LiveGuard →"
     },
     en: {
       "doc.title":     "LiveGuard — What matters to you deserves protection",
@@ -715,7 +740,8 @@
       "steps.3":       "Verification that stays with you, discreetly, for as long as you need it",
       "proof":         "Already used in real-world conditions on UniPay",
       "cta.primary":   "Try it — it only takes a moment",
-      "cta.secondary": "How it works"
+      "cta.secondary": "How it works",
+      "partner.link":  "Are you a partner? See how to integrate LiveGuard →"
     }
   };
 
