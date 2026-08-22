@@ -224,10 +224,10 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
           <span className="landing-proof-icons" aria-hidden="true">
             <span className="landing-proof-people">
               <svg viewBox="0 0 24 24" fill="none">
-                <circle cx="9" cy="8" r="3" fill="#fff"/>
-                <path d="M3.5 19c.6-3 2.9-4.6 5.5-4.6s4.9 1.6 5.5 4.6" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-                <circle cx="17" cy="9" r="2.4" fill="#fff" fillOpacity=".75"/>
-                <path d="M15.5 19c.3-2.4 1.9-3.8 4-4.1" stroke="#fff" strokeOpacity=".75" strokeWidth="1.6" strokeLinecap="round"/>
+                <path d="M12 2.6 4.6 5.6v5.2c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V5.6L12 2.6Z"
+                      fill="#fff" fillOpacity=".95"/>
+                <path d="m8.7 11.6 2.3 2.3 4.3-4.5" stroke="#0da678" strokeWidth="2"
+                      strokeLinecap="round" strokeLinejoin="round" fill="none"/>
               </svg>
             </span>
             <span className="landing-proof-unipay">U</span>
