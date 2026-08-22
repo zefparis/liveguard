@@ -1,57 +1,31 @@
-/* ============================================================
- * LiveGuard — Design System
- *
- * Neutral palette with a single discrete blue accent.
- * No campaign cyan/violet — sober, system-aware.
- *
- * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
- * Patents Pending FR2514274 | FR2514546
- * ============================================================ */
-
 :root {
-  /* Neutral surfaces */
   --bg: #0f172a;
   --surface: #1e293b;
   --surface-2: #334155;
-  --surface-3: #475569;
   --text: #f1f5f9;
   --text-muted: #94a3b8;
-  --text-secondary: #cbd5e1;
-
-  /* Single accent — soft blue */
   --accent: #3b82f6;
   --accent-hover: #2563eb;
-  --accent-subtle: rgba(59, 130, 246, 0.12);
-
-  /* Status */
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-
-  /* Layout */
   --radius: 12px;
-  --radius-sm: 8px;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-  --max-width: 430px;
+
+  /* Neutral palette — same variable names as demoguard campaign, neutral values.
+     LiveGuard uses slate + single blue accent instead of cyan/violet campaign. */
+  --camp-bg: #0f172a;
+  --camp-cyan: #3b82f6;
+  --camp-violet: #2563eb;
+  --camp-text: #f1f5f9;
+  --camp-text-secondary: #94a3b8;
+  --camp-segment-done: #3b82f6;
+  --camp-segment-current: #2563eb;
+  --camp-segment-pending: #334155;
+  --camp-instruction-bg: rgba(59, 130, 246, 0.08);
 
   /* Header indicator */
   --indicator-green: #22c55e;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --surface-2: #f1f5f9;
-    --surface-3: #e2e8f0;
-    --text: #0f172a;
-    --text-muted: #64748b;
-    --text-secondary: #334155;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --accent-subtle: rgba(59, 130, 246, 0.08);
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  }
 }
 
 * {
@@ -59,6 +33,24 @@
   padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --camp-bg: #f8fafc;
+    --camp-cyan: #3b82f6;
+    --camp-violet: #2563eb;
+    --camp-text: #0f172a;
+    --camp-text-secondary: #64748b;
+    --camp-segment-pending: #e2e8f0;
+    --camp-instruction-bg: rgba(59, 130, 246, 0.06);
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
 }
 
 html, body {
@@ -86,7 +78,7 @@ body {
 
 .app-shell {
   width: 100%;
-  max-width: var(--max-width);
+  max-width: 430px;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -110,7 +102,1292 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  gap: 16px;
 }
+
+/* Scrollable variant for content-heavy screens (DoneScreen).
+   justify-content: flex-start so overflow content is reachable from top,
+   unlike .screen-center where centered overflow clips the top (flexbox bug). */
+.screen-scroll {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  gap: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  min-height: 48px;
+  color: var(--text);
+  background: var(--accent);
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+/* LiveGuard: .btn-primary is an alias for .btn with explicit accent background */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-success {
+  background: var(--success);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.test-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  min-height: 44px;
+}
+
+.phase-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.phase-progress {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.input-pad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.input-pad button {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  border: none;
+  font-size: 22px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.input-pad button:active {
+  background: var(--accent);
+}
+
+.stroop-word {
+  font-size: 48px;
+  font-weight: 800;
+  text-align: center;
+  padding: 32px 0;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stroop-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stroop-option {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 2px solid var(--surface-2);
+  background: var(--surface);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 56px;
+  color: var(--text);
+}
+
+.stroop-option:active {
+  border-color: var(--accent);
+}
+
+.trail-area {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+}
+
+.trail-node {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 2px solid var(--accent);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.trail-node.tapped {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.trail-node.wrong {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.reflex-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  min-height: 200px;
+}
+
+.reflex-area.ready {
+  background: var(--surface-2);
+}
+
+.reflex-area.go {
+  background: var(--success);
+}
+
+.reflex-area.too-early {
+  background: var(--danger);
+}
+
+.nback-letter {
+  font-size: 64px;
+  font-weight: 800;
+  text-align: center;
+  padding: 48px 0;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nback-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.nback-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+.nback-intro-title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.nback-intro-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.nback-example {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  width: 100%;
+}
+
+.nback-example-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nback-example-letter {
+  font-size: 32px;
+  font-weight: 800;
+  min-width: 40px;
+  text-align: center;
+}
+
+.nback-example-arrow {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+.nback-example-badge {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.nback-example-same {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+}
+
+.nback-example-diff {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.nback-instruction {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.nback-feedback {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px 0;
+  animation: nback-fade 0.4s ease;
+}
+
+.nback-feedback-correct {
+  color: var(--success);
+}
+
+.nback-feedback-incorrect {
+  color: var(--danger);
+}
+
+.nback-feedback-answered {
+  color: var(--text-muted);
+  font-size: 24px;
+}
+
+@keyframes nback-fade {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.error-boundary h3 {
+  color: var(--danger);
+}
+
+.voice-visual {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 200px;
+}
+
+.voice-pulse {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.voice-pulse.recording {
+  background: var(--danger);
+}
+
+.voice-pulse.warming-up {
+  background: #f59e0b;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+.result-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.result-detail {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.rotate-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 16px;
+  text-align: center;
+  padding: 32px;
+}
+
+.rotate-icon {
+  font-size: 48px;
+  animation: rotate 2s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+/* ─── Segmented progress bar (optional PhaseHeader variant) ─────────── */
+
+.segment-progress {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  min-height: 44px;
+}
+
+.segment-progress-bar {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.segment-progress-seg {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--camp-segment-pending);
+  transition: background 0.2s ease;
+}
+
+.segment-progress-seg.done {
+  background: var(--camp-segment-done);
+}
+
+.segment-progress-seg.current {
+  background: var(--camp-segment-current);
+}
+
+.segment-progress-count {
+  font-size: 13px;
+  color: var(--camp-text-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+/* ─── Stroop refactored styles ──────────────────────────────────────── */
+
+.stroop-instruction-card {
+  background: var(--camp-instruction-bg);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--camp-text-secondary);
+  margin-bottom: 8px;
+}
+
+.stroop-instruction-card strong {
+  color: var(--camp-cyan);
+  font-weight: 700;
+}
+
+.stroop-feedback-line {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  transition: opacity 0.15s ease;
+}
+
+.stroop-feedback-correct {
+  color: var(--camp-cyan);
+}
+
+.stroop-feedback-incorrect {
+  color: var(--danger);
+}
+
+.stroop-feedback-ms {
+  color: var(--camp-text-secondary);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.stroop-option.stroop-option-selected {
+  outline: 2px solid var(--camp-cyan);
+  outline-offset: 2px;
+}
+
+.stroop-option-campaign {
+  border-radius: 10px !important;
+}
+
+/* ─── IdleScreen campaign styles ───────────────────────────────────── */
+
+.idle-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  background: var(--camp-bg);
+  padding: 24px 20px;
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+  min-height: 100dvh;
+}
+
+.idle-fingerprint {
+  margin-bottom: 8px;
+}
+
+.idle-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--camp-text);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.idle-subtitle {
+  font-size: 15px;
+  color: var(--camp-text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.idle-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 260px;
+  margin: 8px 0;
+}
+
+.idle-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--camp-text);
+}
+
+.idle-chip-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.idle-start-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 48px;
+  background: var(--camp-cyan);
+  color: var(--camp-bg);
+  transition: opacity 0.15s;
+}
+
+.idle-start-btn:active {
+  opacity: 0.85;
+}
+
+.idle-start-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.prep-continue-btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 48px;
+  background: var(--camp-cyan);
+  color: var(--camp-bg);
+  transition: opacity 0.15s;
+  margin-top: 16px;
+}
+
+.prep-continue-btn:active {
+  opacity: 0.85;
+}
+
+.prep-continue-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.idle-no-signup {
+  font-size: 10px;
+  color: #6E6A9E;
+  margin-top: 4px;
+}
+
+.lang-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 3px;
+  z-index: 10;
+}
+
+.lang-pill-btn {
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 0 14px;
+  min-height: 44px;
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--camp-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lang-pill-btn-active {
+  background: var(--camp-cyan);
+  color: var(--camp-bg);
+}
+
+.lang-pill-btn:not(.lang-pill-btn-active):hover {
+  color: var(--camp-text);
+}
+
+.idle-debug-input {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--camp-text);
+  font-size: 14px;
+  min-height: 48px;
+}
+
+/* ─── Shared campaign instruction card (reused by all task screens) ── */
+/* Already defined for Stroop: .stroop-instruction-card — we add a generic alias */
+.camp-instruction-card {
+  background: var(--camp-instruction-bg);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--camp-text-secondary);
+  margin-bottom: 8px;
+}
+
+.camp-instruction-card strong {
+  color: var(--camp-cyan);
+  font-weight: 700;
+}
+
+/* ─── Campaign feedback line (reused by DigitSpan, NBack, Reflex) ──── */
+
+.camp-feedback-line {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.camp-feedback-correct {
+  color: var(--camp-cyan);
+}
+
+.camp-feedback-incorrect {
+  color: var(--danger);
+}
+
+.camp-feedback-detail {
+  color: var(--camp-text-secondary);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ─── DigitSpan campaign styles ────────────────────────────────────── */
+
+.digit-span-input-pad-campaign {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.digit-span-input-pad-campaign button {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: none;
+  font-size: 22px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.digit-span-input-pad-campaign button:active {
+  background: var(--camp-cyan);
+  color: var(--camp-bg);
+}
+
+/* ─── Reflex campaign styles ───────────────────────────────────────── */
+
+.reflex-feedback-qualifier {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+  min-height: 20px;
+  text-align: center;
+}
+
+/* ─── NBack campaign styles ────────────────────────────────────────── */
+
+.nback-intro-campaign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+.nback-intro-title-campaign {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--camp-text);
+}
+
+.nback-intro-subtitle-campaign {
+  font-size: 16px;
+  color: var(--camp-text-secondary);
+  text-align: center;
+}
+
+.nback-example-campaign {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.nback-example-row-campaign {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nback-example-letter-campaign {
+  font-size: 32px;
+  font-weight: 800;
+  min-width: 40px;
+  text-align: center;
+  color: var(--camp-text);
+}
+
+.nback-example-arrow-campaign {
+  font-size: 20px;
+  color: var(--camp-text-secondary);
+}
+
+.nback-example-badge-campaign {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.nback-example-same-campaign {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--camp-cyan);
+}
+
+.nback-example-diff-campaign {
+  background: rgba(255, 107, 139, 0.15);
+  color: #FF6B8B;
+}
+
+.nback-instruction-campaign {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--camp-text);
+}
+
+.nback-feedback-campaign {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px 0;
+  animation: nback-fade 0.4s ease;
+}
+
+.nback-feedback-correct-campaign {
+  color: var(--camp-cyan);
+}
+
+.nback-feedback-incorrect-campaign {
+  color: var(--danger);
+}
+
+.nback-feedback-answered-campaign {
+  color: var(--camp-text-secondary);
+  font-size: 24px;
+}
+
+/* ─── TrailTap campaign styles ─────────────────────────────────────── */
+
+.trail-node-campaign {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 2px solid var(--camp-violet);
+  cursor: pointer;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+}
+
+.trail-node-campaign.tapped {
+  background: var(--camp-cyan);
+  border-color: var(--camp-cyan);
+  color: var(--camp-bg);
+}
+
+.trail-node-campaign.wrong {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.trail-path-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Path appears ~120ms after tap — reads as a consequence of the action,
+   not an instruction to trace. Purely visual CSS transition, no JS timer. */
+.trail-path-svg polyline {
+  opacity: 0;
+  animation: trail-path-fade-in 0.25s ease 0.12s forwards;
+}
+
+@keyframes trail-path-fade-in {
+  from { opacity: 0; }
+  to { opacity: 0.4; }
+}
+
+/* ─── DoneScreen campaign styles ───────────────────────────────────── */
+
+.done-screen {
+  background: var(--camp-bg);
+  color: var(--camp-text);
+  min-height: 100dvh;
+  padding: 24px 20px;
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.done-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.done-fingerprint {
+  margin-bottom: 8px;
+}
+
+.done-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: var(--camp-text);
+}
+
+.done-subtitle {
+  font-size: 14px;
+  color: var(--camp-text-secondary);
+  margin: 0;
+}
+
+/* ── Layer cards ── */
+
+.done-layer-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.done-layer-card-cognitive {
+  background: rgba(59, 130, 246, 0.07);
+}
+
+.done-layer-card-behavior {
+  background: rgba(37, 99, 235, 0.09);
+}
+
+.done-layer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.done-layer-icon {
+  font-size: 20px;
+}
+
+.done-layer-icon-cognitive {
+  color: var(--camp-cyan);
+}
+
+.done-layer-icon-behavior {
+  color: var(--camp-violet);
+}
+
+.done-layer-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.done-layer-title-cognitive {
+  color: var(--camp-cyan);
+}
+
+.done-layer-title-behavior {
+  color: var(--camp-violet);
+}
+
+.done-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.done-metric-label {
+  font-size: 14px;
+  color: var(--camp-text-secondary);
+}
+
+.done-metric-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--camp-text);
+}
+
+/* ── Conclusion ── */
+
+.done-conclusion {
+  font-size: 14px;
+  color: var(--camp-text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+/* ── Buttons ── */
+
+.done-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.done-btn-share {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 48px;
+  background: var(--camp-cyan);
+  color: var(--camp-bg);
+}
+
+.done-btn-share:active {
+  opacity: 0.85;
+}
+
+.done-btn-reset {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--camp-text-secondary);
+}
+
+.done-btn-reset:active {
+  opacity: 0.85;
+}
+
+/* ── Pedagogical block ── */
+
+.done-pedagogy-divider {
+  width: 100%;
+  max-width: 420px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 20px 0;
+}
+
+.done-pedagogy-toggle {
+  width: 100%;
+  max-width: 420px;
+  background: none;
+  border: none;
+  color: var(--camp-cyan);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  text-align: center;
+}
+
+.done-pedagogy-content {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.done-pedagogy-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.done-pedagogy-item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.done-pedagogy-item-body {
+  flex: 1;
+}
+
+.done-pedagogy-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+  color: var(--camp-text);
+}
+
+.done-pedagogy-item-text {
+  font-size: 13px;
+  color: var(--camp-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.done-pedagogy-conclusion {
+  background: rgba(59, 130, 246, 0.07);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--camp-text-secondary);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.done-pedagogy-formula {
+  margin-top: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.done-pedagogy-formula-label {
+  display: block;
+  font-size: 11px;
+  color: #6E6A9E;
+  margin-bottom: 2px;
+}
+
+.done-pedagogy-formula-value {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 13px;
+  color: var(--camp-text);
+}
+
+.done-pedagogy-patent {
+  font-size: 10.5px;
+  color: #6E6A9E;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.done-pedagogy-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--camp-violet);
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.done-pedagogy-link:active {
+  opacity: 0.7;
+}
+
+/* ── Technical details ── */
+
+.done-tech-toggle {
+  width: 100%;
+  max-width: 420px;
+  background: none;
+  border: none;
+  color: #6E6A9E;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 12px 0;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.done-tech-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.done-tech-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.done-tech-label {
+  color: var(--camp-text);
+}
+
+.done-tech-value {
+  color: var(--camp-text-secondary);
+}
+
+.done-tech-trace {
+  font-size: 12px;
+}
+
+.done-tech-message {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--camp-text-secondary);
+}
+
+.done-tech-brainage {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.done-tech-brainage-title {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--camp-text);
+}
+
+.done-tech-brainage-detail {
+  font-size: 11px;
+  color: var(--camp-text-secondary);
+}
+
+/* ── Fallback ── */
+
+.done-fallback {
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* ============================================================
+ * LiveGuard-specific additions (not in demoguard)
+ * Neutral palette, single blue accent, system-aware.
+ * ============================================================ */
 
 /* ─── Header indicator ──────────────────────────────────────────── */
 
@@ -136,458 +1413,39 @@ body {
   font-weight: 500;
 }
 
-/* ─── Buttons ───────────────────────────────────────────────────── */
+/* ─── Shield icon (idle screen) ─────────────────────────────────── */
 
-.btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 24px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
+.shield-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
 }
 
-.btn-primary:hover {
-  background: var(--accent-hover);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 20px;
-  border: 1px solid var(--surface-3);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: var(--surface-2);
-}
-
-/* ─── Cards ─────────────────────────────────────────────────────── */
-
-.card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 20px;
-  border: 1px solid var(--surface-2);
-}
-
-.card-selectable {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 16px;
-  border: 2px solid var(--surface-2);
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.card-selectable:hover {
-  border-color: var(--accent);
-  background: var(--accent-subtle);
-}
-
-.card-selectable.selected {
-  border-color: var(--accent);
-  background: var(--accent-subtle);
-}
-
-.card-selectable-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.card-selectable-label {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-/* ─── Typography ────────────────────────────────────────────────── */
-
-.title-lg {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  text-align: center;
-}
-
-.title-md {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.subtitle {
-  font-size: 14px;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.text-muted {
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-/* ─── Phase header (progress segments) ──────────────────────────── */
-
-.phase-header {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 0;
-}
-
-.phase-segment {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--surface-2);
-  transition: background 0.2s ease;
-}
-
-.phase-segment.done {
-  background: var(--accent);
-}
-
-.phase-segment.current {
-  background: var(--accent);
-  opacity: 0.6;
-}
-
-.phase-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  margin-top: 8px;
-}
-
-.phase-instruction {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
-
-/* ─── Test components (preserved from demoguard) ────────────────── */
-
-.test-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 24px;
-}
-
-.test-stimulus {
-  font-size: 72px;
-  font-weight: 700;
-  color: var(--text);
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.test-letter {
-  font-size: 96px;
-  font-weight: 700;
-  color: var(--text);
-  min-height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.test-instruction {
-  font-size: 16px;
-  color: var(--text-secondary);
-  text-align: center;
-}
-
-.test-button {
-  padding: 16px 32px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
-  min-width: 200px;
-}
-
-.test-button:hover {
-  background: var(--accent-hover);
-}
-
-.test-button:active {
-  transform: scale(0.96);
-}
-
-.test-button.secondary {
-  background: var(--surface-2);
-  color: var(--text);
-}
-
-.test-button.secondary:hover {
-  background: var(--surface-3);
-}
-
-/* ─── Stroop ────────────────────────────────────────────────────── */
-
-.stroop-word {
-  font-size: 64px;
-  font-weight: 800;
-  text-align: center;
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stroop-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  max-width: 280px;
-}
-
-.stroop-option {
-  padding: 16px;
-  border: 2px solid var(--surface-2);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
-  text-align: center;
-}
-
-.stroop-option:hover {
-  border-color: var(--accent);
-}
-
-.stroop-option.selected {
-  border-color: var(--accent);
-  background: var(--accent-subtle);
-}
-
-/* ─── N-Back ────────────────────────────────────────────────────── */
-
-.nback-letter {
-  font-size: 96px;
-  font-weight: 700;
-  color: var(--text);
-  min-height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nback-instruction {
-  font-size: 16px;
-  color: var(--text-secondary);
-  text-align: center;
-  min-height: 24px;
-}
-
-.nback-buttons {
-  display: flex;
-  gap: 16px;
-}
-
-.nback-btn {
-  padding: 12px 24px;
-  border: 2px solid var(--surface-2);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-  min-width: 100px;
-}
-
-.nback-btn:hover {
-  border-color: var(--accent);
-}
-
-.nback-btn:active {
-  transform: scale(0.96);
-}
-
-.nback-feedback {
-  font-size: 14px;
-  font-weight: 600;
-  min-height: 20px;
-}
-
-.nback-feedback.correct {
-  color: var(--success);
-}
-
-.nback-feedback.wrong {
-  color: var(--danger);
-}
-
-/* ─── Digit Span ────────────────────────────────────────────────── */
-
-.digit-display {
-  font-size: 48px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 8px;
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.digit-input {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.digit-key {
-  width: 48px;
-  height: 48px;
-  border: 2px solid var(--surface-2);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-
-.digit-key:hover {
-  border-color: var(--accent);
-}
-
-.digit-key:active {
-  transform: scale(0.95);
-}
-
-.digit-sequence {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 4px;
-  min-height: 40px;
-}
-
-/* ─── Trail Tap ─────────────────────────────────────────────────── */
-
-.trail-container {
-  position: relative;
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 1;
-  margin: 0 auto;
-}
-
-.trail-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+.shield-icon svg {
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  color: var(--accent);
 }
 
-.trail-node {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
+/* ─── Info chips ────────────────────────────────────────────────── */
+
+.info-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
   background: var(--surface);
-  color: var(--text);
-  font-size: 18px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  touch-action: none;
-  transform: translate(-50%, -50%);
-  transition: background 0.15s ease, border-color 0.15s ease;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--surface-2);
+  font-size: 13px;
+  color: var(--text-secondary, var(--camp-text-secondary));
 }
 
-.trail-node.tapped {
-  background: var(--accent);
-  color: #ffffff;
-}
-
-.trail-node.wrong {
-  border-color: var(--danger);
-  background: rgba(239, 68, 68, 0.15);
-}
-
-/* ─── Reflex ────────────────────────────────────────────────────── */
-
-.reflex-target {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: var(--surface-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.1s ease;
-}
-
-.reflex-target.active {
-  background: var(--accent);
-}
-
-.reflex-target.idle {
-  background: var(--surface-3);
+.info-chip svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 /* ─── Done screen ───────────────────────────────────────────────── */
@@ -642,8 +1500,8 @@ body {
   justify-content: center;
   gap: 8px;
   padding: 14px;
-  border: 1px dashed var(--surface-3);
-  border-radius: var(--radius-sm);
+  border: 1px dashed var(--surface-2);
+  border-radius: var(--radius-sm, 8px);
   background: transparent;
   color: var(--text-muted);
   font-size: 14px;
@@ -657,128 +1515,69 @@ body {
   color: var(--accent);
 }
 
-/* ─── Rotate overlay ────────────────────────────────────────────── */
+/* ─── Selectable cards ──────────────────────────────────────────── */
 
-.rotate-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
+.card-selectable {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 2px solid var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-selectable:hover {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.card-selectable.selected {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.card-selectable-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface-2);
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  flex-shrink: 0;
+}
+
+.card-selectable-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ─── Typography helpers ────────────────────────────────────────── */
+
+.title-lg {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
   text-align: center;
-  padding: 20px;
 }
 
-.rotate-overlay p {
-  margin-top: 16px;
-  font-size: 16px;
-  color: var(--text-muted);
+.title-md {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
 }
 
-/* ─── Error screen ──────────────────────────────────────────────── */
-
-.error-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(239, 68, 68, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-}
-
-.error-icon svg {
-  width: 32px;
-  height: 32px;
-  color: var(--danger);
-}
-
-.error-message {
+.subtitle {
   font-size: 14px;
   color: var(--text-muted);
   text-align: center;
-  margin-bottom: 24px;
 }
 
-/* ─── Loading / submitting ──────────────────────────────────────── */
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--surface-2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ─── Language pill ─────────────────────────────────────────────── */
-
-.lang-pill {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  gap: 4px;
-  z-index: 10;
-}
-
-.lang-pill button {
-  padding: 4px 10px;
-  border: 1px solid var(--surface-2);
-  border-radius: 20px;
-  background: var(--surface);
+.text-muted {
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.lang-pill button.active {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-/* ─── Shield icon (idle screen) ─────────────────────────────────── */
-
-.shield-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 24px;
-}
-
-.shield-icon svg {
-  width: 100%;
-  height: 100%;
-  color: var(--accent);
-}
-
-/* ─── Info chips ────────────────────────────────────────────────── */
-
-.info-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--surface);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--surface-2);
   font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.info-chip svg {
-  width: 16px;
-  height: 16px;
-  color: var(--accent);
-  flex-shrink: 0;
 }
