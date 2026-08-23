@@ -261,5 +261,27 @@
   "demo.scenario5.button": "Simuler la dérive",
   "demo.scenario6.title": "Tentatives massives",
   "demo.scenario6.description": "10 tentatives rapides — le score de risque réseau augmente jusqu'au blocage.",
-  "demo.scenario6.button": "Simuler les tentatives massives"
+  "demo.scenario6.button": "Simuler les tentatives massives",
+
+  "landing.howItWorks.label": "Comment ça marche",
+  "landing.howItWorks.card1.title": "Observation continue",
+  "landing.howItWorks.card1.text": "Cognitif, comportemental et réseau sont analysés en arrière-plan pendant que vous utilisez l'app normalement.",
+  "landing.howItWorks.card2.title": "Détection d'écart",
+  "landing.howItWorks.card2.text": "Un changement de comportement, une perte de focus ou une IP suspecte fait grimper le score de risque en temps réel.",
+  "landing.howItWorks.card3.title": "Suspension & vérification",
+  "landing.howItWorks.card3.text": "La session se suspend au-delà du seuil de tolérance et demande une re-vérification cognitive avant de reprendre.",
+
+  "landing.domain.badge": "HCS-U7 · Plusieurs brevets français",
+  "landing.domain.title": "Protégez n'importe quel domaine, pas seulement LiveGuard",
+  "landing.domain.text": "HCS-U7, le moteur propriétaire derrière LiveGuard, PulseGuard et UniPay, sécurise votre domaine sans toucher à votre DNS et sans backend requis — bien au-delà d'un simple filtre réseau.",
+  "landing.domain.cta": "Protéger mon domaine",
+  "landing.domain.terminal.line1": "✓ Domaine détecté chez Cloudflare",
+  "landing.domain.terminal.line2": "→ Protection HCS-U7 appliquée automatiquement",
+  "landing.domain.terminal.line3": "Aucune configuration DNS nécessaire",
+
+  "landing.footer.copyright": "© 2026 LiveGuard —",
+  "landing.footer.company": "IA Solution",
+  "landing.footer.docs": "Documentation",
+  "landing.footer.integration": "Intégration",
+  "landing.footer.contact": "Contact"
 }

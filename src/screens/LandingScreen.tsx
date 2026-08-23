@@ -335,6 +335,89 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         </ol>
       </section>
 
+      {/* ── 4b. How it works (desktop only, hidden on mobile) ── */}
+      <section className="landing-howitworks" aria-label={t('landing.howItWorks.label')}>
+        <span className="landing-howitworks-label">{t('landing.howItWorks.label')}</span>
+        <div className="landing-howitworks-grid">
+          <div className="landing-howitworks-card" data-accent="indigo">
+            <span className="landing-howitworks-icon" data-accent="indigo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                <path d="M7 12h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </span>
+            <h3>{t('landing.howItWorks.card1.title')}</h3>
+            <p>{t('landing.howItWorks.card1.text')}</p>
+          </div>
+          <div className="landing-howitworks-card" data-accent="violet">
+            <span className="landing-howitworks-icon" data-accent="violet" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                <path d="M12 9v4M12 17h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </span>
+            <h3>{t('landing.howItWorks.card2.title')}</h3>
+            <p>{t('landing.howItWorks.card2.text')}</p>
+          </div>
+          <div className="landing-howitworks-card" data-accent="coral">
+            <span className="landing-howitworks-icon" data-accent="coral" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </span>
+            <h3>{t('landing.howItWorks.card3.title')}</h3>
+            <p>{t('landing.howItWorks.card3.text')}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4c. Domain protection (HCS-U7, desktop only) ── */}
+      <section className="landing-domain" aria-label={t('landing.domain.title')}>
+        <div className="landing-domain-content">
+          <span className="landing-domain-badge">{t('landing.domain.badge')}</span>
+          <h2>{t('landing.domain.title')}</h2>
+          <p>{t('landing.domain.text')}</p>
+          <a
+            className="landing-btn landing-btn-primary landing-domain-cta"
+            href="https://hcs-u7.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{t('landing.domain.cta')}</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div className="landing-domain-terminal" aria-hidden="true">
+          <div className="landing-domain-terminal-line">{t('landing.domain.terminal.line1')}</div>
+          <div className="landing-domain-terminal-line">{t('landing.domain.terminal.line2')}</div>
+          <div className="landing-domain-terminal-line landing-domain-terminal-success">
+            {t('landing.domain.terminal.line3')}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4d. Footer (desktop only) ── */}
+      <footer className="landing-footer">
+        <span className="landing-footer-copyright">
+          {t('landing.footer.copyright')}{' '}
+          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
+            {t('landing.footer.company')}
+          </a>
+        </span>
+        <nav className="landing-footer-links">
+          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
+            {t('landing.footer.docs')}
+          </a>
+          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
+            {t('landing.footer.integration')}
+          </a>
+          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
+            {t('landing.footer.contact')}
+          </a>
+        </nav>
+      </footer>
+
       {/* ── 5. Social proof ── */}
       <div className="landing-proof">
         <span className="landing-proof-pill">

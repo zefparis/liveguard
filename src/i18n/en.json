@@ -261,5 +261,27 @@
   "demo.scenario5.button": "Simulate drift",
   "demo.scenario6.title": "Mass Attempts",
   "demo.scenario6.description": "10 rapid attempts — network risk score increases until blocked.",
-  "demo.scenario6.button": "Simulate mass attempts"
+  "demo.scenario6.button": "Simulate mass attempts",
+
+  "landing.howItWorks.label": "How it works",
+  "landing.howItWorks.card1.title": "Continuous observation",
+  "landing.howItWorks.card1.text": "Cognitive, behavioral and network signals are analyzed in the background while you use the app normally.",
+  "landing.howItWorks.card2.title": "Deviation detection",
+  "landing.howItWorks.card2.text": "A behavior change, loss of focus or suspicious IP pushes the risk score up in real time.",
+  "landing.howItWorks.card3.title": "Suspension & verification",
+  "landing.howItWorks.card3.text": "The session suspends beyond the tolerance threshold and requires cognitive re-verification before resuming.",
+
+  "landing.domain.badge": "HCS-U7 · Multiple French patents",
+  "landing.domain.title": "Protect any domain, not just LiveGuard",
+  "landing.domain.text": "HCS-U7, the proprietary engine behind LiveGuard, PulseGuard and UniPay, secures your domain without touching your DNS and with no backend required — far beyond a simple network filter.",
+  "landing.domain.cta": "Protect my domain",
+  "landing.domain.terminal.line1": "✓ Domain detected on Cloudflare",
+  "landing.domain.terminal.line2": "→ HCS-U7 protection applied automatically",
+  "landing.domain.terminal.line3": "No DNS configuration required",
+
+  "landing.footer.copyright": "© 2026 LiveGuard —",
+  "landing.footer.company": "IA Solution",
+  "landing.footer.docs": "Documentation",
+  "landing.footer.integration": "Integration",
+  "landing.footer.contact": "Contact"
 }

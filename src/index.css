@@ -2450,6 +2450,162 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   DESKTOP-ONLY SECTIONS — hidden on mobile (display:none by default),
+   shown inside @media (min-width: 901px).
+   "How it works" 3-card grid, HCS-U7 domain protection block, footer.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hidden on mobile ── */
+.landing-howitworks,
+.landing-domain,
+.landing-footer {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  /* ── How it works: 3-card grid ── */
+  .landing-howitworks {
+    display: block;
+    margin-top: 56px;
+  }
+  .landing-howitworks-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--l-text-faint);
+    margin-bottom: 18px;
+  }
+  .landing-howitworks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .landing-howitworks-card {
+    --a: 79 124 255;
+    background: var(--l-surface);
+    border: 1px solid var(--l-border);
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: var(--l-shadow-soft);
+  }
+  .landing-howitworks-card[data-accent="indigo"] { --a: 79 124 255; }
+  .landing-howitworks-card[data-accent="violet"] { --a: 139 92 246; }
+  .landing-howitworks-card[data-accent="coral"]  { --a: 240 122 99; }
+  .landing-howitworks-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin-bottom: 14px;
+    background: rgb(var(--a) / .15);
+    color: rgb(var(--a));
+  }
+  .landing-howitworks-card h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--l-text);
+  }
+  .landing-howitworks-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--l-text-soft);
+  }
+
+  /* ── Domain protection (HCS-U7) ── */
+  .landing-domain {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-top: 56px;
+    padding: 32px;
+    border-radius: 14px;
+    border: 1px solid var(--l-border-strong);
+    background: linear-gradient(135deg, var(--l-surface-soft), var(--l-surface));
+  }
+  .landing-domain-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .landing-domain-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgb(79 124 255 / .10);
+    color: var(--l-accent-blue);
+  }
+  .landing-domain h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -.02em;
+    line-height: 1.25;
+    color: var(--l-text);
+  }
+  .landing-domain p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--l-text-soft);
+  }
+  .landing-domain-cta {
+    margin-top: 8px;
+    min-height: 48px;
+    max-width: 260px;
+    text-decoration: none;
+  }
+  /* Terminal-style encart */
+  .landing-domain-terminal {
+    background: #0d1220;
+    border-radius: 10px;
+    padding: 20px 22px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: #a5b4d4;
+  }
+  .landing-domain-terminal-line {
+    white-space: nowrap;
+  }
+  .landing-domain-terminal-success {
+    color: #34d399;
+  }
+
+  /* ── Footer ── */
+  .landing-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--l-border-strong);
+    font-size: 13px;
+    color: var(--l-text-faint);
+  }
+  .landing-footer-copyright a,
+  .landing-footer-links a {
+    color: var(--l-text-faint);
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+  .landing-footer-copyright a:hover,
+  .landing-footer-links a:hover {
+    color: var(--l-accent-blue);
+  }
+  .landing-footer-links {
+    display: flex;
+    gap: 28px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    SCENARIO DEMO SCREEN (demo-*) — 4-state visual system
    ═══════════════════════════════════════════════════════════════ */
 
