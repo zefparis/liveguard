@@ -122,7 +122,7 @@ const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
   implementation: ['landing', 'how_it_works', 'idle'],
   idle: ['select_protection', 'landing', 'prep', 'scenario_selector'],
   select_protection: ['prep', 'idle', 'landing'],
-  scenario_selector: ['scenario_demo', 'landing', 'how_it_works', 'idle'],
+  scenario_selector: ['scenario_demo', 'session_suspended', 'landing', 'how_it_works', 'idle'],
   scenario_demo: ['session_suspended', 'scenario_selector', 'prep', 'landing'],
   session_suspended: ['prep', 'scenario_selector', 'landing'],
   prep: ['test_reflex', 'error'],
