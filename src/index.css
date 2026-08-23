@@ -2387,6 +2387,14 @@ body {
     width: 100%;
   }
 
+  /* Larger brand wordmark on desktop — 21px with medium weight.
+     Mobile keeps the base 19px/700. The flex align-items:center on
+     .landing-brand keeps the logo and wordmark vertically centered. */
+  .landing-brand-name {
+    font-size: 21px;
+    font-weight: 500;
+  }
+
   /* Content container fills full width with fluid horizontal padding.
      clamp(32px, 5vw, 120px) gives comfortable side spacing that scales
      from ~45px at 901px to 120px at 2400px+, preventing content from
