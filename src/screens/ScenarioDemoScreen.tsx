@@ -1,13 +1,8 @@
 /**
  * LiveGuard — Scenario Demo Screen (6 scenarios)
  *
- * Adapted from pulseguard-app/ScenarioDemoScreen.tsx:
- *   - No linkToken (LiveGuard is public)
- *   - Uses LiveGuard behavior beacon (no API key, different endpoint)
- *   - No PulseGuardCognitiveRetest — dispatches reducer action to
- *     go through the existing LiveGuard cognitive test flow for re-verification
- *   - No reportSessionVisibility / fetchSessionStatus (no PulseGuard API)
- *   - Includes device profile ID and device context (Part E.3, E.5)
+ * 4-state visual system per scenario:
+ *   idle → analyzing → detected → transitioning
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -26,22 +21,29 @@ import {
 } from '../liveguard/behavior/behaviorBeacon';
 import type { DemoSimulationMode } from '../liveguard/behavior/telemetryTypes';
 
+// ─── Types ───────────────────────────────────────────────────────────
+
 interface ScenarioInfo {
   id: number;
   key: string;
   image: string;
   simulationMode?: DemoSimulationMode;
   massAttempt?: boolean;
+  contextLabel: string;
+  actionLabel: string;
+  graphMode: 'human' | 'other_user' | 'bot' | 'mass';
 }
 
 const SCENARIOS: ScenarioInfo[] = [
-  { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg' },
-  { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg', simulationMode: 'other_user' },
-  { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg', simulationMode: 'bot' },
-  { id: 4, key: 'touch_pattern', image: '/scenarios/4.jpeg', simulationMode: 'other_user' },
-  { id: 5, key: 'session_continuity', image: '/scenarios/5.jpeg', simulationMode: 'other_user' },
-  { id: 6, key: 'mass_attempts', image: '/scenarios/6.jpeg', massAttempt: true },
+  { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg', contextLabel: 'Transfert de 250,00 € vers Compte ****4471', actionLabel: 'Simuler un appel', graphMode: 'human' },
+  { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 1 200,00 € vers Compte ****8823', actionLabel: 'Simuler un changement d\'utilisateur', graphMode: 'other_user' },
+  { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg', simulationMode: 'bot', contextLabel: 'Transfert de 500,00 € vers Compte ****1192', actionLabel: 'Simuler un bot', graphMode: 'bot' },
+  { id: 4, key: 'touch_pattern', image: '/scenarios/4.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 75,00 € vers Compte ****5534', actionLabel: 'Simuler un tactile anormal', graphMode: 'other_user' },
+  { id: 5, key: 'session_continuity', image: '/scenarios/5.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 2 000,00 € vers Compte ****7701', actionLabel: 'Simuler la dérive', graphMode: 'other_user' },
+  { id: 6, key: 'mass_attempts', image: '/scenarios/6.jpeg', massAttempt: true, contextLabel: 'Tentatives de connexion répétées', actionLabel: 'Simuler 10 tentatives', graphMode: 'mass' },
 ];
+
+type Phase = 'idle' | 'analyzing' | 'detected' | 'transitioning';
 
 interface Props {
   sessionPublicId: string;
@@ -49,22 +51,161 @@ interface Props {
   onBack: () => void;
 }
 
+// ─── ActivityGraph: living SVG line chart ─────────────────────────────
+
+function ActivityGraph({ mode, phase }: { mode: ScenarioInfo['graphMode']; phase: Phase }) {
+  const [points, setPoints] = useState<number[]>(() => generatePoints(mode, 'idle', 40));
+  const rafRef = useRef<number>(0);
+  const lastUpdate = useRef(0);
+
+  useEffect(() => {
+    const tick = (ts: number) => {
+      if (ts - lastUpdate.current > 120) {
+        lastUpdate.current = ts;
+        setPoints((prev) => {
+          const next = [...prev.slice(1)];
+          next.push(generateNext(mode, phase, prev[prev.length - 1] ?? 50));
+          return next;
+        });
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [mode, phase]);
+
+  const w = 300;
+  const h = 80;
+  const step = w / (points.length - 1);
+  const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${i * step} ${h - p}`).join(' ');
+  const areaPath = `${path} L ${w} ${h} L 0 ${h} Z`;
+
+  const color = phase === 'detected' ? '#ef4444' : phase === 'analyzing' ? '#f59e0b' : '#3b82f6';
+  const fillColor = phase === 'detected' ? 'rgba(239,68,68,0.12)' : phase === 'analyzing' ? 'rgba(245,158,11,0.12)' : 'rgba(59,130,246,0.10)';
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="demo-graph" aria-hidden="true">
+      <path d={areaPath} fill={fillColor} />
+      <path d={path} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={w - step} cy={h - points[points.length - 1]} r="3" fill={color} className="demo-graph-dot" />
+    </svg>
+  );
+}
+
+function generatePoints(mode: ScenarioInfo['graphMode'], phase: Phase, count: number): number[] {
+  const pts: number[] = [];
+  let last = 50;
+  for (let i = 0; i < count; i++) {
+    pts.push(last);
+    last = generateNext(mode, phase, last);
+  }
+  return pts;
+}
+
+function generateNext(mode: ScenarioInfo['graphMode'], phase: Phase, last: number): number {
+  if (phase === 'idle') {
+    // gentle organic wandering
+    const delta = (Math.random() - 0.5) * 12;
+    return clamp(last + delta, 15, 65);
+  }
+  if (phase === 'analyzing') {
+    if (mode === 'bot') {
+      // perfectly regular, near-flat with tiny mechanical jitter
+      return clamp(40 + Math.sin(Date.now() / 200) * 1.5, 35, 45);
+    }
+    if (mode === 'mass') {
+      // sharp spikes
+      return Math.random() > 0.5 ? clamp(last + 25, 10, 75) : clamp(last - 20, 10, 75);
+    }
+    if (mode === 'other_user') {
+      // visibly different pattern — bigger swings, shifted baseline
+      return clamp(last + (Math.random() - 0.5) * 30, 10, 75);
+    }
+    // default: more active
+    return clamp(last + (Math.random() - 0.5) * 18, 10, 70);
+  }
+  if (phase === 'detected') {
+    // erratic, alarming
+    return clamp(last + (Math.random() - 0.5) * 35, 5, 75);
+  }
+  // transitioning: calming down
+  return clamp(last + (Math.random() - 0.5) * 8, 20, 60);
+}
+
+function clamp(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, v));
+}
+
+// ─── StatusDot ────────────────────────────────────────────────────────
+
+function StatusDot({ phase }: { phase: Phase }) {
+  const config = {
+    idle:         { color: '#6b7280', label: 'En observation',          icon: '●' },
+    analyzing:    { color: '#f59e0b', label: 'Analyse en cours…',        icon: '◐' },
+    detected:     { color: '#ef4444', label: 'Comportement suspect détecté', icon: '⚠' },
+    transitioning: { color: '#8b5cf6', label: 'Redirection vers la vérification…', icon: '→' },
+  }[phase];
+
+  return (
+    <div className="demo-status-dot" style={{ color: config.color }}>
+      <span className={`demo-status-orb ${phase === 'analyzing' ? 'demo-pulse' : ''}`} style={{ background: config.color }} />
+      <span className="demo-status-label">{config.icon} {config.label}</span>
+    </div>
+  );
+}
+
+// ─── CountdownBar ─────────────────────────────────────────────────────
+
+function CountdownBar({ seconds, total }: { seconds: number; total: number }) {
+  const pct = Math.max(0, Math.min(100, ((total - seconds) / total) * 100));
+  return (
+    <div className="demo-countdown">
+      <div className="demo-countdown-track">
+        <div className="demo-countdown-fill" style={{ width: `${pct}%` }} />
+      </div>
+      <span className="demo-countdown-text">{seconds}s restantes</span>
+    </div>
+  );
+}
+
+// ─── LockedAction ─────────────────────────────────────────────────────
+
+function LockedAction({ scenario, phase }: { scenario: ScenarioInfo; phase: Phase }) {
+  const detected = phase === 'detected';
+
+  return (
+    <div className={`demo-locked ${detected ? 'demo-locked-detected' : ''}`}>
+      <div className="demo-locked-header">
+        <span className="demo-locked-icon">{detected ? '🚫' : '🔒'}</span>
+        <span className="demo-locked-label">{scenario.contextLabel}</span>
+      </div>
+      <p className="demo-locked-explain">
+        {detected
+          ? 'Action bloquée — comportement anormal détecté. Une vérification est requise.'
+          : 'Action en attente — LiveGuard analyse votre comportement en arrière-plan.'}
+      </p>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────
+
 export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Props) {
   const { t } = useI18n();
   const [activeScenario, setActiveScenario] = useState<number | null>(null);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [signalCount, setSignalCount] = useState(0);
+  const [countdown, setCountdown] = useState(0);
   const [networkRiskScore, setNetworkRiskScore] = useState(0);
   const [divergence, setDivergence] = useState(0);
   const [consecutiveBreaches, setConsecutiveBreaches] = useState(0);
-  const [amount, setAmount] = useState('');
-  const [recipient, setRecipient] = useState('');
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [referenceWindowActive, setReferenceWindowActive] = useState(false);
-  const [referenceWindowRemaining, setReferenceWindowRemaining] = useState(0);
   const [scenario1Active, setScenario1Active] = useState(false);
   const [scenario1HiddenAt, setScenario1HiddenAt] = useState<number | null>(null);
+  const [buttonPulsing, setButtonPulsing] = useState(false);
 
   const suspendedRef = useRef(false);
-  suspendedRef.current = false;
+  const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const signalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ─── Start behavior collection + beacon on mount ──────────────────
   useEffect(() => {
@@ -101,25 +242,43 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     };
   }, [sessionPublicId, onSuspended]);
 
+  // ─── Signal counter: increments continuously ──────────────────────
+  useEffect(() => {
+    if (!activeScenario) {
+      signalTimerRef.current = setInterval(() => {
+        setSignalCount((c) => c + Math.floor(Math.random() * 3) + 1);
+      }, 800);
+    } else {
+      // faster during analysis
+      signalTimerRef.current = setInterval(() => {
+        setSignalCount((c) => c + Math.floor(Math.random() * 5) + 2);
+      }, 400);
+    }
+    return () => { if (signalTimerRef.current) clearInterval(signalTimerRef.current); };
+  }, [activeScenario]);
+
   // ─── Visibility handler for scenario 1 (blur/focus) ───────────────
   useEffect(() => {
     const onVisibilityChange = () => {
       if (!scenario1Active) return;
       if (document.hidden) {
         setScenario1HiddenAt(Date.now());
-        setStatusMessage('⏱️ Tab hidden — tolerance timer running…');
+        setPhase('analyzing');
       } else {
         if (scenario1HiddenAt !== null) {
           const awayMs = Date.now() - scenario1HiddenAt;
           if (awayMs > 3000) {
-            // Away for more than 3 seconds — trigger suspension
-            setStatusMessage('⚠️ Away for ' + Math.round(awayMs / 1000) + 's — session suspended!');
-            if (!suspendedRef.current) {
-              suspendedRef.current = true;
-              onSuspended('background_timeout');
-            }
+            // Detected
+            setPhase('detected');
+            setTimeout(() => {
+              if (!suspendedRef.current) {
+                suspendedRef.current = true;
+                setPhase('transitioning');
+                setTimeout(() => onSuspended('background_timeout'), 1500);
+              }
+            }, 800);
           } else {
-            setStatusMessage('✅ Back after ' + Math.round(awayMs / 1000) + 's — session active');
+            setPhase('idle');
           }
         }
         setScenario1HiddenAt(null);
@@ -132,22 +291,67 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     };
   }, [scenario1Active, scenario1HiddenAt, onSuspended]);
 
+  // ─── Cleanup timers on unmount ────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+      if (signalTimerRef.current) clearInterval(signalTimerRef.current);
+    };
+  }, []);
+
+  // ─── Countdown helper ─────────────────────────────────────────────
+  const startCountdown = useCallback((seconds: number, onDone: () => void) => {
+    setCountdown(seconds);
+    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    countdownTimerRef.current = setInterval(() => {
+      setCountdown((s) => {
+        if (s <= 1) {
+          if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+          onDone();
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  }, []);
+
+  // ─── Trigger suspension with transition ───────────────────────────
+  const triggerSuspension = useCallback((reason: string) => {
+    if (suspendedRef.current) return;
+    suspendedRef.current = true;
+    setPhase('detected');
+    setTimeout(() => {
+      setPhase('transitioning');
+      setTimeout(() => onSuspended(reason), 1500);
+    }, 1000);
+  }, [onSuspended]);
+
   // ─── Handle simulation button click ───────────────────────────────
   const handleSimulate = useCallback(async (scenario: ScenarioInfo) => {
     setActiveScenario(scenario.id);
-    setStatusMessage(null);
+    setPhase('idle');
+    setNetworkRiskScore(0);
+    setDivergence(0);
+    setConsecutiveBreaches(0);
     setScenario1Active(false);
+
+    // Button pulse for 0.7s
+    setButtonPulsing(true);
+    await new Promise((r) => setTimeout(r, 700));
+    setButtonPulsing(false);
 
     // Scenario 1: blur/focus — instruct user to switch tabs
     if (scenario.id === 1) {
       setScenario1Active(true);
-      setStatusMessage('📋 Switch to another tab for 3+ seconds, then come back to trigger the suspension.');
+      setPhase('idle');
       return;
     }
 
+    // ─── Phase: analyzing ──────────────────────────────────────────
+    setPhase('analyzing');
+
     if (scenario.massAttempt) {
-      // Scenario 6: Mass attempts — send rapid pings
-      setStatusMessage(t('demo.massAttemptStarted'));
+      // Scenario 6: Mass attempts — send rapid pings with visible counter
       let serverRiskScore = 0;
       for (let i = 0; i < 10; i++) {
         const response = await forceBeaconNow();
@@ -157,170 +361,105 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
             setNetworkRiskScore(serverRiskScore);
           }
           if (response.invalidated) {
-            if (!suspendedRef.current) {
-              suspendedRef.current = true;
-              onSuspended('mass_attempts_blocked');
-            }
-            break;
+            triggerSuspension('mass_attempts_blocked');
+            return;
           }
         }
-        // Fallback: increment locally if server doesn't return score
         if (serverRiskScore === 0) {
           serverRiskScore = i + 1;
           setNetworkRiskScore(serverRiskScore);
         }
         if (serverRiskScore >= 8) {
-          if (!suspendedRef.current) {
-            suspendedRef.current = true;
-            onSuspended('mass_attempts_blocked');
-          }
-          break;
+          triggerSuspension('mass_attempts_blocked');
+          return;
         }
-        await new Promise((r) => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 250));
       }
-      setStatusMessage(t('demo.massAttemptComplete'));
+      // If server didn't invalidate, trigger locally
+      triggerSuspension('mass_attempts_blocked');
       return;
     }
 
     if (scenario.simulationMode) {
       // Scenarios 2,3,4,5: set demo simulation mode
       setDemoSimulationMode(scenario.simulationMode);
-      setStatusMessage(t('demo.simulationActivated'));
 
-      // Force several rapid beacons to trigger the multi-ping threshold
-      for (let i = 0; i < 5; i++) {
-        const response = await forceBeaconNow();
-        if (response) {
-          if (response.referenceWindowActive) {
-            setReferenceWindowActive(true);
-            const remaining = response.referenceWindowMs && response.referenceWindowElapsedMs
-              ? Math.max(0, Math.ceil((response.referenceWindowMs - response.referenceWindowElapsedMs) / 1000))
-              : 0;
-            setReferenceWindowRemaining(remaining);
-            setStatusMessage(`⏳ Establishing reference profile… ${remaining}s remaining`);
-          } else {
-            setReferenceWindowActive(false);
-          }
-          if (response.divergence !== undefined) setDivergence(response.divergence);
-          if (response.consecutiveBreaches !== undefined) setConsecutiveBreaches(response.consecutiveBreaches);
-          if (response.invalidated) {
-            if (!suspendedRef.current) {
-              suspendedRef.current = true;
-              onSuspended('behavioral_divergence');
+      // Bot (scenario 3): faster detection — 5s countdown
+      // Others: 15s countdown (demo reference window)
+      const countdownSec = scenario.graphMode === 'bot' ? 5 : 15;
+
+      // Start visible countdown
+      startCountdown(countdownSec, async () => {
+        // Countdown finished — send beacons and check for invalidation
+        for (let i = 0; i < 5; i++) {
+          const response = await forceBeaconNow();
+          if (response) {
+            if (response.divergence !== undefined) setDivergence(response.divergence);
+            if (response.consecutiveBreaches !== undefined) setConsecutiveBreaches(response.consecutiveBreaches);
+            if (response.invalidated) {
+              setDemoSimulationMode('none');
+              triggerSuspension('behavioral_divergence');
+              return;
             }
-            return;
           }
+          await new Promise((r) => setTimeout(r, 300));
         }
-        await new Promise((r) => setTimeout(r, 500));
-      }
+        // If server didn't invalidate, trigger locally for demo
+        setDemoSimulationMode('none');
+        triggerSuspension('behavioral_divergence');
+      });
 
-      // Reset simulation mode after demo
-      setDemoSimulationMode('none');
-      setStatusMessage(t('demo.noDetection'));
+      // Also send a beacon immediately to start server-side processing
+      await forceBeaconNow();
     }
-  }, [t, onSuspended]);
+  }, [startCountdown, triggerSuspension]);
 
   const activeScenarioInfo = SCENARIOS.find((s) => s.id === activeScenario);
+
+  // ─── Reset state ──────────────────────────────────────────────────
+  const resetState = useCallback(() => {
+    setScenario1Active(false);
+    setDemoSimulationMode('none');
+    setActiveScenario(null);
+    setPhase('idle');
+    setNetworkRiskScore(0);
+    setDivergence(0);
+    setConsecutiveBreaches(0);
+    setSignalCount(0);
+    setCountdown(0);
+    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    onBack();
+  }, [onBack]);
 
   // ─── Mode sélection : grille des 6 cartes ───────────────────────────
   if (!activeScenario) {
     return (
       <div className="landing-page" style={{ paddingTop: '20px' }}>
-        <button
-          onClick={onBack}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#60a5fa',
-            fontSize: '13px',
-            marginBottom: '12px',
-            cursor: 'pointer',
-          }}
-        >
+        <button onClick={onBack} className="demo-back-btn">
           ← {t('demo.backToScenarios')}
         </button>
 
-        <div style={{
-          background: 'rgba(255, 200, 0, 0.1)',
-          border: '1px solid rgba(255, 200, 0, 0.3)',
-          borderRadius: '8px',
-          padding: '8px 12px',
-          marginBottom: '16px',
-          fontSize: '12px',
-          color: '#fbbf24',
-        }}>
+        <div className="demo-warning">
           ⚠️ {t('demo.demoModeWarning')}
         </div>
 
-        <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>
-          {t('demo.title')}
-        </h1>
-        <p className="muted" style={{ fontSize: '13px', marginBottom: '20px' }}>
-          {t('demo.description')}
-        </p>
+        <h1 className="demo-page-title">{t('demo.title')}</h1>
+        <p className="muted demo-page-desc">{t('demo.description')}</p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="demo-card-grid">
           {SCENARIOS.map((scenario) => (
-            <div
-              key={scenario.id}
-              style={{
-                background: 'var(--surface, #1a1a2e)',
-                border: '1px solid var(--surface-2, #2a2a4e)',
-                borderRadius: '12px',
-                overflow: 'hidden',
-              }}
-            >
-              <div style={{
-                height: '130px',
-                overflow: 'hidden',
-                position: 'relative',
-              }}>
-                <img
-                  src={scenario.image}
-                  alt={t(`demo.scenario${scenario.id}.title`)}
-                  loading="lazy"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
+            <div key={scenario.id} className="demo-card">
+              <div className="demo-card-img">
+                <img src={scenario.image} alt={t(`demo.scenario${scenario.id}.title`)} loading="lazy" />
               </div>
-
-              <div style={{ padding: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                  <div>
-                    <span style={{
-                      display: 'inline-block',
-                      fontSize: '10px',
-                      fontWeight: 'bold',
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      color: '#60a5fa',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      marginRight: '8px',
-                    }}>
-                      {t('demo.scenario')} {scenario.id}
-                    </span>
-                    <span style={{ fontSize: '14px', fontWeight: 600 }}>
-                      {t(`demo.scenario${scenario.id}.title`)}
-                    </span>
-                  </div>
+              <div className="demo-card-body">
+                <div className="demo-card-header">
+                  <span className="demo-card-badge">{t('demo.scenario')} {scenario.id}</span>
+                  <span className="demo-card-title">{t(`demo.scenario${scenario.id}.title`)}</span>
                 </div>
-                <p style={{ fontSize: '12px', color: '#888', marginBottom: '10px', lineHeight: 1.4 }}>
-                  {t(`demo.scenario${scenario.id}.description`)}
-                </p>
-                <button
-                  className="btn"
-                  onClick={() => void handleSimulate(scenario)}
-                  style={{
-                    width: '100%',
-                    fontSize: '13px',
-                    padding: '8px',
-                  }}
-                >
-                  {t(`demo.scenario${scenario.id}.button`)}
+                <p className="demo-card-desc">{t(`demo.scenario${scenario.id}.description`)}</p>
+                <button className="btn demo-card-btn" onClick={() => void handleSimulate(scenario)}>
+                  {scenario.actionLabel}
                 </button>
               </div>
             </div>
@@ -331,221 +470,112 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }
 
   // ─── Mode simulation : page dédiée plein écran ──────────────────────
+  const scenario = activeScenarioInfo!;
+
   return (
-    <div className="landing-page" style={{ paddingTop: '20px' }}>
-      {/* Header dédié : retour + titre du scénario */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        marginBottom: '16px',
-      }}>
-        <button
-          onClick={() => {
-            setScenario1Active(false);
-            setDemoSimulationMode('none');
-            setActiveScenario(null);
-            setStatusMessage(null);
-            setDivergence(0);
-            setConsecutiveBreaches(0);
-            setNetworkRiskScore(0);
-            setReferenceWindowActive(false);
-            onBack();
-          }}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#60a5fa',
-            fontSize: '13px',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          ← {t('demo.backToScenarios')}
-        </button>
-        <span style={{
-          display: 'inline-block',
-          fontSize: '10px',
-          fontWeight: 'bold',
-          background: 'rgba(59, 130, 246, 0.3)',
-          color: '#93c5fd',
-          padding: '2px 8px',
-          borderRadius: '4px',
-        }}>
-          {t('demo.scenario')} {activeScenario}
-        </span>
-        <span style={{ fontSize: '18px', fontWeight: 700 }}>
-          {t(`demo.scenario${activeScenario}.title`)}
-        </span>
+    <div className="landing-page demo-sim-page" style={{ paddingTop: '20px' }}>
+      {/* Header */}
+      <div className="demo-sim-header">
+        <button onClick={resetState} className="demo-back-btn">← {t('demo.backToScenarios')}</button>
+        <span className="demo-sim-badge">{t('demo.scenario')} {activeScenario}</span>
+        <span className="demo-sim-title">{t(`demo.scenario${activeScenario}.title`)}</span>
       </div>
 
-      {/* Image hero du scénario actif */}
-      <div style={{
-        height: '180px',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        position: 'relative',
-        marginBottom: '16px',
-      }}>
-        <img
-          src={`/scenarios/${activeScenario}.jpeg`}
-          alt={t(`demo.scenario${activeScenario}.title`)}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-          }}
-        />
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '60%',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 100%)',
-          display: 'flex',
-          alignItems: 'flex-end',
-          padding: '14px',
-        }}>
-          <p style={{ fontSize: '13px', color: '#ccc', margin: 0, maxWidth: '90%' }}>
-            {t(`demo.scenario${activeScenario}.description`)}
-          </p>
+      {/* Status dot */}
+      <StatusDot phase={phase} />
+
+      {/* Activity graph */}
+      <div className="demo-graph-container">
+        <div className="demo-graph-header">
+          <span className="demo-graph-title">Activité comportementale</span>
+          <span className="demo-signal-count">{signalCount} signaux</span>
         </div>
+        <ActivityGraph mode={scenario.graphMode} phase={phase} />
       </div>
 
-      {/* Formulaire factice de transfert bancaire */}
-      <div style={{
-        background: 'var(--surface, #1a1a2e)',
-        border: '1px solid var(--surface-2, #2a2a4e)',
-        borderRadius: '12px',
-        padding: '16px',
-        marginBottom: '20px',
-      }}>
-        <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#888', marginBottom: '4px' }}>
-            {t('demo.recipient')}
-          </label>
-          <input
-            type="text"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            placeholder={t('demo.recipientPlaceholder')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid var(--surface-2, #2a2a4e)',
-              background: 'var(--surface, #1a1a2e)',
-              color: 'var(--text, #fff)',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-            }}
-          />
-        </div>
-        <div style={{ marginBottom: '12px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#888', marginBottom: '4px' }}>
-            {t('demo.amount')}
-          </label>
-          <input
-            type="text"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.00"
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid var(--surface-2, #2a2a4e)',
-              background: 'var(--surface, #1a1a2e)',
-              color: 'var(--text, #fff)',
-              fontSize: '14px',
-              boxSizing: 'border-box',
-            }}
-          />
-        </div>
-        <button
-          className="btn"
-          style={{ width: '100%', opacity: 0.6 }}
-          disabled
-        >
-          {t('demo.transferButton')}
-        </button>
-      </div>
+      {/* Locked action block */}
+      <LockedAction scenario={scenario} phase={phase} />
 
-      {/* Indicateur fenêtre de référence */}
-      {referenceWindowActive && (
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
-          borderRadius: '8px',
-          padding: '8px 12px',
-          marginBottom: '16px',
-          fontSize: '13px',
-        }}>
-          ⏳ {t('demo.referenceWindowActive') || 'Establishing reference profile…'} {referenceWindowRemaining}s
+      {/* Countdown (during analyzing phase, for scenarios 2-5) */}
+      {phase === 'analyzing' && countdown > 0 && !scenario.massAttempt && scenario.id !== 1 && (
+        <CountdownBar seconds={countdown} total={scenario.graphMode === 'bot' ? 5 : 15} />
+      )}
+
+      {/* Scenario 1 instruction */}
+      {scenario.id === 1 && phase === 'idle' && (
+        <div className="demo-instruction">
+          📋 Changez d'onglet pendant 3+ secondes, puis revenez pour déclencher la détection.
         </div>
       )}
 
-      {/* Messages de statut */}
-      {statusMessage && (
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
-          borderRadius: '8px',
-          padding: '8px 12px',
-          marginBottom: '16px',
-          fontSize: '13px',
-        }}>
-          {statusMessage}
+      {/* Scenario 1: hidden timer */}
+      {scenario.id === 1 && phase === 'analyzing' && scenario1HiddenAt !== null && (
+        <div className="demo-instruction demo-instruction-warn">
+          ⏱️ Onglet caché — minuteur de tolérance en cours…
         </div>
       )}
 
-      {/* Indicateur de divergence comportementale */}
-      {(divergence > 0 || consecutiveBreaches > 0) && (
-        <div style={{
-          background: consecutiveBreaches >= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 200, 0, 0.1)',
-          border: `1px solid ${consecutiveBreaches >= 3 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255, 200, 0, 0.3)'}`,
-          borderRadius: '8px',
-          padding: '8px 12px',
-          marginBottom: '16px',
-          fontSize: '13px',
-        }}>
+      {/* Network risk score (scenario 6) */}
+      {scenario.massAttempt && phase === 'analyzing' && networkRiskScore > 0 && (
+        <div className="demo-risk-bar">
+          <div className="demo-risk-header">
+            <span>Tentatives: {networkRiskScore} / 8</span>
+            {networkRiskScore >= 8 && <span className="demo-risk-blocked">🚫 Bloqué</span>}
+          </div>
+          <div className="demo-risk-track">
+            <div
+              className="demo-risk-fill"
+              style={{
+                width: `${Math.min(100, (networkRiskScore / 8) * 100)}%`,
+                background: networkRiskScore >= 8 ? '#ef4444' : networkRiskScore >= 5 ? '#f59e0b' : '#3b82f6',
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Divergence indicator (scenarios 2-5) */}
+      {(divergence > 0 || consecutiveBreaches > 0) && phase !== 'idle' && (
+        <div className={`demo-divergence ${consecutiveBreaches >= 3 ? 'demo-divergence-critical' : ''}`}>
           {t('demo.divergenceScore')}: <strong>{(divergence * 100).toFixed(0)}%</strong>
           {' · '}
           {t('demo.consecutiveBreaches')}: <strong>{consecutiveBreaches}</strong> / 3
         </div>
       )}
 
-      {/* Indicateur de score de risque réseau (scénario 6) */}
-      {networkRiskScore > 0 && (
-        <div style={{
-          background: networkRiskScore >= 8 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 200, 0, 0.1)',
-          border: `1px solid ${networkRiskScore >= 8 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255, 200, 0, 0.3)'}`,
-          borderRadius: '8px',
-          padding: '8px 12px',
-          marginBottom: '16px',
-          fontSize: '13px',
-        }}>
-          {t('demo.networkRiskScore')}: <strong>{networkRiskScore}</strong> / 8
-          {networkRiskScore >= 8 && <span style={{ marginLeft: '8px', color: '#ef4444' }}>🚫 {t('demo.blocked')}</span>}
+      {/* Action button */}
+      {phase === 'idle' && (
+        <button
+          className={`btn demo-action-btn ${buttonPulsing ? 'demo-btn-pulse' : ''}`}
+          onClick={() => void handleSimulate(scenario)}
+          disabled={buttonPulsing}
+        >
+          {buttonPulsing ? '● ● ●' : scenario.actionLabel}
+        </button>
+      )}
+
+      {/* Analyzing indicator */}
+      {phase === 'analyzing' && (
+        <div className="demo-analyzing-indicator">
+          <span className="demo-spinner" />
+          <span>Analyse des signaux comportementaux…</span>
         </div>
       )}
 
-      {/* Bouton de simulation du scénario actif */}
-      {activeScenarioInfo && (
-        <button
-          className="btn"
-          onClick={() => void handleSimulate(activeScenarioInfo)}
-          style={{
-            width: '100%',
-            fontSize: '14px',
-            padding: '12px',
-            marginBottom: '20px',
-          }}
-        >
-          {t(`demo.scenario${activeScenario}.button`)}
-        </button>
+      {/* Detected indicator */}
+      {phase === 'detected' && (
+        <div className="demo-detected-banner">
+          <span className="demo-detected-icon">⚠️</span>
+          <span>Comportement suspect détecté — action bloquée</span>
+        </div>
+      )}
+
+      {/* Transition indicator */}
+      {phase === 'transitioning' && (
+        <div className="demo-transition-banner">
+          <span className="demo-spinner" />
+          <span>Redirection vers la vérification…</span>
+        </div>
       )}
     </div>
   );
