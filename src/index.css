@@ -1953,6 +1953,7 @@ body {
   padding: 20px 0 8px;
 }
 .landing-brand { display: flex; align-items: center; gap: 10px; }
+.landing-brand-clickable { cursor: pointer; }
 .landing-brand-badge {
   width: 38px; height: 38px;
   border-radius: var(--l-radius-sm);

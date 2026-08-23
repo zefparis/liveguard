@@ -18,6 +18,7 @@ import { LandingHeader } from '../components/LandingHeader';
 
 interface Props {
   onBack: () => void;
+  onBackToLanding: () => void;
 }
 
 function InvisibleIcon() {
@@ -69,7 +70,7 @@ function ShieldPatternIcon() {
   );
 }
 
-export function ImplementationScreen({ onBack }: Props) {
+export function ImplementationScreen({ onBack, onBackToLanding }: Props) {
   const { t } = useI18n();
 
   const benefits = [
@@ -95,7 +96,7 @@ export function ImplementationScreen({ onBack }: Props) {
 
   return (
     <div className="landing-page imp-page">
-      <LandingHeader />
+      <LandingHeader onLogoClick={onBackToLanding} />
 
       {/* ── Back link ── */}
       <button className="imp-back" onClick={onBack}>

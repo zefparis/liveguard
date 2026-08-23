@@ -11,13 +11,19 @@
 import { useI18n } from '../i18n/I18nContext';
 import { useTheme } from '../hooks/useTheme';
 
-export function LandingHeader() {
+export function LandingHeader({ onLogoClick }: { onLogoClick?: () => void }) {
   const { locale, setLocale } = useI18n();
   const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="landing-topbar">
-      <div className="landing-brand">
+      <div
+        className={`landing-brand${onLogoClick ? ' landing-brand-clickable' : ''}`}
+        onClick={onLogoClick}
+        role={onLogoClick ? 'button' : undefined}
+        tabIndex={onLogoClick ? 0 : undefined}
+        aria-label={onLogoClick ? 'LiveGuard — home' : undefined}
+      >
         <span className="landing-brand-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 2.6 4.6 5.6v5.2c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V5.6L12 2.6Z"

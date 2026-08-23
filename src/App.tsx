@@ -195,12 +195,14 @@ export default function App() {
             onTryDemo={handleTryDemo}
             onShowImplementation={handleShowImplementation}
             onShowScenarios={handleShowScenarios}
+            onBackToLanding={handleBackToLanding}
           />
         )}
 
         {state.phase === 'implementation' && (
           <ImplementationScreen
             onBack={handleBackToLanding}
+            onBackToLanding={handleBackToLanding}
           />
         )}
 

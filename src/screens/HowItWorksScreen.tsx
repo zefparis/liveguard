@@ -25,9 +25,10 @@ interface Props {
   onTryDemo: (sessionPublicId: string) => void;
   onShowImplementation: () => void;
   onShowScenarios: (sessionPublicId: string) => void;
+  onBackToLanding: () => void;
 }
 
-export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenarios }: Props) {
+export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenarios, onBackToLanding }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +68,7 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenar
 
   return (
     <div className="landing-page hiw-page">
-      <LandingHeader />
+      <LandingHeader onLogoClick={onBackToLanding} />
 
       {/* ── Title ── */}
       <section className="hiw-title-section">
