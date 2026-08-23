@@ -63,7 +63,12 @@ function getAllowedOrigins(): Set<string> {
 }
 
 function getUpstreamUrl(): string {
-  const base = process.env.HYBRID_VECTOR_API_URL || 'https://hybrid-vector-api-owc4.onrender.com';
+  // STEP 4 MIGRATION: route through the Cloudflare Worker (/hv/* prefix)
+  // instead of calling hybrid-vector-api directly on Render.
+  // The Worker applies WAF, rate limiting, bot detection, and injects
+  // X-HCS-Worker-Auth + x-origin-verify + X-Behavioral-Risk-Score.
+  // The /hv prefix is stripped by the Worker before forwarding to the upstream.
+  const base = process.env.HYBRID_VECTOR_API_URL || 'https://api.hcs-u7.org/hv';
   // LiveGuard uses the same /demoguard/verify endpoint — the source field
   // ('liveguard_mobile') distinguishes it from demoguard sessions.
   return `${base.replace(/\/+$/, '')}/demoguard/verify`;
@@ -276,6 +281,7 @@ export default async function liveguardVerifyHandler(
       headers: {
         'Content-Type': 'application/json',
         'X-API-Key': apiKey,
+        'X-Source-App': 'liveguard',
       },
       body: JSON.stringify(body),
       signal: controller.signal,
