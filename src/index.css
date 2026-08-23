@@ -2361,13 +2361,13 @@ body {
      and constrains all content to a narrow left-aligned column even though
      .landing-page itself expands to 1100px. */
   .app-shell {
-    max-width: 1100px;
+    max-width: 1320px;
   }
 
   /* Expand content container for desktop */
   .landing-page {
-    max-width: 1100px;
-    padding: 0 40px calc(40px + env(safe-area-inset-bottom));
+    max-width: 1320px;
+    padding: 0 48px calc(40px + env(safe-area-inset-bottom));
   }
 
   /* Hero grid: 2 columns — hero (title+paragraph+CTA) on left,
@@ -2376,7 +2376,7 @@ body {
   .landing-hero-grid {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
-    gap: 48px;
+    gap: 64px;
     align-items: start;
     margin-top: 20px;
   }
@@ -2413,7 +2413,7 @@ body {
   /* Steps: 3-column grid on desktop */
   .landing-step-list {
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 24px;
   }
   /* Step cards: stack content vertically on desktop (icon on top,
      number, then text) instead of horizontal row */
@@ -2432,8 +2432,8 @@ body {
   /* Bottom CTAs: horizontal row on desktop */
   .landing-ctas {
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    max-width: 700px;
+    gap: 16px;
+    max-width: 820px;
     margin-left: auto;
     margin-right: auto;
   }
