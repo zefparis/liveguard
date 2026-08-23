@@ -133,6 +133,7 @@ async function sendBeacon(): Promise<void> {
   const payload = {
     sessionId: beaconConfig.sessionPublicId,
     source: beaconConfig.source,
+    isDemo: beaconConfig.isDemo,
     snapshot,
     deviceProfileId: beaconConfig.deviceProfileId,
     deviceContext: beaconConfig.deviceContext,
@@ -205,6 +206,7 @@ export async function forceBeaconNow(): Promise<BehaviorPingResponse | null> {
   const payload = {
     sessionId: beaconConfig.sessionPublicId,
     source: beaconConfig.source,
+    isDemo: beaconConfig.isDemo,
     snapshot,
     deviceProfileId: beaconConfig.deviceProfileId,
     deviceContext: beaconConfig.deviceContext,

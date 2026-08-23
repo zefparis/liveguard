@@ -123,6 +123,10 @@ export interface BehaviorPingResponse {
   storedAsReference?: boolean;
   /** Whether the reference window is still accumulating (not yet active). */
   referenceWindowActive?: boolean;
+  /** Total reference window duration in ms (sent during window phase). */
+  referenceWindowMs?: number;
+  /** Elapsed time in the reference window in ms (sent during window phase). */
+  referenceWindowElapsedMs?: number;
   /** Network risk score (for scenario 6 display). */
   networkRiskScore?: number;
   /** Whether a longitudinal profile was found for this device. */

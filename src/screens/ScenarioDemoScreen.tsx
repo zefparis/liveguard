@@ -58,6 +58,10 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [referenceWindowActive, setReferenceWindowActive] = useState(false);
+  const [referenceWindowRemaining, setReferenceWindowRemaining] = useState(0);
+  const [scenario1Active, setScenario1Active] = useState(false);
+  const [scenario1HiddenAt, setScenario1HiddenAt] = useState<number | null>(null);
 
   const suspendedRef = useRef(false);
   suspendedRef.current = false;
@@ -100,12 +104,25 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   // ─── Visibility handler for scenario 1 (blur/focus) ───────────────
   useEffect(() => {
     const onVisibilityChange = () => {
+      if (!scenario1Active) return;
       if (document.hidden) {
-        // Simulate blur — in LiveGuard we don't call a backend visibility endpoint,
-        // we just track locally for the demo
-        setStatusMessage('Tab hidden — tolerance timer running…');
+        setScenario1HiddenAt(Date.now());
+        setStatusMessage('⏱️ Tab hidden — tolerance timer running…');
       } else {
-        setStatusMessage('Tab focused — session active');
+        if (scenario1HiddenAt !== null) {
+          const awayMs = Date.now() - scenario1HiddenAt;
+          if (awayMs > 3000) {
+            // Away for more than 3 seconds — trigger suspension
+            setStatusMessage('⚠️ Away for ' + Math.round(awayMs / 1000) + 's — session suspended!');
+            if (!suspendedRef.current) {
+              suspendedRef.current = true;
+              onSuspended('background_timeout');
+            }
+          } else {
+            setStatusMessage('✅ Back after ' + Math.round(awayMs / 1000) + 's — session active');
+          }
+        }
+        setScenario1HiddenAt(null);
       }
     };
 
@@ -113,24 +130,46 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, []);
+  }, [scenario1Active, scenario1HiddenAt, onSuspended]);
 
   // ─── Handle simulation button click ───────────────────────────────
   const handleSimulate = useCallback(async (scenario: ScenarioInfo) => {
     setActiveScenario(scenario.id);
     setStatusMessage(null);
+    setScenario1Active(false);
+
+    // Scenario 1: blur/focus — instruct user to switch tabs
+    if (scenario.id === 1) {
+      setScenario1Active(true);
+      setStatusMessage('📋 Switch to another tab for 3+ seconds, then come back to trigger the suspension.');
+      return;
+    }
 
     if (scenario.massAttempt) {
-      // Scenario 6: Mass attempts — send rapid pings, simulate risk score locally
+      // Scenario 6: Mass attempts — send rapid pings
       setStatusMessage(t('demo.massAttemptStarted'));
-      let simulatedRiskScore = 0;
+      let serverRiskScore = 0;
       for (let i = 0; i < 10; i++) {
-        simulatedRiskScore += 1;
-        setNetworkRiskScore(simulatedRiskScore);
-
-        await forceBeaconNow();
-
-        if (simulatedRiskScore >= 8) {
+        const response = await forceBeaconNow();
+        if (response) {
+          if (response.networkRiskScore !== undefined) {
+            serverRiskScore = response.networkRiskScore;
+            setNetworkRiskScore(serverRiskScore);
+          }
+          if (response.invalidated) {
+            if (!suspendedRef.current) {
+              suspendedRef.current = true;
+              onSuspended('mass_attempts_blocked');
+            }
+            break;
+          }
+        }
+        // Fallback: increment locally if server doesn't return score
+        if (serverRiskScore === 0) {
+          serverRiskScore = i + 1;
+          setNetworkRiskScore(serverRiskScore);
+        }
+        if (serverRiskScore >= 8) {
           if (!suspendedRef.current) {
             suspendedRef.current = true;
             onSuspended('mass_attempts_blocked');
@@ -152,6 +191,16 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       for (let i = 0; i < 5; i++) {
         const response = await forceBeaconNow();
         if (response) {
+          if (response.referenceWindowActive) {
+            setReferenceWindowActive(true);
+            const remaining = response.referenceWindowMs && response.referenceWindowElapsedMs
+              ? Math.max(0, Math.ceil((response.referenceWindowMs - response.referenceWindowElapsedMs) / 1000))
+              : 0;
+            setReferenceWindowRemaining(remaining);
+            setStatusMessage(`⏳ Establishing reference profile… ${remaining}s remaining`);
+          } else {
+            setReferenceWindowActive(false);
+          }
           if (response.divergence !== undefined) setDivergence(response.divergence);
           if (response.consecutiveBreaches !== undefined) setConsecutiveBreaches(response.consecutiveBreaches);
           if (response.invalidated) {
@@ -322,6 +371,20 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           {t('demo.transferButton')}
         </button>
       </div>
+
+      {/* Reference window indicator */}
+      {referenceWindowActive && (
+        <div style={{
+          background: 'rgba(59, 130, 246, 0.1)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          marginBottom: '16px',
+          fontSize: '13px',
+        }}>
+          ⏳ {t('demo.referenceWindowActive') || 'Establishing reference profile…'} {referenceWindowRemaining}s
+        </div>
+      )}
 
       {/* Status messages */}
       {statusMessage && (
