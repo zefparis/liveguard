@@ -2437,25 +2437,28 @@ body {
     user-select: none;
   }
 
-  /* ── Vignette: dark rounded container behind the shield image.
+  /* ── Halo: soft radial gradient behind the shield image.
      Only visible in light mode — provides contrast so the dark shield
-     image stands out against the light page background.
-     In dark mode, the page background is already dark, so the vignette
-     is hidden (display:none via [data-theme="dark"] rule). ── */
+     image stands out against the light page background, without any
+     hard geometric shape (no rectangle, no hard-edged circle).
+     The gradient fades from semi-transparent dark at the center to
+     fully transparent at the edges, so there's no visible boundary.
+     In dark mode, the page background is already dark, so the halo
+     is hidden. ── */
   .landing-shield-vignette {
     display: block;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: clamp(360px, 34vw, 510px);
-    height: clamp(360px, 34vw, 510px);
-    border-radius: 24px;
-    background: linear-gradient(135deg, #141a2b, #0d1220);
+    width: clamp(480px, 46vw, 680px);
+    height: clamp(480px, 46vw, 680px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(20, 26, 43, 0.55) 0%, rgba(20, 26, 43, 0.28) 35%, transparent 70%);
     z-index: 1;
     pointer-events: none;
   }
-  /* Hide vignette in dark mode (explicit or system) */
+  /* Hide halo in dark mode (explicit or system) */
   [data-theme="dark"] .landing-shield-vignette { display: none; }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .landing-shield-vignette { display: none; }
