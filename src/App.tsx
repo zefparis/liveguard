@@ -320,7 +320,11 @@ export default function App() {
           />
         )}
 
-        <div style={{ display: state.phase === 'scenario_selector' ? 'block' : 'none' }}>
+        <div style={{
+          display: state.phase === 'scenario_selector' ? 'flex' : 'none',
+          flex: 1,
+          flexDirection: 'column',
+        }}>
           <ScenarioSelectorScreen
             sessionPublicId={state.sessionPublicId}
             onSelectScenario={handleStartScenarioDemo}
