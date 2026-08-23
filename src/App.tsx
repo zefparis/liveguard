@@ -193,6 +193,7 @@ export default function App() {
           <HowItWorksScreen
             onTryDemo={handleTryDemo}
             onShowImplementation={handleShowImplementation}
+            onShowScenarios={handleShowScenarios}
           />
         )}
 

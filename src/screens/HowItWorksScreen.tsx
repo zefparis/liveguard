@@ -24,9 +24,10 @@ import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 interface Props {
   onTryDemo: (sessionPublicId: string) => void;
   onShowImplementation: () => void;
+  onShowScenarios: (sessionPublicId: string) => void;
 }
 
-export function HowItWorksScreen({ onTryDemo, onShowImplementation }: Props) {
+export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenarios }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,14 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation }: Props) {
         ? data.sessionPublicId : '';
     } catch { return ''; }
   }, []);
+
+  const handleShowScenarios = useCallback(async () => {
+    setLoading(true);
+    let id = await ensureSession();
+    if (!id) id = `lg_${Date.now().toString(36)}`;
+    setLoading(false);
+    onShowScenarios(id);
+  }, [ensureSession, onShowScenarios]);
 
   const handleTryDemo = useCallback(async () => {
     setLoading(true);
@@ -139,6 +148,12 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation }: Props) {
         <h2 className="hiw-section-title">{t('hiw.continuousTitle')}</h2>
         <p className="hiw-section-text">{t('hiw.continuousText')}</p>
       </section>
+
+      <p className="hiw-contextual-link">
+        <button type="button" onClick={handleShowScenarios} disabled={loading}>
+          {loading ? '…' : 'Voyez-le en action →'}
+        </button>
+      </p>
 
       {/* ── Section: Learning system, not a fixed secret ── */}
       <section className="hiw-section">

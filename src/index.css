@@ -2387,6 +2387,26 @@ body {
   line-height: 1.6;
 }
 
+/* Contextual link to demo scenarios */
+.hiw-contextual-link {
+  margin: 0 0 20px;
+  text-align: left;
+}
+.hiw-contextual-link button {
+  font-size: 13px; font-weight: 500;
+  color: var(--l-accent-blue, #60a5fa);
+  background: transparent; border: 0;
+  border-bottom: 1px dashed var(--l-border-strong, #2a2a4e);
+  padding-bottom: 1px;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease;
+}
+.hiw-contextual-link button:hover {
+  color: var(--l-accent-blue, #60a5fa);
+  border-bottom-color: var(--l-accent-blue, #60a5fa);
+}
+.hiw-contextual-link button:disabled { opacity: .6; cursor: default; }
+
 /* Privacy list */
 .hiw-privacy-list {
   list-style: none;
