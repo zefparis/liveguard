@@ -2,8 +2,8 @@
  * LiveGuard — LandingScreen (unified home page at "/")
  *
  * Replaces the old ShowcaseScreen with the polished Kimi K3 landing design:
- * adaptive light/dark, gradient glow accents, network mesh, protectable-things
- * tiles, 3 numbered steps, UniPay social proof, partner link.
+ * adaptive light/dark, hierarchical status accordion, radial gradient hero,
+ * 3 numbered steps, UniPay social proof, partner link.
  *
  * Two CTAs:
  *   - "Essayer" → onTryDemo (resolves session, dispatches START → 5 cognitive tests)
@@ -254,32 +254,6 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
 
       {/* ── 3. Hero ── */}
       <section className="landing-hero">
-        <svg className="landing-mesh" viewBox="0 0 400 260" aria-hidden="true">
-          <g>
-            <line x1="30" y1="42" x2="92" y2="26"/><line x1="92" y1="26" x2="152" y2="60"/>
-            <line x1="152" y1="60" x2="212" y2="30"/><line x1="212" y1="30" x2="282" y2="56"/>
-            <line x1="282" y1="56" x2="352" y2="34"/><line x1="30" y1="42" x2="62" y2="118"/>
-            <line x1="62" y1="118" x2="132" y2="148"/><line x1="132" y1="148" x2="202" y2="118"/>
-            <line x1="202" y1="118" x2="272" y2="158"/><line x1="272" y1="158" x2="342" y2="128"/>
-            <line x1="92" y1="26" x2="62" y2="118"/><line x1="152" y1="60" x2="132" y2="148"/>
-            <line x1="212" y1="30" x2="202" y2="118"/><line x1="282" y1="56" x2="272" y2="158"/>
-            <line x1="352" y1="34" x2="342" y2="128"/><line x1="62" y1="118" x2="94" y2="212"/>
-            <line x1="132" y1="148" x2="94" y2="212"/><line x1="132" y1="148" x2="172" y2="228"/>
-            <line x1="202" y1="118" x2="172" y2="228"/><line x1="272" y1="158" x2="252" y2="222"/>
-            <line x1="342" y1="128" x2="332" y2="238"/><line x1="94" y1="212" x2="172" y2="228"/>
-            <line x1="172" y1="228" x2="252" y2="222"/><line x1="252" y1="222" x2="332" y2="238"/>
-          </g>
-          <g>
-            <circle cx="30" cy="42" r="2.6"/><circle cx="92" cy="26" r="2.2"/>
-            <circle cx="152" cy="60" r="3"/><circle cx="212" cy="30" r="2.2"/>
-            <circle cx="282" cy="56" r="2.6"/><circle cx="352" cy="34" r="2.2"/>
-            <circle cx="62" cy="118" r="2.6"/><circle cx="132" cy="148" r="3"/>
-            <circle cx="202" cy="118" r="2.6"/><circle cx="272" cy="158" r="2.2"/>
-            <circle cx="342" cy="128" r="2.6"/><circle cx="94" cy="212" r="2.2"/>
-            <circle cx="172" cy="228" r="2.6"/><circle cx="252" cy="222" r="2.2"/>
-            <circle cx="332" cy="238" r="2.6"/>
-          </g>
-        </svg>
         <div className="landing-hero-content">
           <h1>{t('landing.heroTitle')}</h1>
           <p className="landing-lede">{t('landing.heroSub')}</p>
