@@ -27,6 +27,7 @@ interface Props {
 }
 
 type StatusKind = 'active' | 'observation' | 'normal';
+type StatusAccent = 'cognitive' | 'behavioral' | 'network';
 
 interface StatusSubItem {
   icon: ReactNode;
@@ -37,14 +38,25 @@ interface StatusSubItem {
 interface StatusSectionProps {
   icon: ReactNode;
   labelKey: string;
+  descKey: string;
   status: StatusKind;
+  accent: StatusAccent;
+  partialBadge?: boolean;
   expanded: boolean;
   onToggle: () => void;
   children?: ReactNode;
 }
 
-function StatusBadge({ status }: { status: StatusKind }) {
+function StatusBadge({ status, partial }: { status: StatusKind; partial?: boolean }) {
   const { t } = useI18n();
+  if (partial) {
+    return (
+      <span className="landing-status-badge landing-status-badge-active">
+        <span className="landing-status-dot" aria-hidden="true" />
+        {t('landing.status.activePartial')}
+      </span>
+    );
+  }
   return (
     <span className={`landing-status-badge landing-status-badge-${status}`}>
       {t(`landing.status.${status}`)}
@@ -52,10 +64,10 @@ function StatusBadge({ status }: { status: StatusKind }) {
   );
 }
 
-function StatusSection({ icon, labelKey, status, expanded, onToggle, children }: StatusSectionProps) {
+function StatusSection({ icon, labelKey, descKey, status, accent, partialBadge, expanded, onToggle, children }: StatusSectionProps) {
   const { t } = useI18n();
   return (
-    <div className="landing-status-section">
+    <div className="landing-status-section" data-accent={accent}>
       <button
         type="button"
         className="landing-status-row"
@@ -63,8 +75,11 @@ function StatusSection({ icon, labelKey, status, expanded, onToggle, children }:
         aria-expanded={expanded}
       >
         <span className="landing-status-icon" aria-hidden="true">{icon}</span>
-        <span className="landing-status-label">{t(labelKey)}</span>
-        <StatusBadge status={status} />
+        <span className="landing-status-heading">
+          <span className="landing-status-label">{t(labelKey)}</span>
+          <span className="landing-status-desc">{t(descKey)}</span>
+        </span>
+        <StatusBadge status={status} partial={partialBadge} />
         <svg
           className={`landing-status-chevron${expanded ? ' is-open' : ''}`}
           width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
@@ -191,7 +206,9 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         <StatusSection
           icon={ICONS.brain}
           labelKey="landing.status.section.cognitive"
+          descKey="landing.status.section.cognitive.desc"
           status="active"
+          accent="cognitive"
           expanded={!!expanded.cognitive}
           onToggle={() => toggleSection('cognitive')}
         >
@@ -207,7 +224,10 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         <StatusSection
           icon={ICONS.activity}
           labelKey="landing.status.section.behavioral"
+          descKey="landing.status.section.behavioral.desc"
           status="active"
+          accent="behavioral"
+          partialBadge
           expanded={!!expanded.behavioral}
           onToggle={() => toggleSection('behavioral')}
         >
@@ -219,7 +239,9 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         <StatusSection
           icon={ICONS.wifi}
           labelKey="landing.status.section.network"
+          descKey="landing.status.section.network.desc"
           status="active"
+          accent="network"
           expanded={!!expanded.network}
           onToggle={() => toggleSection('network')}
         >

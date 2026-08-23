@@ -28,9 +28,13 @@
   "landing.scenariosCta": "See demo scenarios",
 
   "landing.status.section.cognitive": "Cognitive",
+  "landing.status.section.cognitive.desc": "5 verification exercises",
   "landing.status.section.behavioral": "Behavioral",
+  "landing.status.section.behavioral.desc": "Typing, gestures, movement",
   "landing.status.section.network": "Network",
+  "landing.status.section.network.desc": "Traffic and connection monitored",
   "landing.status.active": "Active",
+  "landing.status.activePartial": "Active · 1/3",
   "landing.status.observation": "Observing",
   "landing.status.normal": "Normal",
   "landing.status.cognitive.stroop": "Stroop",
