@@ -488,10 +488,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           ← {t('demo.backToScenarios')}
         </button>
 
-        <div className="demo-warning">
-          ⚠️ {t('demo.demoModeWarning')}
-        </div>
-
         <h1 className="demo-page-title">{t('demo.title')}</h1>
         <p className="muted demo-page-desc">{t('demo.description')}</p>
 

@@ -42,6 +42,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
   return (
     <div className="landing-page" style={{ paddingTop: '20px' }}>
       <button
+        type="button"
         onClick={onBack}
         style={{
           background: 'none',
@@ -54,6 +55,10 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
       >
         ← {t('demo.backToScenarios')}
       </button>
+
+      <div className="demo-warning">
+        ⚠️ {t('demo.demoModeWarning')}
+      </div>
 
       <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>
         {t('demo.title')}
@@ -115,6 +120,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
                 {t(`demo.scenario${scenario.id}.description`)}
               </p>
               <button
+                type="button"
                 className="btn"
                 onClick={onSelectScenario}
                 style={{
