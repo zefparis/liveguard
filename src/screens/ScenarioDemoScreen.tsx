@@ -435,7 +435,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   if (!activeScenario) {
     return (
       <div className="landing-page" style={{ paddingTop: '20px' }}>
-        <button onClick={onBack} className="demo-back-btn">
+        <button type="button" onClick={onBack} className="demo-back-btn">
           ← {t('demo.backToScenarios')}
         </button>
 
@@ -458,7 +458,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
                   <span className="demo-card-title">{t(`demo.scenario${scenario.id}.title`)}</span>
                 </div>
                 <p className="demo-card-desc">{t(`demo.scenario${scenario.id}.description`)}</p>
-                <button className="btn demo-card-btn" onClick={() => void handleSimulate(scenario)}>
+                <button type="button" className="btn demo-card-btn" onClick={() => void handleSimulate(scenario)}>
                   {scenario.actionLabel}
                 </button>
               </div>
@@ -476,7 +476,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     <div className="landing-page demo-sim-page" style={{ paddingTop: '20px' }}>
       {/* Header */}
       <div className="demo-sim-header">
-        <button onClick={resetState} className="demo-back-btn">← {t('demo.backToScenarios')}</button>
+        <button type="button" onClick={resetState} className="demo-back-btn">← {t('demo.backToScenarios')}</button>
         <span className="demo-sim-badge">{t('demo.scenario')} {activeScenario}</span>
         <span className="demo-sim-title">{t(`demo.scenario${activeScenario}.title`)}</span>
       </div>
@@ -546,6 +546,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       {/* Action button */}
       {phase === 'idle' && (
         <button
+          type="button"
           className={`btn demo-action-btn ${buttonPulsing ? 'demo-btn-pulse' : ''}`}
           onClick={() => void handleSimulate(scenario)}
           disabled={buttonPulsing}
