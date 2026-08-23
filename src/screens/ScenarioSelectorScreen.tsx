@@ -13,6 +13,7 @@
  * Patents Pending FR2514274 | FR2514546
  */
 
+import { useEffect, useRef } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 
 interface ScenarioInfo {
@@ -38,6 +39,24 @@ interface Props {
 
 export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSelectScenario, onBack }: Props) {
   const { t } = useI18n();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Scroll the previously clicked card back into view after remount
+  useEffect(() => {
+    const lastId = sessionStorage.getItem('lg_last_scenario');
+    if (lastId && listRef.current) {
+      sessionStorage.removeItem('lg_last_scenario');
+      const card = listRef.current.querySelector(`[data-scenario-id="${lastId}"]`);
+      if (card) {
+        card.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }
+    }
+  }, []);
+
+  const handleSelect = (id: number) => {
+    sessionStorage.setItem('lg_last_scenario', String(id));
+    onSelectScenario();
+  };
 
   return (
     <div className="landing-page" style={{ paddingTop: '20px' }}>
@@ -63,10 +82,11 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
         {t('demo.description')}
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div ref={listRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {SCENARIOS.map((scenario) => (
           <div
             key={scenario.id}
+            data-scenario-id={scenario.id}
             style={{
               background: 'var(--surface, #1a1a2e)',
               border: '1px solid var(--surface-2, #2a2a4e)',
@@ -118,7 +138,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
               <button
                 type="button"
                 className="btn"
-                onClick={onSelectScenario}
+                onClick={() => handleSelect(scenario.id)}
                 style={{
                   width: '100%',
                   fontSize: '13px',
