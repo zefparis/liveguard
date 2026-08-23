@@ -13,7 +13,6 @@
  * Patents Pending FR2514274 | FR2514546
  */
 
-import { useEffect, useRef } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 
 interface ScenarioInfo {
@@ -39,167 +38,9 @@ interface Props {
 
 export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSelectScenario, onBack }: Props) {
   const { t } = useI18n();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const renderCount = useRef(0);
-  renderCount.current++;
-  console.info('[S-SCROLL] render #' + renderCount.current,
-    'containerRef.current=', containerRef.current,
-    'scrollTop=', containerRef.current?.scrollTop,
-    'scrollHeight=', containerRef.current?.scrollHeight,
-    'clientHeight=', containerRef.current?.clientHeight,
-    'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
-    'window.innerHeight=', window.innerHeight,
-    'visualViewport.height=', window.visualViewport?.height,
-  );
-
-  // ── DEBUG: attach scroll listeners to ALL candidate scrollable elements ──
-  useEffect(() => {
-    // Check for multiple .landing-page instances
-    const allLanding = document.querySelectorAll('.landing-page');
-    console.info('[S-SCROLL] querySelectorAll(.landing-page).length =', allLanding.length);
-    allLanding.forEach((el, i) => {
-      const style = getComputedStyle(el);
-      console.info('[S-SCROLL] .landing-page[' + i + ']', {
-        scrollTop: el.scrollTop,
-        scrollHeight: el.scrollHeight,
-        clientHeight: el.clientHeight,
-        overflowY: style.overflowY,
-        position: style.position,
-        zIndex: style.zIndex,
-        display: style.display,
-        visibility: style.visibility,
-        opacity: style.opacity,
-        offsetParent: (el as HTMLElement).offsetParent?.tagName,
-        rect: el.getBoundingClientRect(),
-        isSameAsContainerRef: el === containerRef.current,
-      });
-    });
-
-    // Walk up DOM from containerRef to find all ancestors and their scroll behavior
-    if (containerRef.current) {
-      let node: Element | null = containerRef.current;
-      let depth = 0;
-      while (node && depth < 20) {
-        const style = getComputedStyle(node);
-        console.info('[S-SCROLL] ancestor[' + depth + ']', node.tagName + '.' + node.className,
-          'scrollTop=', node.scrollTop,
-          'scrollHeight=', node.scrollHeight,
-          'clientHeight=', node.clientHeight,
-          'overflowY=', style.overflowY,
-          'height=', style.height,
-          'rect=', node.getBoundingClientRect(),
-        );
-        node = node.parentElement;
-        depth++;
-      }
-    }
-
-    const candidates: { name: string; el: Element | Window | Document }[] = [
-      { name: 'window', el: window },
-      { name: 'document', el: document },
-      { name: 'html', el: document.documentElement },
-      { name: 'body', el: document.body },
-    ];
-    const root = document.getElementById('root');
-    if (root) candidates.push({ name: '#root', el: root });
-    const shell = document.querySelector('.app-shell');
-    if (shell) candidates.push({ name: '.app-shell', el: shell });
-    allLanding.forEach((el, i) => candidates.push({ name: '.landing-page[' + i + ']', el }));
-
-    // Log initial state of each candidate
-    candidates.forEach(({ name, el }) => {
-      const e = el as Element;
-      if (e && e.tagName) {
-        const style = getComputedStyle(e);
-        console.info('[S-SCROLL] candidate', name, {
-          scrollTop: e.scrollTop,
-          scrollHeight: e.scrollHeight,
-          clientHeight: e.clientHeight,
-          overflowY: style.overflowY,
-          offsetHeight: (e as HTMLElement).offsetHeight,
-          rect: e.getBoundingClientRect(),
-        });
-      }
-    });
-
-    // Attach scroll listeners
-    const handlers: { name: string; fn: () => void }[] = [];
-    candidates.forEach(({ name, el }) => {
-      const fn = () => {
-        const e = el as Element;
-        if (e && e.tagName) {
-          console.info('[S-SCROLL] SCROLL EVENT on', name, 'scrollTop=', e.scrollTop);
-        } else if (el === window) {
-          console.info('[S-SCROLL] SCROLL EVENT on window, scrollY=', window.scrollY);
-        }
-      };
-      (el as EventTarget).addEventListener('scroll', fn, { passive: true });
-      handlers.push({ name, fn });
-    });
-
-    return () => {
-      handlers.forEach(({ name, fn }) => {
-        const candidate = candidates.find(c => c.name === name);
-        if (candidate) (candidate.el as EventTarget).removeEventListener('scroll', fn);
-      });
-    };
-  }, []);
-
-  // Restore scroll position on mount (saved before navigating to detail)
-  useEffect(() => {
-    const saved = sessionStorage.getItem('lg_scenario_scroll');
-    console.info('[S-SCROLL] mount useEffect — sessionStorage saved=', saved,
-      'containerRef.current=', containerRef.current,
-      'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
-    );
-    if (saved) {
-      const pos = parseInt(saved, 10);
-      if (pos > 0 && containerRef.current) {
-        console.info('[S-SCROLL] about to restore, pos=', pos, 'current scrollTop=', containerRef.current.scrollTop);
-        requestAnimationFrame(() => {
-          if (containerRef.current) {
-            console.info('[S-SCROLL] rAF: before restore, scrollTop=', containerRef.current.scrollTop,
-              'scrollHeight=', containerRef.current.scrollHeight,
-              'clientHeight=', containerRef.current.clientHeight,
-              'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
-            );
-            containerRef.current.scrollTop = pos;
-            console.info('[S-SCROLL] rAF: after restore, scrollTop=', containerRef.current.scrollTop, 'expected=', pos);
-            // Check again after a short delay to see if something overwrites it
-            setTimeout(() => {
-              console.info('[S-SCROLL] rAF+100ms: scrollTop=', containerRef.current?.scrollTop, 'expected=', pos);
-            }, 100);
-          } else {
-            console.info('[S-SCROLL] rAF: containerRef.current is NULL');
-          }
-        });
-      } else {
-        console.info('[S-SCROLL] skip restore: pos=', pos, 'containerRef=', containerRef.current);
-      }
-      sessionStorage.removeItem('lg_scenario_scroll');
-    }
-  }, []);
-
-  // Log scrollTop on every re-render
-  useEffect(() => {
-    console.info('[S-SCROLL] render-effect #' + renderCount.current, 'scrollTop=', containerRef.current?.scrollTop);
-  });
-
-  const handleSelect = () => {
-    const el = containerRef.current;
-    const st = el?.scrollTop;
-    console.info('[S-SCROLL] handleSelect — containerRef.current=', el, 'scrollTop=', st);
-    if (el) {
-      sessionStorage.setItem('lg_scenario_scroll', String(st));
-      console.info('[S-SCROLL] handleSelect — saved to sessionStorage:', String(st));
-    } else {
-      console.info('[S-SCROLL] handleSelect — containerRef is NULL, nothing saved');
-    }
-    onSelectScenario();
-  };
 
   return (
-    <div ref={containerRef} className="landing-page" style={{ paddingTop: '20px' }}>
+    <div className="landing-page" style={{ paddingTop: '20px' }}>
       <button
         type="button"
         onClick={onBack}
@@ -277,7 +118,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
               <button
                 type="button"
                 className="btn"
-                onClick={handleSelect}
+                onClick={onSelectScenario}
                 style={{
                   width: '100%',
                   fontSize: '13px',

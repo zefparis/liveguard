@@ -320,13 +320,13 @@ export default function App() {
           />
         )}
 
-        {state.phase === 'scenario_selector' && (
+        <div style={{ display: state.phase === 'scenario_selector' ? 'block' : 'none' }}>
           <ScenarioSelectorScreen
             sessionPublicId={state.sessionPublicId}
             onSelectScenario={handleStartScenarioDemo}
             onBack={() => dispatch({ type: 'SHOW_LANDING' })}
           />
-        )}
+        </div>
 
         {state.phase === 'scenario_demo' && (
           <ScenarioDemoScreen

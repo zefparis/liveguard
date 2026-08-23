@@ -10,17 +10,6 @@ const savedTheme = localStorage.getItem('lg_theme') as 'light' | 'dark' | null;
 const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 document.documentElement.setAttribute('data-theme', savedTheme || systemTheme);
 
-// Eruda — mobile on-screen console for debugging
-(function () {
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/eruda@3.0.1/eruda.min.js';
-  script.onload = function () {
-    (window as any).eruda.init();
-    console.info('[S-SCROLL] Eruda console initialized');
-  };
-  document.head.appendChild(script);
-})();
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nProvider>
