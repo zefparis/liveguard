@@ -206,7 +206,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const suspendedRef = useRef(false);
   const scenario1HiddenAtRef = useRef<number | null>(null);
   const scenario1ActiveRef = useRef(false);
-  const scrollPositionRef = useRef(0);
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const signalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastBeaconResponse = useRef<{ divergence?: number; consecutiveBreaches?: number; networkRiskScore?: number; featureBreakdown?: SuspensionData['featureBreakdown'] }>({});
@@ -389,7 +388,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
 
   // ─── Handle simulation button click ───────────────────────────────
   const handleSimulate = useCallback(async (scenario: ScenarioInfo) => {
-    scrollPositionRef.current = window.scrollY;
     setActiveScenario(scenario.id);
     setPhase('idle');
     setNetworkRiskScore(0);
@@ -509,13 +507,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, [startCountdown, triggerSuspension]);
 
   const activeScenarioInfo = SCENARIOS.find((s) => s.id === activeScenario);
-
-  // ─── Restore scroll position when returning to list ────────────
-  useEffect(() => {
-    if (activeScenario === null && scrollPositionRef.current > 0) {
-      window.scrollTo(0, scrollPositionRef.current);
-    }
-  }, [activeScenario]);
 
   // ─── Reset state ──────────────────────────────────────────────────
   const resetState = useCallback(() => {
