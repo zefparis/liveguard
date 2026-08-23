@@ -147,13 +147,10 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenar
         </div>
         <h2 className="hiw-section-title">{t('hiw.continuousTitle')}</h2>
         <p className="hiw-section-text">{t('hiw.continuousText')}</p>
-      </section>
-
-      <p className="hiw-contextual-link">
-        <button type="button" onClick={handleShowScenarios} disabled={loading}>
-          {loading ? '…' : 'Voyez-le en action →'}
+        <button type="button" className="hiw-section-link" onClick={handleShowScenarios} disabled={loading}>
+          {loading ? '…' : t('hiw.scenariosLink')}
         </button>
-      </p>
+      </section>
 
       {/* ── Section: Learning system, not a fixed secret ── */}
       <section className="hiw-section">

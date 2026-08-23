@@ -2387,25 +2387,23 @@ body {
   line-height: 1.6;
 }
 
-/* Contextual link to demo scenarios */
-.hiw-contextual-link {
-  margin: 0 0 20px;
-  text-align: left;
-}
-.hiw-contextual-link button {
-  font-size: 13px; font-weight: 500;
-  color: var(--l-accent-blue, #60a5fa);
-  background: transparent; border: 0;
-  border-bottom: 1px dashed var(--l-border-strong, #2a2a4e);
-  padding-bottom: 1px;
+/* Contextual link inside hiw-section */
+.hiw-section-link {
+  margin-top: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  color: var(--l-text);
+  background: transparent;
+  border: 1.5px solid var(--l-border-strong, #2a2a4e);
   cursor: pointer;
-  transition: color .2s ease, border-color .2s ease;
+  transition: background .2s ease, border-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.hiw-contextual-link button:hover {
-  color: var(--l-accent-blue, #60a5fa);
-  border-bottom-color: var(--l-accent-blue, #60a5fa);
-}
-.hiw-contextual-link button:disabled { opacity: .6; cursor: default; }
+.hiw-section-link:hover { background: var(--l-surface); }
+.hiw-section-link:active { transform: scale(.98); }
+.hiw-section-link:disabled { opacity: .6; cursor: default; }
 
 /* Privacy list */
 .hiw-privacy-list {

@@ -28,6 +28,7 @@
   "landing.scenariosCta": "See demo scenarios",
 
   "hiw.title": "How LiveGuard works",
+  "hiw.scenariosLink": "See it in action →",
   "hiw.continuousTitle": "Why continuous protection, not just at login?",
   "hiw.continuousText": "Most fraud doesn't happen at the front door. A password protects the moment you sign in. But what happens after? A phone left unattended, a session left open, a SIM card hijacked mid-transaction — these are the moments fraudsters exploit, not the login itself. LiveGuard keeps watching after you sign in, exactly when it matters most: during the action itself. If something seems unusual — you left the app a moment too long, for example — a simple check is enough to confirm it's still you, before continuing.",
   "hiw.learningTitle": "A system that learns, not a fixed secret",

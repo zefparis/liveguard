@@ -28,6 +28,7 @@
   "landing.scenariosCta": "Voir les scénarios de démonstration",
 
   "hiw.title": "Comment fonctionne LiveGuard",
+  "hiw.scenariosLink": "Voyez-le en action →",
   "hiw.continuousTitle": "Pourquoi une protection continue, pas juste à la connexion ?",
   "hiw.continuousText": "La plupart des fraudes n'arrivent pas à la porte d'entrée. Un mot de passe protège le moment où vous vous connectez. Mais que se passe-t-il après ? Un téléphone laissé sans surveillance, une session oubliée ouverte, une carte SIM détournée en plein milieu d'une transaction — ce sont ces instants-là que les fraudeurs exploitent, pas la connexion elle-même. LiveGuard continue de veiller après votre connexion, exactement quand ça compte le plus : pendant l'action elle-même. Si quelque chose semble anormal — vous avez quitté l'application un instant trop long, par exemple — une simple vérification suffit à confirmer que c'est toujours bien vous, avant de continuer.",
   "hiw.learningTitle": "Un système qui apprend, pas un secret figé",
