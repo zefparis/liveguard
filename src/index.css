@@ -2003,30 +2003,113 @@ body {
   background: var(--l-grad-brand);
 }
 
-/* ── 2. Tiles ── */
-.landing-tiles {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px; margin-top: 22px;
+/* ── 2. Protection status accordion ── */
+.landing-status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
 }
-.landing-tile {
-  --a: 79 124 255;
-  aspect-ratio: 1;
-  border-radius: var(--l-radius-md);
+.landing-status-section {
   border: 1px solid var(--l-border);
-  background:
-    radial-gradient(120% 120% at 30% 20%, rgb(var(--a) / .20), transparent 62%),
-    var(--l-surface);
+  border-radius: 12px;
+  background: var(--l-surface);
   box-shadow: var(--l-shadow-soft);
-  display: grid; place-items: center;
+  overflow: hidden;
 }
-.landing-tile[data-accent="cyan"]   { --a: 34 200 238; }
-.landing-tile[data-accent="violet"] { --a: 139 92 246; }
-.landing-tile[data-accent="indigo"] { --a: 99 102 241; }
-.landing-tile svg {
-  width: 46%; height: 46%;
-  filter: drop-shadow(0 3px 10px rgb(var(--a) / .38));
+.landing-status-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--l-text);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
 }
+.landing-status-row:hover { background: rgb(255 255 255 / .02); }
+.landing-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--l-accent-blue);
+  flex-shrink: 0;
+}
+.landing-status-label { flex: 1; }
+.landing-status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.landing-status-badge-active {
+  background: rgb(52 211 153 / .14);
+  color: #34d399;
+  border: 1px solid rgb(52 211 153 / .30);
+}
+.landing-status-badge-observation {
+  background: rgb(245 158 11 / .12);
+  color: #f5a623;
+  border: 1px solid rgb(245 158 11 / .32);
+}
+.landing-status-badge-normal {
+  background: rgb(96 165 250 / .12);
+  color: #60a5fa;
+  border: 1px solid rgb(96 165 250 / .28);
+}
+.landing-status-chevron {
+  color: var(--l-text-faint);
+  flex-shrink: 0;
+  transition: transform .2s ease;
+}
+.landing-status-chevron.is-open { transform: rotate(180deg); }
+.landing-status-content {
+  padding: 2px 16px 14px;
+  border-top: 1px solid var(--l-border);
+}
+.landing-status-list {
+  margin: 0;
+  padding: 10px 0 2px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.landing-status-list li {
+  font-size: 13.5px;
+  color: var(--l-text-soft);
+  padding-left: 32px;
+  position: relative;
+}
+.landing-status-list li::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--l-accent-blue);
+  opacity: .7;
+}
+.landing-status-subrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  font-size: 13.5px;
+  color: var(--l-text-soft);
+}
+.landing-status-subrow + .landing-status-subrow { border-top: 1px solid var(--l-border); }
+.landing-status-subrow .landing-status-icon { color: var(--l-text-faint); }
+.landing-status-subrow .landing-status-label { flex: 1; }
 
 /* ── 3. Hero ── */
 .landing-hero {
