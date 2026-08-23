@@ -288,12 +288,12 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           const awayMs = Date.now() - hiddenAt;
           console.info('[S1] visibilitychange: returned, awayMs=', awayMs, 'threshold=3000');
           if (awayMs > 3000) {
-            // Detected
-            console.info('[S1] awayMs > 3000 → triggering suspension');
-            setPhase('detected');
-            setTimeout(() => {
-              if (!suspendedRef.current) {
-                suspendedRef.current = true;
+            // Detected — but only if not already triggered by the timer
+            if (!suspendedRef.current) {
+              console.info('[S1] awayMs > 3000 → triggering suspension (visibilitychange)');
+              suspendedRef.current = true;
+              setPhase('detected');
+              setTimeout(() => {
                 setPhase('transitioning');
                 setTimeout(() => onSuspended({
                   reason: 'background_timeout',
@@ -301,8 +301,8 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
                   toleranceMs: 3000,
                   detectedAt: new Date().toISOString(),
                 }), 1500);
-              }
-            }, 800);
+              }, 800);
+            }
           } else {
             console.info('[S1] awayMs <= 3000 → back to idle');
             setPhase('idle');
@@ -322,18 +322,35 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
 
   // ─── Live away-timer for scenario 1 ───────────────────────────────
   // Updates scenario1AwayMs every 100ms while the tab is hidden.
-  // Browser throttles JS in hidden tabs, so this may not fire reliably
-  // while away — but it will catch up on return, showing the real elapsed
-  // time before the visibilitychange handler processes it.
+  // ALSO checks the threshold: as soon as awayMs > 3000, triggers
+  // suspension immediately — does NOT wait for visibilitychange return.
+  // This fixes the case where visibilitychange fires on hide but not on
+  // return (e.g. user switches to another app, or browser quirks),
+  // leaving the timer running forever without triggering suspension.
   useEffect(() => {
     if (scenario1HiddenAt === null) return;
     const interval = setInterval(() => {
       if (scenario1HiddenAtRef.current !== null) {
-        setScenario1AwayMs(Date.now() - scenario1HiddenAtRef.current);
+        const elapsed = Date.now() - scenario1HiddenAtRef.current;
+        setScenario1AwayMs(elapsed);
+        if (elapsed > 3000 && !suspendedRef.current) {
+          console.info('[S1] timer threshold exceeded, elapsed=', elapsed, '→ triggering suspension');
+          suspendedRef.current = true;
+          setPhase('detected');
+          setTimeout(() => {
+            setPhase('transitioning');
+            setTimeout(() => onSuspended({
+              reason: 'background_timeout',
+              awayMs: elapsed,
+              toleranceMs: 3000,
+              detectedAt: new Date().toISOString(),
+            }), 1500);
+          }, 800);
+        }
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [scenario1HiddenAt]);
+  }, [scenario1HiddenAt, onSuspended]);
 
   // ─── Cleanup timers on unmount ────────────────────────────────────
   useEffect(() => {
