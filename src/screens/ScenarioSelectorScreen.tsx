@@ -39,28 +39,33 @@ interface Props {
 
 export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSelectScenario, onBack }: Props) {
   const { t } = useI18n();
-  const scrollRef = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Restore scroll position on mount (saved before navigating to detail)
   useEffect(() => {
     const saved = sessionStorage.getItem('lg_scenario_scroll');
     if (saved) {
       const pos = parseInt(saved, 10);
-      if (pos > 0) {
-        requestAnimationFrame(() => window.scrollTo(0, pos));
+      if (pos > 0 && containerRef.current) {
+        requestAnimationFrame(() => {
+          if (containerRef.current) {
+            containerRef.current.scrollTop = pos;
+          }
+        });
       }
       sessionStorage.removeItem('lg_scenario_scroll');
     }
   }, []);
 
   const handleSelect = () => {
-    scrollRef.current = window.scrollY;
-    sessionStorage.setItem('lg_scenario_scroll', String(scrollRef.current));
+    if (containerRef.current) {
+      sessionStorage.setItem('lg_scenario_scroll', String(containerRef.current.scrollTop));
+    }
     onSelectScenario();
   };
 
   return (
-    <div className="landing-page" style={{ paddingTop: '20px' }}>
+    <div ref={containerRef} className="landing-page" style={{ paddingTop: '20px' }}>
       <button
         type="button"
         onClick={onBack}
