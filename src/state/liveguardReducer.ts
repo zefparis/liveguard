@@ -20,6 +20,9 @@ export type Phase =
   | 'how_it_works'
   | 'implementation'
   | 'select_protection'
+  | 'scenario_selector'
+  | 'scenario_demo'
+  | 'session_suspended'
   | 'prep'
   | 'test_reflex'
   | 'test_colors'
@@ -89,6 +92,10 @@ export type Action =
   | { type: 'SHOW_IMPLEMENTATION' }
   | { type: 'START_DEMO'; sessionPublicId: string }
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
+  | { type: 'SHOW_SCENARIO_SELECTOR'; sessionPublicId: string }
+  | { type: 'START_SCENARIO_DEMO'; sessionPublicId: string }
+  | { type: 'SCENARIO_DEMO_SUSPENDED'; reason: string }
+  | { type: 'SCENARIO_DEMO_RESUME' }
   | { type: 'START'; sessionPublicId: string; testScope?: string | null; protectionCategory?: string | null }
   | { type: 'PREP_READY' }
   | { type: 'DEVICE_COLLECTED'; device: LiveGuardDeviceContext }
@@ -107,11 +114,14 @@ export type Action =
   | { type: 'RESET' };
 
 const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
-  landing: ['idle', 'how_it_works', 'implementation', 'prep'],
-  how_it_works: ['landing', 'implementation', 'idle', 'prep'],
+  landing: ['idle', 'how_it_works', 'implementation', 'prep', 'scenario_selector'],
+  how_it_works: ['landing', 'implementation', 'idle', 'prep', 'scenario_selector'],
   implementation: ['landing', 'how_it_works', 'idle'],
-  idle: ['select_protection', 'landing', 'prep'],
+  idle: ['select_protection', 'landing', 'prep', 'scenario_selector'],
   select_protection: ['prep', 'idle', 'landing'],
+  scenario_selector: ['scenario_demo', 'landing', 'how_it_works', 'idle'],
+  scenario_demo: ['session_suspended', 'scenario_selector', 'prep', 'landing'],
+  session_suspended: ['prep', 'scenario_selector', 'landing'],
   prep: ['test_reflex', 'error'],
   test_reflex: ['test_colors', 'error'],
   test_colors: ['test_memory', 'error'],
@@ -122,7 +132,7 @@ const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
   device_signals: ['readiness', 'error'],
   readiness: ['submitting', 'error'],
   submitting: ['done', 'error'],
-  done: ['idle', 'landing'],
+  done: ['idle', 'landing', 'scenario_selector'],
   error: ['idle', 'landing'],
 };
 
@@ -153,6 +163,27 @@ export function liveguardReducer(state: LiveGuardState, action: Action): LiveGua
       // From landing/integration → go to idle (which resolves session then proceeds)
       if (!isValidTransition(state.phase, 'idle')) return state;
       return { ...state, phase: 'idle', sessionPublicId: action.sessionPublicId };
+    }
+
+    case 'SHOW_SCENARIO_SELECTOR': {
+      if (!isValidTransition(state.phase, 'scenario_selector')) return state;
+      return { ...state, phase: 'scenario_selector', sessionPublicId: action.sessionPublicId };
+    }
+
+    case 'START_SCENARIO_DEMO': {
+      if (!isValidTransition(state.phase, 'scenario_demo')) return state;
+      return { ...state, phase: 'scenario_demo', sessionPublicId: action.sessionPublicId };
+    }
+
+    case 'SCENARIO_DEMO_SUSPENDED': {
+      if (!isValidTransition(state.phase, 'session_suspended')) return state;
+      return { ...state, phase: 'session_suspended', error: action.reason };
+    }
+
+    case 'SCENARIO_DEMO_RESUME': {
+      // After re-verification, go back to scenario_selector
+      if (!isValidTransition(state.phase, 'scenario_selector')) return state;
+      return { ...state, phase: 'scenario_selector', error: null };
     }
 
     case 'SELECT_PROTECTION': {

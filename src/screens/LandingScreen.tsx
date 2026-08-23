@@ -23,9 +23,10 @@ interface Props {
   onTryDemo: (sessionPublicId: string) => void;
   onShowHowItWorks: () => void;
   onShowImplementation: () => void;
+  onShowScenarios?: (sessionPublicId: string) => void;
 }
 
-export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementation }: Props) {
+export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
@@ -65,6 +66,16 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
     setLoading(false);
     onTryDemo(id);
   }, [ensureSession, onTryDemo]);
+
+  const handleShowScenarios = useCallback(async () => {
+    setLoading(true);
+    let id = await ensureSession();
+    if (!id) {
+      id = `lg_${Date.now().toString(36)}`;
+    }
+    setLoading(false);
+    onShowScenarios?.(id);
+  }, [ensureSession, onShowScenarios]);
 
   return (
     <div className="landing-page">
@@ -252,6 +263,15 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
       <div className="landing-partner-link">
         <button onClick={onShowImplementation}>{t('landing.partnerLink')}</button>
       </div>
+
+      {/* ── Scenario demo link ── */}
+      {onShowScenarios && (
+        <div className="landing-partner-link">
+          <button onClick={handleShowScenarios} disabled={loading}>
+            {loading ? '…' : '🎯 Scénarios de démonstration →'}
+          </button>
+        </div>
+      )}
 
       {/* ── 8. Scroll indicator ── */}
       <div className="landing-scroll-hint" aria-hidden="true">

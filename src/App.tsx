@@ -37,6 +37,9 @@ import { ReadinessScreen } from './screens/ReadinessScreen';
 import { SubmittingScreen } from './screens/SubmittingScreen';
 import { DoneScreen } from './screens/DoneScreen';
 import { ErrorScreen } from './screens/ErrorScreen';
+import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
+import { ScenarioDemoScreen } from './screens/ScenarioDemoScreen';
+import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
 import { useI18n } from './i18n/I18nContext';
 
 export default function App() {
@@ -87,6 +90,27 @@ export default function App() {
     reset();
     dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory });
   }, [reset]);
+
+  const handleShowScenarios = useCallback((sessionPublicId: string) => {
+    dispatch({ type: 'SHOW_SCENARIO_SELECTOR', sessionPublicId });
+  }, []);
+
+  const handleStartScenarioDemo = useCallback(() => {
+    dispatch({ type: 'START_SCENARIO_DEMO', sessionPublicId: state.sessionPublicId });
+  }, [state.sessionPublicId]);
+
+  const handleScenarioSuspended = useCallback((reason: string) => {
+    dispatch({ type: 'SCENARIO_DEMO_SUSPENDED', reason });
+  }, []);
+
+  const handleReverify = useCallback(() => {
+    reset();
+    dispatch({ type: 'START', sessionPublicId: state.sessionPublicId, testScope: 'cognitive-only', protectionCategory: 'reverify' });
+  }, [reset, state.sessionPublicId]);
+
+  const handleScenarioResume = useCallback(() => {
+    dispatch({ type: 'SCENARIO_DEMO_RESUME' });
+  }, []);
 
   const handleSubmit = useCallback(async () => {
     dispatch({ type: 'SUBMIT' });
@@ -147,7 +171,9 @@ export default function App() {
 
         {/* Header indicator (shown on cognitive flow screens, not on landing/info pages) */}
         {state.phase !== 'idle' && state.phase !== 'landing'
-          && state.phase !== 'how_it_works' && state.phase !== 'implementation' && (
+          && state.phase !== 'how_it_works' && state.phase !== 'implementation'
+          && state.phase !== 'scenario_selector' && state.phase !== 'scenario_demo'
+          && state.phase !== 'session_suspended' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
@@ -159,6 +185,7 @@ export default function App() {
             onTryDemo={handleTryDemo}
             onShowHowItWorks={handleShowHowItWorks}
             onShowImplementation={handleShowImplementation}
+            onShowScenarios={handleShowScenarios}
           />
         )}
 
@@ -286,6 +313,30 @@ export default function App() {
             startedAt={state.startedAt}
             completedAt={state.completedAt}
             onReset={handleReset}
+          />
+        )}
+
+        {state.phase === 'scenario_selector' && (
+          <ScenarioSelectorScreen
+            sessionPublicId={state.sessionPublicId}
+            onSelectScenario={handleStartScenarioDemo}
+            onBack={() => dispatch({ type: 'SHOW_LANDING' })}
+          />
+        )}
+
+        {state.phase === 'scenario_demo' && (
+          <ScenarioDemoScreen
+            sessionPublicId={state.sessionPublicId}
+            onSuspended={handleScenarioSuspended}
+            onBack={() => dispatch({ type: 'SHOW_SCENARIO_SELECTOR', sessionPublicId: state.sessionPublicId })}
+          />
+        )}
+
+        {state.phase === 'session_suspended' && (
+          <SessionSuspendedScreen
+            reason={state.error ?? 'behavioral_divergence'}
+            onReverify={handleReverify}
+            onBack={handleScenarioResume}
           />
         )}
 
