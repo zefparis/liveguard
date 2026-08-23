@@ -220,100 +220,201 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     }
   }, [t, onSuspended]);
 
+  const activeScenarioInfo = SCENARIOS.find((s) => s.id === activeScenario);
+
+  // ─── Mode sélection : grille des 6 cartes ───────────────────────────
+  if (!activeScenario) {
+    return (
+      <div className="landing-page" style={{ paddingTop: '20px' }}>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#60a5fa',
+            fontSize: '13px',
+            marginBottom: '12px',
+            cursor: 'pointer',
+          }}
+        >
+          ← {t('demo.backToScenarios')}
+        </button>
+
+        <div style={{
+          background: 'rgba(255, 200, 0, 0.1)',
+          border: '1px solid rgba(255, 200, 0, 0.3)',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          marginBottom: '16px',
+          fontSize: '12px',
+          color: '#fbbf24',
+        }}>
+          ⚠️ {t('demo.demoModeWarning')}
+        </div>
+
+        <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>
+          {t('demo.title')}
+        </h1>
+        <p className="muted" style={{ fontSize: '13px', marginBottom: '20px' }}>
+          {t('demo.description')}
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {SCENARIOS.map((scenario) => (
+            <div
+              key={scenario.id}
+              style={{
+                background: 'var(--surface, #1a1a2e)',
+                border: '1px solid var(--surface-2, #2a2a4e)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{
+                height: '130px',
+                overflow: 'hidden',
+                position: 'relative',
+              }}>
+                <img
+                  src={scenario.image}
+                  alt={t(`demo.scenario${scenario.id}.title`)}
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </div>
+
+              <div style={{ padding: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <div>
+                    <span style={{
+                      display: 'inline-block',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      color: '#60a5fa',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      marginRight: '8px',
+                    }}>
+                      {t('demo.scenario')} {scenario.id}
+                    </span>
+                    <span style={{ fontSize: '14px', fontWeight: 600 }}>
+                      {t(`demo.scenario${scenario.id}.title`)}
+                    </span>
+                  </div>
+                </div>
+                <p style={{ fontSize: '12px', color: '#888', marginBottom: '10px', lineHeight: 1.4 }}>
+                  {t(`demo.scenario${scenario.id}.description`)}
+                </p>
+                <button
+                  className="btn"
+                  onClick={() => void handleSimulate(scenario)}
+                  style={{
+                    width: '100%',
+                    fontSize: '13px',
+                    padding: '8px',
+                  }}
+                >
+                  {t(`demo.scenario${scenario.id}.button`)}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Mode simulation : page dédiée plein écran ──────────────────────
   return (
     <div className="landing-page" style={{ paddingTop: '20px' }}>
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        style={{
-          background: 'none',
-          border: 'none',
-          color: '#60a5fa',
-          fontSize: '13px',
-          marginBottom: '12px',
-          cursor: 'pointer',
-        }}
-      >
-        ← {t('demo.backToScenarios')}
-      </button>
-
-      {/* Demo mode warning */}
+      {/* Header dédié : retour + titre du scénario */}
       <div style={{
-        background: 'rgba(255, 200, 0, 0.1)',
-        border: '1px solid rgba(255, 200, 0, 0.3)',
-        borderRadius: '8px',
-        padding: '8px 12px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
         marginBottom: '16px',
-        fontSize: '12px',
-        color: '#fbbf24',
       }}>
-        ⚠️ {t('demo.demoModeWarning')}
+        <button
+          onClick={() => {
+            setScenario1Active(false);
+            setDemoSimulationMode('none');
+            setActiveScenario(null);
+            setStatusMessage(null);
+            setDivergence(0);
+            setConsecutiveBreaches(0);
+            setNetworkRiskScore(0);
+            setReferenceWindowActive(false);
+            onBack();
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#60a5fa',
+            fontSize: '13px',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          ← {t('demo.backToScenarios')}
+        </button>
+        <span style={{
+          display: 'inline-block',
+          fontSize: '10px',
+          fontWeight: 'bold',
+          background: 'rgba(59, 130, 246, 0.3)',
+          color: '#93c5fd',
+          padding: '2px 8px',
+          borderRadius: '4px',
+        }}>
+          {t('demo.scenario')} {activeScenario}
+        </span>
+        <span style={{ fontSize: '18px', fontWeight: 700 }}>
+          {t(`demo.scenario${activeScenario}.title`)}
+        </span>
       </div>
 
-      <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>
-        {t('demo.title')}
-      </h1>
-      <p className="muted" style={{ fontSize: '13px', marginBottom: '20px' }}>
-        {t('demo.description')}
-      </p>
-
-      {/* Active scenario header image */}
-      {activeScenario && (
+      {/* Image hero du scénario actif */}
+      <div style={{
+        height: '180px',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        position: 'relative',
+        marginBottom: '16px',
+      }}>
+        <img
+          src={`/scenarios/${activeScenario}.jpeg`}
+          alt={t(`demo.scenario${activeScenario}.title`)}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
         <div style={{
-          height: '180px',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          position: 'relative',
-          marginBottom: '16px',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '60%',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 100%)',
+          display: 'flex',
+          alignItems: 'flex-end',
+          padding: '14px',
         }}>
-          <img
-            src={`/scenarios/${activeScenario}.jpeg`}
-            alt={t(`demo.scenario${activeScenario}.title`)}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-          />
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '60%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 100%)',
-            display: 'flex',
-            alignItems: 'flex-end',
-            padding: '14px',
-          }}>
-            <div>
-              <span style={{
-                display: 'inline-block',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                background: 'rgba(59, 130, 246, 0.3)',
-                color: '#93c5fd',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                marginRight: '8px',
-              }}>
-                {t('demo.scenario')} {activeScenario}
-              </span>
-              <span style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#fff',
-                textShadow: '0 2px 8px rgba(0,0,0,0.6)',
-              }}>
-                {t(`demo.scenario${activeScenario}.title`)}
-              </span>
-            </div>
-          </div>
+          <p style={{ fontSize: '13px', color: '#ccc', margin: 0, maxWidth: '90%' }}>
+            {t(`demo.scenario${activeScenario}.description`)}
+          </p>
         </div>
-      )}
+      </div>
 
-      {/* Demo banking form */}
+      {/* Formulaire factice de transfert bancaire */}
       <div style={{
         background: 'var(--surface, #1a1a2e)',
         border: '1px solid var(--surface-2, #2a2a4e)',
@@ -372,7 +473,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </button>
       </div>
 
-      {/* Reference window indicator */}
+      {/* Indicateur fenêtre de référence */}
       {referenceWindowActive && (
         <div style={{
           background: 'rgba(59, 130, 246, 0.1)',
@@ -386,7 +487,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </div>
       )}
 
-      {/* Status messages */}
+      {/* Messages de statut */}
       {statusMessage && (
         <div style={{
           background: 'rgba(59, 130, 246, 0.1)',
@@ -400,7 +501,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </div>
       )}
 
-      {/* Behavioral divergence indicator */}
+      {/* Indicateur de divergence comportementale */}
       {(divergence > 0 || consecutiveBreaches > 0) && (
         <div style={{
           background: consecutiveBreaches >= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 200, 0, 0.1)',
@@ -416,7 +517,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </div>
       )}
 
-      {/* Network risk score (scenario 6) */}
+      {/* Indicateur de score de risque réseau (scénario 6) */}
       {networkRiskScore > 0 && (
         <div style={{
           background: networkRiskScore >= 8 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 200, 0, 0.1)',
@@ -431,78 +532,21 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </div>
       )}
 
-      {/* 6 scenario cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {SCENARIOS.map((scenario) => (
-          <div
-            key={scenario.id}
-            style={{
-              background: 'var(--surface, #1a1a2e)',
-              border: '1px solid var(--surface-2, #2a2a4e)',
-              borderRadius: '12px',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{
-              height: '130px',
-              overflow: 'hidden',
-              position: 'relative',
-            }}>
-              <img
-                src={scenario.image}
-                alt={t(`demo.scenario${scenario.id}.title`)}
-                loading="lazy"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
-
-            <div style={{ padding: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                <div>
-                  <span style={{
-                    display: 'inline-block',
-                    fontSize: '10px',
-                    fontWeight: 'bold',
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    color: '#60a5fa',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    marginRight: '8px',
-                  }}>
-                    {t('demo.scenario')} {scenario.id}
-                  </span>
-                  <span style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t(`demo.scenario${scenario.id}.title`)}
-                  </span>
-                </div>
-              </div>
-              <p style={{ fontSize: '12px', color: '#888', marginBottom: '10px', lineHeight: 1.4 }}>
-                {t(`demo.scenario${scenario.id}.description`)}
-              </p>
-              <button
-                className="btn"
-                onClick={() => void handleSimulate(scenario)}
-                disabled={activeScenario === scenario.id}
-                style={{
-                  width: '100%',
-                  fontSize: '13px',
-                  padding: '8px',
-                  opacity: activeScenario === scenario.id ? 0.5 : 1,
-                }}
-              >
-                {activeScenario === scenario.id
-                  ? t('demo.simulating')
-                  : t(`demo.scenario${scenario.id}.button`)}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Bouton de simulation du scénario actif */}
+      {activeScenarioInfo && (
+        <button
+          className="btn"
+          onClick={() => void handleSimulate(activeScenarioInfo)}
+          style={{
+            width: '100%',
+            fontSize: '14px',
+            padding: '12px',
+            marginBottom: '20px',
+          }}
+        >
+          {t(`demo.scenario${activeScenario}.button`)}
+        </button>
+      )}
     </div>
   );
 }
