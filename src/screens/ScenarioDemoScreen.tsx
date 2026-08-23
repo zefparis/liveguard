@@ -204,6 +204,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const [buttonPulsing, setButtonPulsing] = useState(false);
 
   const suspendedRef = useRef(false);
+  const scenario1HiddenAtRef = useRef<number | null>(null);
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const signalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastBeaconResponse = useRef<{ divergence?: number; consecutiveBreaches?: number; networkRiskScore?: number; featureBreakdown?: SuspensionData['featureBreakdown'] }>({});
@@ -265,15 +266,21 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, [activeScenario]);
 
   // ─── Visibility handler for scenario 1 (blur/focus) ───────────────
+  // Uses a ref for scenario1HiddenAtRef to avoid stale closures:
+  // when the tab is hidden, the browser pauses JS, so React state updates
+  // and effect re-runs don't happen. The old listener keeps the old state
+  // value in its closure. A ref is mutable and always current.
   useEffect(() => {
     const onVisibilityChange = () => {
       if (!scenario1Active) return;
       if (document.hidden) {
+        scenario1HiddenAtRef.current = Date.now();
         setScenario1HiddenAt(Date.now());
         setPhase('analyzing');
       } else {
-        if (scenario1HiddenAt !== null) {
-          const awayMs = Date.now() - scenario1HiddenAt;
+        const hiddenAt = scenario1HiddenAtRef.current;
+        if (hiddenAt !== null) {
+          const awayMs = Date.now() - hiddenAt;
           if (awayMs > 3000) {
             // Detected
             setPhase('detected');
@@ -293,6 +300,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
             setPhase('idle');
           }
         }
+        scenario1HiddenAtRef.current = null;
         setScenario1HiddenAt(null);
       }
     };
@@ -301,7 +309,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, [scenario1Active, scenario1HiddenAt, onSuspended]);
+  }, [scenario1Active, onSuspended]);
 
   // ─── Cleanup timers on unmount ────────────────────────────────────
   useEffect(() => {
