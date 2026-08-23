@@ -30,17 +30,16 @@ interface ScenarioInfo {
   simulationMode?: DemoSimulationMode;
   massAttempt?: boolean;
   contextLabel: string;
-  actionLabel: string;
   graphMode: 'human' | 'other_user' | 'bot' | 'mass';
 }
 
 const SCENARIOS: ScenarioInfo[] = [
-  { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg', contextLabel: 'Transfert de 250,00 € vers Compte ****4471', actionLabel: 'Simuler un appel', graphMode: 'human' },
-  { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 1 200,00 € vers Compte ****8823', actionLabel: 'Simuler un changement d\'utilisateur', graphMode: 'other_user' },
-  { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg', simulationMode: 'bot', contextLabel: 'Transfert de 500,00 € vers Compte ****1192', actionLabel: 'Simuler un bot', graphMode: 'bot' },
-  { id: 4, key: 'touch_pattern', image: '/scenarios/4.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 75,00 € vers Compte ****5534', actionLabel: 'Simuler un tactile anormal', graphMode: 'other_user' },
-  { id: 5, key: 'session_continuity', image: '/scenarios/5.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 2 000,00 € vers Compte ****7701', actionLabel: 'Simuler la dérive', graphMode: 'other_user' },
-  { id: 6, key: 'mass_attempts', image: '/scenarios/6.jpeg', massAttempt: true, contextLabel: 'Tentatives de connexion répétées', actionLabel: 'Simuler 10 tentatives', graphMode: 'mass' },
+  { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg', contextLabel: 'Transfert de 250,00 € vers Compte ****4471', graphMode: 'human' },
+  { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 1 200,00 € vers Compte ****8823', graphMode: 'other_user' },
+  { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg', simulationMode: 'bot', contextLabel: 'Transfert de 500,00 € vers Compte ****1192', graphMode: 'bot' },
+  { id: 4, key: 'touch_pattern', image: '/scenarios/4.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 75,00 € vers Compte ****5534', graphMode: 'other_user' },
+  { id: 5, key: 'session_continuity', image: '/scenarios/5.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 2 000,00 € vers Compte ****7701', graphMode: 'other_user' },
+  { id: 6, key: 'mass_attempts', image: '/scenarios/6.jpeg', massAttempt: true, contextLabel: 'Tentatives de connexion répétées', graphMode: 'mass' },
 ];
 
 type Phase = 'idle' | 'analyzing' | 'detected' | 'transitioning';
@@ -550,7 +549,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
                 </div>
                 <p className="demo-card-desc">{t(`demo.scenario${scenario.id}.description`)}</p>
                 <button type="button" className="btn demo-card-btn" onClick={() => void handleSimulate(scenario)}>
-                  {scenario.actionLabel}
+                  {t(`demo.scenario${scenario.id}.button`)}
                 </button>
               </div>
             </div>
@@ -658,7 +657,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           onClick={() => void handleSimulate(scenario)}
           disabled={buttonPulsing}
         >
-          {buttonPulsing ? '● ● ●' : scenario.actionLabel}
+          {buttonPulsing ? '● ● ●' : t(`demo.scenario${activeScenario}.button`)}
         </button>
       )}
 
