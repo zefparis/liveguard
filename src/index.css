@@ -2914,12 +2914,9 @@ body {
 
 /* ═══════════════════════════════════════════════════════════════
    HOW-IT-WORKS SCREEN (hiw-*) — public reassurance page
+   .hiw-page inherits all --l-* tokens from .landing-page.
+   overflow-y: auto is now on .landing-page itself.
    ═══════════════════════════════════════════════════════════════ */
-
-.hiw-page {
-  /* Inherits all --l-* tokens from .landing-page */
-  /* overflow-y: auto is now on .landing-page itself */
-}
 
 .hiw-title-section {
   margin-top: 26px;
@@ -3035,11 +3032,8 @@ body {
 
 /* ═══════════════════════════════════════════════════════════════
    IMPLEMENTATION SCREEN (imp-*) — partner/business page
+   overflow-y: auto is now on .landing-page itself.
    ═══════════════════════════════════════════════════════════════ */
-
-.imp-page {
-  /* overflow-y: auto is now on .landing-page itself */
-}
 
 .imp-back {
   display: flex;
