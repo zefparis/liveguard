@@ -40,26 +40,52 @@ interface Props {
 export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSelectScenario, onBack }: Props) {
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
+  const renderCount = useRef(0);
+  renderCount.current++;
+  console.info('[S-SCROLL] render #' + renderCount.current, 'containerRef.current=', containerRef.current, 'scrollTop=', containerRef.current?.scrollTop);
 
   // Restore scroll position on mount (saved before navigating to detail)
   useEffect(() => {
     const saved = sessionStorage.getItem('lg_scenario_scroll');
+    console.info('[S-SCROLL] mount useEffect — sessionStorage saved=', saved, 'containerRef.current=', containerRef.current);
     if (saved) {
       const pos = parseInt(saved, 10);
       if (pos > 0 && containerRef.current) {
+        console.info('[S-SCROLL] about to restore, pos=', pos, 'current scrollTop=', containerRef.current.scrollTop);
         requestAnimationFrame(() => {
           if (containerRef.current) {
+            console.info('[S-SCROLL] rAF: before restore, scrollTop=', containerRef.current.scrollTop);
             containerRef.current.scrollTop = pos;
+            console.info('[S-SCROLL] rAF: after restore, scrollTop=', containerRef.current.scrollTop, 'expected=', pos);
+            // Check again after a short delay to see if something overwrites it
+            setTimeout(() => {
+              console.info('[S-SCROLL] rAF+100ms: scrollTop=', containerRef.current?.scrollTop, 'expected=', pos);
+            }, 100);
+          } else {
+            console.info('[S-SCROLL] rAF: containerRef.current is NULL');
           }
         });
+      } else {
+        console.info('[S-SCROLL] skip restore: pos=', pos, 'containerRef=', containerRef.current);
       }
       sessionStorage.removeItem('lg_scenario_scroll');
     }
   }, []);
 
+  // Log scrollTop on every re-render
+  useEffect(() => {
+    console.info('[S-SCROLL] render-effect #' + renderCount.current, 'scrollTop=', containerRef.current?.scrollTop);
+  });
+
   const handleSelect = () => {
-    if (containerRef.current) {
-      sessionStorage.setItem('lg_scenario_scroll', String(containerRef.current.scrollTop));
+    const el = containerRef.current;
+    const st = el?.scrollTop;
+    console.info('[S-SCROLL] handleSelect — containerRef.current=', el, 'scrollTop=', st);
+    if (el) {
+      sessionStorage.setItem('lg_scenario_scroll', String(st));
+      console.info('[S-SCROLL] handleSelect — saved to sessionStorage:', String(st));
+    } else {
+      console.info('[S-SCROLL] handleSelect — containerRef is NULL, nothing saved');
     }
     onSelectScenario();
   };
