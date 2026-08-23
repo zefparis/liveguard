@@ -9,14 +9,23 @@
  *   - resize (fires after dimensions are updated)
  *   - visualViewport.resize (most reliable on mobile — URL bar, keyboard)
  *
- * When the device is in landscape, the rotate overlay is shown and the
- * locked height is cleared (the overlay is position:fixed and covers
- * the viewport regardless of shell height).
+ * When the device is in landscape AND is a mobile/touch device, the rotate
+ * overlay is shown and the locked height is cleared (the overlay is
+ * position:fixed and covers the viewport regardless of shell height).
  *
- * Orientation detection: prefers window dimension comparison
- * (innerWidth > innerHeight) over screen.orientation.type because
- * dimensions always reflect the actual layout, while
- * screen.orientation.type can lag behind on some Android devices.
+ * Desktop guard: the rotate overlay is ONLY shown on mobile/touch devices.
+ * A desktop browser window (which typically has innerWidth > innerHeight)
+ * must never trigger the overlay — otherwise the site would be completely
+ * blocked for desktop visitors. Detection uses:
+ *   - matchMedia('(pointer: coarse)') — primary pointer is touch
+ *   - 'ontouchstart' in window || maxTouchPoints > 0 — touch API present
+ *   - max-width 900px — viewport is narrow enough to be a phone/tablet
+ * All three must be satisfied (coarse pointer + touch + narrow viewport)
+ * to treat the device as mobile. This prevents:
+ *   - Desktop with mouse (pointer: fine) → no overlay, even if window is wide
+ *   - Desktop narrowed to 400px (split-screen) → no overlay (no touch)
+ *   - Touch laptop with narrow window → no overlay (pointer: fine or
+ *     maxTouchPoints but viewport > 900px in most cases)
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -26,6 +35,45 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 // Set to false to disable logs once the issue is confirmed fixed
 const LOG_ORIENTATION = true;
+
+// Viewport width above which we assume desktop, regardless of touch.
+// Phones max out at ~430px, tablets at ~1024px. 900px is a safe cutoff
+// that covers phones in landscape (e.g. 812x375) while excluding
+// desktop windows and tablets in landscape (which have enough height
+// to not need the rotate overlay).
+const MOBILE_MAX_WIDTH = 900;
+
+function isTouchDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+  // pointer: coarse means the primary input is touch (no fine pointer
+  // like a mouse). This is the most reliable CSS media query for this.
+  const coarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+  // Fallback: explicit touch API presence (used elsewhere in this project:
+  // behaviorSession.ts:35, touchCollector.ts:60)
+  const hasTouchApi = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
+  return coarsePointer || hasTouchApi;
+}
+
+function isMobileViewport(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth <= MOBILE_MAX_WIDTH;
+}
+
+function isLandscapeOrientation(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth > window.innerHeight;
+}
+
+/**
+ * Returns true only if the device is a mobile/touch device in landscape.
+ * Desktop browsers (even with innerWidth > innerHeight) never trigger
+ * the overlay because they lack touch or have a wide viewport.
+ */
+function shouldShowRotateOverlay(): boolean {
+  if (typeof window === 'undefined') return false;
+  // Must be landscape AND mobile (touch + narrow viewport)
+  return isLandscapeOrientation() && isTouchDevice() && isMobileViewport();
+}
 
 function logOrientation(source: string): void {
   if (!LOG_ORIENTATION) return;
@@ -38,21 +86,18 @@ function logOrientation(source: string): void {
     ? window.visualViewport.height
     : -1;
   const dimLandscape = innerW > innerH;
+  const touch = isTouchDevice();
+  const mobileVP = isMobileViewport();
+  const shouldOverlay = shouldShowRotateOverlay();
   console.info(
     `[useLockedShell] source=${source}`,
     `innerW=${innerW} innerH=${innerH}`,
     `dimLandscape=${dimLandscape}`,
+    `touch=${touch} mobileVP=${mobileVP}`,
+    `shouldOverlay=${shouldOverlay}`,
     `screen.orientation.type=${screenType}`,
     `visualViewport.height=${vvH}`,
   );
-}
-
-function isLandscapeOrientation(): boolean {
-  if (typeof window === 'undefined') return false;
-  // Prefer dimension comparison — always reflects actual layout.
-  // screen.orientation.type can lag behind on some Android devices,
-  // causing the overlay to stay stuck when rotating back to portrait.
-  return window.innerWidth > window.innerHeight;
 }
 
 function measureViewportHeight(): number {
@@ -70,7 +115,8 @@ export function useLockedShell(phase: string) {
   const orientationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const lock = useCallback(() => {
-    if (isLandscapeOrientation()) {
+    // Only clear height for mobile landscape (where overlay shows)
+    if (shouldShowRotateOverlay()) {
       setLockedHeight(null);
       return;
     }
@@ -79,9 +125,9 @@ export function useLockedShell(phase: string) {
 
   const updateOrientation = useCallback((source: string = 'unknown') => {
     logOrientation(source);
-    const isLandscape = isLandscapeOrientation();
-    setShowRotateOverlay(isLandscape);
-    if (isLandscape) {
+    const shouldOverlay = shouldShowRotateOverlay();
+    setShowRotateOverlay(shouldOverlay);
+    if (shouldOverlay) {
       setLockedHeight(null);
     } else {
       setLockedHeight(measureViewportHeight());
