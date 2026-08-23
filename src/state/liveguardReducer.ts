@@ -13,6 +13,7 @@
 import type { LiveGuardSignals, LiveGuardPermissions, LiveGuardDeviceContext, LiveGuardQuality, LiveGuardSafeResponse, TouchDiagnosticsSafe } from '../liveguard/types';
 import type { CognitiveSignals } from '../liveguard/cognitive/cognitiveTypes';
 import type { BehaviorPayload, TouchDiagnosticsBehaviorSafe } from '../liveguard/behavior/behaviorTypes';
+import type { SuspensionData } from '../liveguard/behavior/telemetryTypes';
 
 export type Phase =
   | 'idle'
@@ -53,6 +54,7 @@ export interface LiveGuardState {
   response: LiveGuardSafeResponse | null;
   error: string | null;
   protectionCategory: string | null;
+  suspensionData: SuspensionData | null;
 }
 
 export const initialState: LiveGuardState = {
@@ -84,6 +86,7 @@ export const initialState: LiveGuardState = {
   response: null,
   error: null,
   protectionCategory: null,
+  suspensionData: null,
 };
 
 export type Action =
@@ -94,7 +97,7 @@ export type Action =
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
   | { type: 'SHOW_SCENARIO_SELECTOR'; sessionPublicId: string }
   | { type: 'START_SCENARIO_DEMO'; sessionPublicId: string }
-  | { type: 'SCENARIO_DEMO_SUSPENDED'; reason: string }
+  | { type: 'SCENARIO_DEMO_SUSPENDED'; reason: string; suspensionData?: SuspensionData }
   | { type: 'SCENARIO_DEMO_RESUME' }
   | { type: 'START'; sessionPublicId: string; testScope?: string | null; protectionCategory?: string | null }
   | { type: 'PREP_READY' }
@@ -177,7 +180,7 @@ export function liveguardReducer(state: LiveGuardState, action: Action): LiveGua
 
     case 'SCENARIO_DEMO_SUSPENDED': {
       if (!isValidTransition(state.phase, 'session_suspended')) return state;
-      return { ...state, phase: 'session_suspended', error: action.reason };
+      return { ...state, phase: 'session_suspended', error: action.reason, suspensionData: action.suspensionData ?? null };
     }
 
     case 'SCENARIO_DEMO_RESUME': {

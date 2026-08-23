@@ -40,6 +40,7 @@ import { ErrorScreen } from './screens/ErrorScreen';
 import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
 import { ScenarioDemoScreen } from './screens/ScenarioDemoScreen';
 import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
+import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
 
 export default function App() {
@@ -99,8 +100,8 @@ export default function App() {
     dispatch({ type: 'START_SCENARIO_DEMO', sessionPublicId: state.sessionPublicId });
   }, [state.sessionPublicId]);
 
-  const handleScenarioSuspended = useCallback((reason: string) => {
-    dispatch({ type: 'SCENARIO_DEMO_SUSPENDED', reason });
+  const handleScenarioSuspended = useCallback((data: SuspensionData) => {
+    dispatch({ type: 'SCENARIO_DEMO_SUSPENDED', reason: data.reason, suspensionData: data });
   }, []);
 
   const handleReverify = useCallback(() => {
@@ -336,6 +337,7 @@ export default function App() {
         {state.phase === 'session_suspended' && (
           <SessionSuspendedScreen
             reason={state.error ?? 'behavioral_divergence'}
+            suspensionData={state.suspensionData}
             onReverify={handleReverify}
             onBack={handleScenarioResume}
           />

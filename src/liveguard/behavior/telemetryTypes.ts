@@ -109,6 +109,16 @@ export interface BehaviorBeaconConfig {
 }
 
 /**
+ * Per-feature divergence data returned by the backend on invalidation.
+ */
+export interface FeatureBreakdown {
+  name: string;
+  current: number | null;
+  reference: number | null;
+  divergence: number;
+}
+
+/**
  * Server response from the behavior-ping endpoint.
  */
 export interface BehaviorPingResponse {
@@ -131,5 +141,30 @@ export interface BehaviorPingResponse {
   networkRiskScore?: number;
   /** Whether a longitudinal profile was found for this device. */
   longitudinalProfileFound?: boolean;
+  /** Per-feature divergence breakdown (only present when invalidated). */
+  featureBreakdown?: FeatureBreakdown[];
   message?: string;
+}
+
+/**
+ * Detection data passed from ScenarioDemoScreen to SessionSuspendedScreen.
+ * Contains only real values from the backend or client-side detection.
+ */
+export interface SuspensionData {
+  /** Suspension reason string. */
+  reason: string;
+  /** Final EMA divergence score (0-1), from backend. */
+  divergence?: number;
+  /** Consecutive breach count, from backend. */
+  consecutiveBreaches?: number;
+  /** Network risk score (scenario 6), from backend. */
+  networkRiskScore?: number;
+  /** Per-feature breakdown, from backend (behavioral scenarios only). */
+  featureBreakdown?: FeatureBreakdown[];
+  /** For blur/focus: milliseconds the tab was hidden. */
+  awayMs?: number;
+  /** For blur/focus: tolerance threshold in ms. */
+  toleranceMs?: number;
+  /** ISO timestamp of detection. */
+  detectedAt?: string;
 }

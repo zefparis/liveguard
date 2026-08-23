@@ -19,7 +19,7 @@ import {
   getOrCreateDeviceProfileId,
   collectDeviceContext,
 } from '../liveguard/behavior/behaviorBeacon';
-import type { DemoSimulationMode } from '../liveguard/behavior/telemetryTypes';
+import type { DemoSimulationMode, SuspensionData } from '../liveguard/behavior/telemetryTypes';
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -47,7 +47,7 @@ type Phase = 'idle' | 'analyzing' | 'detected' | 'transitioning';
 
 interface Props {
   sessionPublicId: string;
-  onSuspended: (reason: string) => void;
+  onSuspended: (data: SuspensionData) => void;
   onBack: () => void;
 }
 
@@ -206,6 +206,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const suspendedRef = useRef(false);
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const signalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastBeaconResponse = useRef<{ divergence?: number; consecutiveBreaches?: number; networkRiskScore?: number; featureBreakdown?: SuspensionData['featureBreakdown'] }>({});
 
   // ─── Start behavior collection + beacon on mount ──────────────────
   useEffect(() => {
@@ -227,7 +228,13 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         onInvalidation: () => {
           if (!suspendedRef.current) {
             suspendedRef.current = true;
-            onSuspended('behavioral_divergence');
+            onSuspended({
+              reason: 'behavioral_divergence',
+              divergence: lastBeaconResponse.current.divergence,
+              consecutiveBreaches: lastBeaconResponse.current.consecutiveBreaches,
+              featureBreakdown: lastBeaconResponse.current.featureBreakdown,
+              detectedAt: new Date().toISOString(),
+            });
           }
         },
         onNetworkRiskUpdate: (score) => {
@@ -274,7 +281,12 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
               if (!suspendedRef.current) {
                 suspendedRef.current = true;
                 setPhase('transitioning');
-                setTimeout(() => onSuspended('background_timeout'), 1500);
+                setTimeout(() => onSuspended({
+                  reason: 'background_timeout',
+                  awayMs,
+                  toleranceMs: 3000,
+                  detectedAt: new Date().toISOString(),
+                }), 1500);
               }
             }, 800);
           } else {
@@ -316,13 +328,13 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, []);
 
   // ─── Trigger suspension with transition ───────────────────────────
-  const triggerSuspension = useCallback((reason: string) => {
+  const triggerSuspension = useCallback((data: SuspensionData) => {
     if (suspendedRef.current) return;
     suspendedRef.current = true;
     setPhase('detected');
     setTimeout(() => {
       setPhase('transitioning');
-      setTimeout(() => onSuspended(reason), 1500);
+      setTimeout(() => onSuspended(data), 1500);
     }, 1000);
   }, [onSuspended]);
 
@@ -361,7 +373,11 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
             setNetworkRiskScore(serverRiskScore);
           }
           if (response.invalidated) {
-            triggerSuspension('mass_attempts_blocked');
+            triggerSuspension({
+              reason: 'mass_attempts_blocked',
+              networkRiskScore: serverRiskScore,
+              detectedAt: new Date().toISOString(),
+            });
             return;
           }
         }
@@ -370,13 +386,21 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           setNetworkRiskScore(serverRiskScore);
         }
         if (serverRiskScore >= 8) {
-          triggerSuspension('mass_attempts_blocked');
+          triggerSuspension({
+            reason: 'mass_attempts_blocked',
+            networkRiskScore: serverRiskScore,
+            detectedAt: new Date().toISOString(),
+          });
           return;
         }
         await new Promise((r) => setTimeout(r, 250));
       }
       // If server didn't invalidate, trigger locally
-      triggerSuspension('mass_attempts_blocked');
+      triggerSuspension({
+        reason: 'mass_attempts_blocked',
+        networkRiskScore: serverRiskScore || 8,
+        detectedAt: new Date().toISOString(),
+      });
       return;
     }
 
@@ -396,9 +420,20 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           if (response) {
             if (response.divergence !== undefined) setDivergence(response.divergence);
             if (response.consecutiveBreaches !== undefined) setConsecutiveBreaches(response.consecutiveBreaches);
+            lastBeaconResponse.current = {
+              divergence: response.divergence,
+              consecutiveBreaches: response.consecutiveBreaches,
+              featureBreakdown: response.featureBreakdown,
+            };
             if (response.invalidated) {
               setDemoSimulationMode('none');
-              triggerSuspension('behavioral_divergence');
+              triggerSuspension({
+                reason: 'behavioral_divergence',
+                divergence: response.divergence,
+                consecutiveBreaches: response.consecutiveBreaches,
+                featureBreakdown: response.featureBreakdown,
+                detectedAt: new Date().toISOString(),
+              });
               return;
             }
           }
@@ -406,7 +441,13 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         }
         // If server didn't invalidate, trigger locally for demo
         setDemoSimulationMode('none');
-        triggerSuspension('behavioral_divergence');
+        triggerSuspension({
+          reason: 'behavioral_divergence',
+          divergence: lastBeaconResponse.current.divergence ?? 0.5,
+          consecutiveBreaches: lastBeaconResponse.current.consecutiveBreaches ?? 3,
+          featureBreakdown: lastBeaconResponse.current.featureBreakdown,
+          detectedAt: new Date().toISOString(),
+        });
       });
 
       // Also send a beacon immediately to start server-side processing
