@@ -25,6 +25,9 @@
   "landing.ctaPrimary": "Essayer, ça prend un instant",
   "landing.ctaSecondary": "Comment ça fonctionne",
   "landing.partnerLink": "Vous êtes un partenaire ? Voir comment intégrer LiveGuard →",
+  "landing.scenariosTitle": "Voyez la protection en action",
+  "landing.scenariosSub": "Simulez des scénarios de fraude réels et regardez le système réagir en direct.",
+  "landing.scenariosCta": "Lancer les scénarios de démo",
 
   "hiw.title": "Comment fonctionne LiveGuard",
   "hiw.continuousTitle": "Pourquoi une protection continue, pas juste à la connexion ?",

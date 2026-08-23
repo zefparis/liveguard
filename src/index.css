@@ -2110,6 +2110,80 @@ body {
   border-bottom-color: var(--l-accent-blue);
 }
 
+/* ── Scenarios showcase block ── */
+.landing-scenarios {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(56, 162, 246, 0.08), rgba(139, 92, 246, 0.08));
+  border: 1.5px solid rgba(56, 162, 246, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.landing-scenarios-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.landing-scenarios-mosaic {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  flex-shrink: 0;
+}
+.landing-scenarios-mosaic span {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+.landing-scenarios-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--l-text);
+  margin: 0;
+}
+.landing-scenarios-sub {
+  font-size: 13px;
+  color: var(--l-text-faint);
+  margin: 0;
+  line-height: 1.4;
+}
+.landing-scenarios-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 20px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: pointer;
+  border: 1.5px solid rgba(56, 162, 246, 0.4);
+  background: rgba(56, 162, 246, 0.1);
+  color: var(--l-text);
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.landing-scenarios-btn:hover {
+  background: rgba(56, 162, 246, 0.18);
+  box-shadow: 0 8px 20px rgba(56, 162, 246, 0.25);
+}
+.landing-scenarios-btn:active {
+  transform: scale(.985);
+}
+.landing-scenarios-btn:disabled {
+  opacity: .7;
+  cursor: default;
+}
+
 /* ── 8. Scroll indicator ── */
 .landing-scroll-hint {
   margin: auto auto 6px;
