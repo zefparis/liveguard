@@ -2150,31 +2150,16 @@ body {
 }
 .landing-status-subrow .landing-status-label { flex: 1; }
 
-/* ── Shield hero images — hidden by default (mobile), shown on desktop
-   via @media (min-width: 901px) with theme-based selection.
-   Theme rules are FLAT (not nested inside the min-width media query)
-   to avoid CSS nesting issues with minifiers. The base .landing-shield-img
-   {display:none} has lower specificity than [data-theme] rules, so we
-   use !important on the base rule to keep images hidden on mobile
-   regardless of theme. On desktop, the min-width media query sets
-   display via theme rules with higher specificity. ── */
+/* ── Shield hero image — single image (shield-hero-dark.png) used in
+   both themes. Hidden on mobile, shown on desktop via @media (min-width: 901px).
+   In light mode, .landing-shield-vignette provides a dark background behind
+   the image for contrast. In dark mode, the vignette is hidden (the page
+   background is already dark). ── */
 .landing-shield-img {
   display: none !important;
 }
-.landing-shield-dark { display: none; }
-.landing-shield-light { display: none; }
-/* Explicit theme choice — only applies on desktop where the image
-   container is visible. The !important on base keeps mobile hidden. */
-@media (min-width: 901px) {
-  [data-theme="dark"] .landing-shield-dark { display: block !important; }
-  [data-theme="light"] .landing-shield-light { display: block !important; }
-}
-/* System fallback when no explicit data-theme is set */
-@media (min-width: 901px) and (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .landing-shield-dark { display: block !important; }
-}
-@media (min-width: 901px) and (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .landing-shield-light { display: block !important; }
+.landing-shield-vignette {
+  display: none;
 }
 
 /* ── Hero visual container — wrapper for shield + floating status cards ── */
@@ -2438,18 +2423,42 @@ body {
   }
 
   /* ── Shield image: centered in the visual column, large format.
-     Both images get the same sizing/animation; visibility is controlled
-     by the flat theme rules below (outside this media query). ── */
+     Single image (shield-hero-dark.png) used in both themes. ── */
   .landing-shield-img {
+    display: block !important;
     width: clamp(320px, 30vw, 450px);
     height: clamp(320px, 30vw, 450px);
     object-fit: contain;
     margin: 0 auto;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     animation: shield-float 6s ease-in-out infinite;
     pointer-events: none;
     user-select: none;
+  }
+
+  /* ── Vignette: dark rounded container behind the shield image.
+     Only visible in light mode — provides contrast so the dark shield
+     image stands out against the light page background.
+     In dark mode, the page background is already dark, so the vignette
+     is hidden (display:none via [data-theme="dark"] rule). ── */
+  .landing-shield-vignette {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(360px, 34vw, 510px);
+    height: clamp(360px, 34vw, 510px);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #141a2b, #0d1220);
+    z-index: 1;
+    pointer-events: none;
+  }
+  /* Hide vignette in dark mode (explicit or system) */
+  [data-theme="dark"] .landing-shield-vignette { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .landing-shield-vignette { display: none; }
   }
 
   /* ── Status block: floating overlay around the shield image ── */

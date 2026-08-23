@@ -209,17 +209,13 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
       <div className="landing-hero-grid">
         {/* ── Right column: shield image + floating status cards ── */}
         <div className="landing-hero-visual">
-          {/* Shield images — desktop only, theme-switched via CSS.
-              Both rendered; CSS shows/hides based on data-theme. */}
+          {/* Shield image — single image (shield-hero-dark.png) used in
+              both themes. In light mode, a dark vignette container behind
+              the image provides contrast (see .landing-shield-vignette). */}
+          <div className="landing-shield-vignette" aria-hidden="true" />
           <img
-            className="landing-shield-img landing-shield-dark"
+            className="landing-shield-img"
             src="/images/shield-hero-dark.png"
-            alt=""
-            aria-hidden="true"
-          />
-          <img
-            className="landing-shield-img landing-shield-light"
-            src="/images/shield-hero-light.png"
             alt=""
             aria-hidden="true"
           />
