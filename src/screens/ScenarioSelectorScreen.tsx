@@ -54,6 +54,46 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
 
   // ── DEBUG: attach scroll listeners to ALL candidate scrollable elements ──
   useEffect(() => {
+    // Check for multiple .landing-page instances
+    const allLanding = document.querySelectorAll('.landing-page');
+    console.info('[S-SCROLL] querySelectorAll(.landing-page).length =', allLanding.length);
+    allLanding.forEach((el, i) => {
+      const style = getComputedStyle(el);
+      console.info('[S-SCROLL] .landing-page[' + i + ']', {
+        scrollTop: el.scrollTop,
+        scrollHeight: el.scrollHeight,
+        clientHeight: el.clientHeight,
+        overflowY: style.overflowY,
+        position: style.position,
+        zIndex: style.zIndex,
+        display: style.display,
+        visibility: style.visibility,
+        opacity: style.opacity,
+        offsetParent: (el as HTMLElement).offsetParent?.tagName,
+        rect: el.getBoundingClientRect(),
+        isSameAsContainerRef: el === containerRef.current,
+      });
+    });
+
+    // Walk up DOM from containerRef to find all ancestors and their scroll behavior
+    if (containerRef.current) {
+      let node: Element | null = containerRef.current;
+      let depth = 0;
+      while (node && depth < 20) {
+        const style = getComputedStyle(node);
+        console.info('[S-SCROLL] ancestor[' + depth + ']', node.tagName + '.' + node.className,
+          'scrollTop=', node.scrollTop,
+          'scrollHeight=', node.scrollHeight,
+          'clientHeight=', node.clientHeight,
+          'overflowY=', style.overflowY,
+          'height=', style.height,
+          'rect=', node.getBoundingClientRect(),
+        );
+        node = node.parentElement;
+        depth++;
+      }
+    }
+
     const candidates: { name: string; el: Element | Window | Document }[] = [
       { name: 'window', el: window },
       { name: 'document', el: document },
@@ -64,8 +104,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
     if (root) candidates.push({ name: '#root', el: root });
     const shell = document.querySelector('.app-shell');
     if (shell) candidates.push({ name: '.app-shell', el: shell });
-    const landing = document.querySelector('.landing-page');
-    if (landing) candidates.push({ name: '.landing-page', el: landing });
+    allLanding.forEach((el, i) => candidates.push({ name: '.landing-page[' + i + ']', el }));
 
     // Log initial state of each candidate
     candidates.forEach(({ name, el }) => {
