@@ -2421,7 +2421,8 @@ body {
      Default follows prefers-color-scheme when no explicit data-theme. ── */
   .landing-shield-img {
     width: clamp(320px, 30vw, 450px);
-    height: auto;
+    height: clamp(320px, 30vw, 450px);
+    object-fit: contain;
     margin: 0 auto;
     position: relative;
     z-index: 1;
