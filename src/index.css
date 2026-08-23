@@ -2151,9 +2151,30 @@ body {
 .landing-status-subrow .landing-status-label { flex: 1; }
 
 /* ── Shield hero images — hidden by default (mobile), shown on desktop
-   via @media (min-width: 901px) with theme-based selection. ── */
+   via @media (min-width: 901px) with theme-based selection.
+   Theme rules are FLAT (not nested inside the min-width media query)
+   to avoid CSS nesting issues with minifiers. The base .landing-shield-img
+   {display:none} has lower specificity than [data-theme] rules, so we
+   use !important on the base rule to keep images hidden on mobile
+   regardless of theme. On desktop, the min-width media query sets
+   display via theme rules with higher specificity. ── */
 .landing-shield-img {
-  display: none;
+  display: none !important;
+}
+.landing-shield-dark { display: none; }
+.landing-shield-light { display: none; }
+/* Explicit theme choice — only applies on desktop where the image
+   container is visible. The !important on base keeps mobile hidden. */
+@media (min-width: 901px) {
+  [data-theme="dark"] .landing-shield-dark { display: block !important; }
+  [data-theme="light"] .landing-shield-light { display: block !important; }
+}
+/* System fallback when no explicit data-theme is set */
+@media (min-width: 901px) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .landing-shield-dark { display: block !important; }
+}
+@media (min-width: 901px) and (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .landing-shield-light { display: block !important; }
 }
 
 /* ── Hero visual container — wrapper for shield + floating status cards ── */
@@ -2417,8 +2438,8 @@ body {
   }
 
   /* ── Shield image: centered in the visual column, large format.
-     Theme switching: dark variant in dark mode, light in light mode.
-     Default follows prefers-color-scheme when no explicit data-theme. ── */
+     Both images get the same sizing/animation; visibility is controlled
+     by the flat theme rules below (outside this media query). ── */
   .landing-shield-img {
     width: clamp(320px, 30vw, 450px);
     height: clamp(320px, 30vw, 450px);
@@ -2429,16 +2450,6 @@ body {
     animation: shield-float 6s ease-in-out infinite;
     pointer-events: none;
     user-select: none;
-  }
-  .landing-shield-dark { display: none; }
-  .landing-shield-light { display: none; }
-  [data-theme="dark"] .landing-shield-dark { display: block; }
-  [data-theme="light"] .landing-shield-light { display: block; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .landing-shield-dark { display: block; }
-  }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) .landing-shield-light { display: block; }
   }
 
   /* ── Status block: floating overlay around the shield image ── */
