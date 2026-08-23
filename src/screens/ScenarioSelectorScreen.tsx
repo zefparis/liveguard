@@ -52,6 +52,60 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
     'visualViewport.height=', window.visualViewport?.height,
   );
 
+  // ── DEBUG: attach scroll listeners to ALL candidate scrollable elements ──
+  useEffect(() => {
+    const candidates: { name: string; el: Element | Window | Document }[] = [
+      { name: 'window', el: window },
+      { name: 'document', el: document },
+      { name: 'html', el: document.documentElement },
+      { name: 'body', el: document.body },
+    ];
+    const root = document.getElementById('root');
+    if (root) candidates.push({ name: '#root', el: root });
+    const shell = document.querySelector('.app-shell');
+    if (shell) candidates.push({ name: '.app-shell', el: shell });
+    const landing = document.querySelector('.landing-page');
+    if (landing) candidates.push({ name: '.landing-page', el: landing });
+
+    // Log initial state of each candidate
+    candidates.forEach(({ name, el }) => {
+      const e = el as Element;
+      if (e && e.tagName) {
+        const style = getComputedStyle(e);
+        console.info('[S-SCROLL] candidate', name, {
+          scrollTop: e.scrollTop,
+          scrollHeight: e.scrollHeight,
+          clientHeight: e.clientHeight,
+          overflowY: style.overflowY,
+          offsetHeight: (e as HTMLElement).offsetHeight,
+          rect: e.getBoundingClientRect(),
+        });
+      }
+    });
+
+    // Attach scroll listeners
+    const handlers: { name: string; fn: () => void }[] = [];
+    candidates.forEach(({ name, el }) => {
+      const fn = () => {
+        const e = el as Element;
+        if (e && e.tagName) {
+          console.info('[S-SCROLL] SCROLL EVENT on', name, 'scrollTop=', e.scrollTop);
+        } else if (el === window) {
+          console.info('[S-SCROLL] SCROLL EVENT on window, scrollY=', window.scrollY);
+        }
+      };
+      (el as EventTarget).addEventListener('scroll', fn, { passive: true });
+      handlers.push({ name, fn });
+    });
+
+    return () => {
+      handlers.forEach(({ name, fn }) => {
+        const candidate = candidates.find(c => c.name === name);
+        if (candidate) (candidate.el as EventTarget).removeEventListener('scroll', fn);
+      });
+    };
+  }, []);
+
   // Restore scroll position on mount (saved before navigating to detail)
   useEffect(() => {
     const saved = sessionStorage.getItem('lg_scenario_scroll');
