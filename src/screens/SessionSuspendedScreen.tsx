@@ -28,7 +28,7 @@ export function SessionSuspendedScreen({ reason, onReverify, onBack }: Props) {
         : t('demo.suspendedBehavioral');
 
   return (
-    <div className="screen-center">
+    <div className="screen-scroll">
       <div style={{ fontSize: 48 }}>🔒</div>
       <h1>{t('demo.sessionSuspended')}</h1>
       <p className="muted" style={{ maxWidth: 320, textAlign: 'center', lineHeight: 1.5 }}>

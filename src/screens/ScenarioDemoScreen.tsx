@@ -172,7 +172,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, [t, onSuspended]);
 
   return (
-    <div style={{ padding: '20px', maxWidth: 480, margin: '0 auto' }}>
+    <div className="landing-page" style={{ paddingTop: '20px' }}>
       {/* Back button */}
       <button
         onClick={onBack}

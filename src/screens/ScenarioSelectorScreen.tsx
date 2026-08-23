@@ -40,7 +40,7 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
   const { t } = useI18n();
 
   return (
-    <div style={{ padding: '20px', maxWidth: 480, margin: '0 auto' }}>
+    <div className="landing-page" style={{ paddingTop: '20px' }}>
       <button
         onClick={onBack}
         style={{
