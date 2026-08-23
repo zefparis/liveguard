@@ -42,19 +42,34 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
   const containerRef = useRef<HTMLDivElement>(null);
   const renderCount = useRef(0);
   renderCount.current++;
-  console.info('[S-SCROLL] render #' + renderCount.current, 'containerRef.current=', containerRef.current, 'scrollTop=', containerRef.current?.scrollTop);
+  console.info('[S-SCROLL] render #' + renderCount.current,
+    'containerRef.current=', containerRef.current,
+    'scrollTop=', containerRef.current?.scrollTop,
+    'scrollHeight=', containerRef.current?.scrollHeight,
+    'clientHeight=', containerRef.current?.clientHeight,
+    'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
+    'window.innerHeight=', window.innerHeight,
+    'visualViewport.height=', window.visualViewport?.height,
+  );
 
   // Restore scroll position on mount (saved before navigating to detail)
   useEffect(() => {
     const saved = sessionStorage.getItem('lg_scenario_scroll');
-    console.info('[S-SCROLL] mount useEffect — sessionStorage saved=', saved, 'containerRef.current=', containerRef.current);
+    console.info('[S-SCROLL] mount useEffect — sessionStorage saved=', saved,
+      'containerRef.current=', containerRef.current,
+      'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
+    );
     if (saved) {
       const pos = parseInt(saved, 10);
       if (pos > 0 && containerRef.current) {
         console.info('[S-SCROLL] about to restore, pos=', pos, 'current scrollTop=', containerRef.current.scrollTop);
         requestAnimationFrame(() => {
           if (containerRef.current) {
-            console.info('[S-SCROLL] rAF: before restore, scrollTop=', containerRef.current.scrollTop);
+            console.info('[S-SCROLL] rAF: before restore, scrollTop=', containerRef.current.scrollTop,
+              'scrollHeight=', containerRef.current.scrollHeight,
+              'clientHeight=', containerRef.current.clientHeight,
+              'app-shell height=', document.querySelector('.app-shell')?.getBoundingClientRect().height,
+            );
             containerRef.current.scrollTop = pos;
             console.info('[S-SCROLL] rAF: after restore, scrollTop=', containerRef.current.scrollTop, 'expected=', pos);
             // Check again after a short delay to see if something overwrites it
