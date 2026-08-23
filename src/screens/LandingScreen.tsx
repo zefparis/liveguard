@@ -202,63 +202,82 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
       {/* ── 1. Header ── */}
       <LandingHeader />
 
-      {/* ── 2+3. Hero grid (status accordion + hero title/CTA) ── */}
+      {/* ── 2+3. Hero grid (hero title/CTA + shield visual with floating status) ── */}
       {/* On mobile: stacks vertically (status block, then hero).
           On desktop (min-width: 901px): 2-column grid, hero on left,
-          status block on right. Single JSX tree, CSS controls layout. */}
+          shield image + floating status cards on right. */}
       <div className="landing-hero-grid">
-        {/* ── 2. Protection status accordion ── */}
-        <section className="landing-status-block">
-          <StatusSection
-            icon={ICONS.brain}
-            labelKey="landing.status.section.cognitive"
-            descKey="landing.status.section.cognitive.desc"
-            status="active"
-            accent="cognitive"
-            expanded={!!expanded.cognitive}
-            onToggle={() => toggleSection('cognitive')}
-          >
-            <ul className="landing-status-list">
-              <li>{t('landing.status.cognitive.stroop')}</li>
-              <li>{t('landing.status.cognitive.nback')}</li>
-              <li>{t('landing.status.cognitive.reflex')}</li>
-              <li>{t('landing.status.cognitive.digitSpan')}</li>
-              <li>{t('landing.status.cognitive.trailTap')}</li>
-            </ul>
-          </StatusSection>
+        {/* ── Right column: shield image + floating status cards ── */}
+        <div className="landing-hero-visual">
+          {/* Shield images — desktop only, theme-switched via CSS.
+              Both rendered; CSS shows/hides based on data-theme. */}
+          <img
+            className="landing-shield-img landing-shield-dark"
+            src="/images/shield-hero-dark.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            className="landing-shield-img landing-shield-light"
+            src="/images/shield-hero-light.png"
+            alt=""
+            aria-hidden="true"
+          />
 
-          <StatusSection
-            icon={ICONS.activity}
-            labelKey="landing.status.section.behavioral"
-            descKey="landing.status.section.behavioral.desc"
-            status="active"
-            accent="behavioral"
-            partialBadge
-            expanded={!!expanded.behavioral}
-            onToggle={() => toggleSection('behavioral')}
-          >
-            <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
-            <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
-            <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
-          </StatusSection>
+          {/* Protection status accordion — stacks on mobile, floats
+              around the shield image on desktop. */}
+          <section className="landing-status-block">
+            <StatusSection
+              icon={ICONS.brain}
+              labelKey="landing.status.section.cognitive"
+              descKey="landing.status.section.cognitive.desc"
+              status="active"
+              accent="cognitive"
+              expanded={!!expanded.cognitive}
+              onToggle={() => toggleSection('cognitive')}
+            >
+              <ul className="landing-status-list">
+                <li>{t('landing.status.cognitive.stroop')}</li>
+                <li>{t('landing.status.cognitive.nback')}</li>
+                <li>{t('landing.status.cognitive.reflex')}</li>
+                <li>{t('landing.status.cognitive.digitSpan')}</li>
+                <li>{t('landing.status.cognitive.trailTap')}</li>
+              </ul>
+            </StatusSection>
 
-          <StatusSection
-            icon={ICONS.wifi}
-            labelKey="landing.status.section.network"
-            descKey="landing.status.section.network.desc"
-            status="active"
-            accent="network"
-            expanded={!!expanded.network}
-            onToggle={() => toggleSection('network')}
-          >
-            <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
-            <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
-            <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
-            <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
-          </StatusSection>
-        </section>
+            <StatusSection
+              icon={ICONS.activity}
+              labelKey="landing.status.section.behavioral"
+              descKey="landing.status.section.behavioral.desc"
+              status="active"
+              accent="behavioral"
+              partialBadge
+              expanded={!!expanded.behavioral}
+              onToggle={() => toggleSection('behavioral')}
+            >
+              <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
+              <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
+              <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
+            </StatusSection>
 
-        {/* ── 3. Hero ── */}
+            <StatusSection
+              icon={ICONS.wifi}
+              labelKey="landing.status.section.network"
+              descKey="landing.status.section.network.desc"
+              status="active"
+              accent="network"
+              expanded={!!expanded.network}
+              onToggle={() => toggleSection('network')}
+            >
+              <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
+              <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
+              <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
+              <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
+            </StatusSection>
+          </section>
+        </div>
+
+        {/* ── Left column: hero title + CTA ── */}
         <section className="landing-hero">
           <div className="landing-hero-content">
             <h1>{t('landing.heroTitle')}</h1>

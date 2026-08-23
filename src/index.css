@@ -2150,6 +2150,23 @@ body {
 }
 .landing-status-subrow .landing-status-label { flex: 1; }
 
+/* ── Shield hero images — hidden by default (mobile), shown on desktop
+   via @media (min-width: 901px) with theme-based selection. ── */
+.landing-shield-img {
+  display: none;
+}
+
+/* ── Hero visual container — wrapper for shield + floating status cards ── */
+.landing-hero-visual {
+  position: relative;
+}
+
+/* ── Shield float animation ── */
+@keyframes shield-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
 /* ── 3. Hero ── */
 .landing-hero {
   position: relative;
@@ -2338,6 +2355,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .landing-scroll-hint span { animation: none; }
+  .landing-shield-img { animation: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2374,8 +2392,7 @@ body {
   }
 
   /* Hero grid: 2 columns — hero (title+paragraph+CTA) on left,
-     status accordion on right. On mobile, this wrapper is a simple
-     block container and children stack in natural order.
+     shield visual + floating status cards on right.
      Gap uses clamp() for fluid spacing across the desktop range.
      At narrow desktop widths (901-1199px), use equal 1fr/1fr columns
      so neither side feels crushed. Above 1200px, give hero slightly
@@ -2388,16 +2405,76 @@ body {
     margin-top: 20px;
   }
 
-  /* Place hero on the left (column 1), status block on the right (column 2).
-     In the JSX, status block comes first, hero second. Use order to swap. */
-  .landing-hero-grid .landing-status-block {
+  /* Place hero on the left (column 1), visual on the right (column 2).
+     In the JSX, visual container comes first, hero second. Use order to swap. */
+  .landing-hero-grid .landing-hero-visual {
     order: 2;
-    margin-top: 0;
   }
   .landing-hero-grid .landing-hero {
     order: 1;
     margin-top: 0;
     padding-top: 10px;
+  }
+
+  /* ── Shield image: centered in the visual column, large format.
+     Theme switching: dark variant in dark mode, light in light mode.
+     Default follows prefers-color-scheme when no explicit data-theme. ── */
+  .landing-shield-img {
+    width: clamp(320px, 30vw, 450px);
+    height: auto;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: shield-float 6s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+  }
+  .landing-shield-dark { display: none; }
+  .landing-shield-light { display: none; }
+  [data-theme="dark"] .landing-shield-dark { display: block; }
+  [data-theme="light"] .landing-shield-light { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .landing-shield-dark { display: block; }
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .landing-shield-light { display: block; }
+  }
+
+  /* ── Status block: floating overlay around the shield image ── */
+  .landing-hero-visual .landing-status-block {
+    position: relative;
+    margin-top: 0;
+    z-index: 2;
+  }
+
+  /* Each status section floats at a different position around the shield.
+     The shield is centered in the visual column; the 3 cards overlap
+     its edges at different corners. Cards have solid backgrounds so
+     they remain readable over the image. */
+  .landing-hero-visual .landing-status-section {
+    position: absolute;
+    width: clamp(220px, 22vw, 300px);
+    z-index: 3;
+  }
+  /* Cognitive — top-left, overlapping shield's upper-left edge */
+  .landing-hero-visual .landing-status-section:nth-child(1) {
+    top: clamp(20px, 4vw, 60px);
+    left: 0;
+  }
+  /* Behavioral — bottom-left, overlapping shield's lower-left edge */
+  .landing-hero-visual .landing-status-section:nth-child(2) {
+    bottom: clamp(20px, 4vw, 60px);
+    left: 0;
+  }
+  /* Network — bottom-right, overlapping shield's lower-right edge */
+  .landing-hero-visual .landing-status-section:nth-child(3) {
+    bottom: clamp(60px, 8vw, 120px);
+    right: 0;
+  }
+
+  /* Give the visual column enough min-height to contain the shield + overlays */
+  .landing-hero-visual {
+    min-height: clamp(420px, 40vw, 560px);
   }
 
   /* Larger hero title on desktop — fluid from 30px (901px) to 44px (1467px+).
@@ -2470,7 +2547,7 @@ body {
    to avoid the hero text spanning 900px+ wide. ── */
 @media (min-width: 1920px) {
   /* Hero: 3 columns — hero content (col 1), spacer (col 2, empty),
-     status block (col 3). Explicit grid-column assignment prevents
+     visual column (col 3). Explicit grid-column assignment prevents
      the empty middle column from being skipped by grid auto-placement. */
   .landing-hero-grid {
     grid-template-columns: 1fr 0.6fr 1fr;
@@ -2479,7 +2556,7 @@ body {
     order: 1;
     grid-column: 1;
   }
-  .landing-hero-grid .landing-status-block {
+  .landing-hero-grid .landing-hero-visual {
     order: 2;
     grid-column: 3;
   }
