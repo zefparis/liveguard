@@ -2,7 +2,7 @@
  * LandingHeader — shared header for landing-family screens
  * (landing, how-it-works, implementation).
  *
- * Shield-check gradient badge + "LiveGuard" wordmark + theme toggle + FR/EN switch.
+ * Shield-pulse LiveGuard logo + wordmark + theme toggle + FR/EN switch.
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -10,6 +10,7 @@
 
 import { useI18n } from '../i18n/I18nContext';
 import { useTheme } from '../hooks/useTheme';
+import { LiveGuardLogo } from './LiveGuardLogo';
 
 export function LandingHeader({ onLogoClick }: { onLogoClick?: () => void }) {
   const { locale, setLocale } = useI18n();
@@ -24,14 +25,7 @@ export function LandingHeader({ onLogoClick }: { onLogoClick?: () => void }) {
         tabIndex={onLogoClick ? 0 : undefined}
         aria-label={onLogoClick ? 'LiveGuard — home' : undefined}
       >
-        <span className="landing-brand-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 2.6 4.6 5.6v5.2c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V5.6L12 2.6Z"
-                  fill="#fff" fillOpacity=".95"/>
-            <path d="m8.7 11.6 2.3 2.3 4.3-4.5" stroke="#5b6cf0" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-          </svg>
-        </span>
+        <LiveGuardLogo size={38} />
         <span className="landing-brand-name">LiveGuard</span>
       </div>
 

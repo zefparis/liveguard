@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
+import { LiveGuardLogo } from '../components/LiveGuardLogo';
 import type { LiveGuardSafeResponse } from '../liveguard/types';
 import type { CognitiveSignals } from '../liveguard/cognitive/cognitiveTypes';
 
@@ -41,14 +42,7 @@ function PuzzleIcon() {
 }
 
 function ShieldCheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden width="22" height="22">
-      <path d="M12 2.6 4.6 5.6v5.2c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V5.6L12 2.6Z"
-            stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none"/>
-      <path d="m8.7 11.6 2.3 2.3 4.3-4.5" stroke="currentColor" strokeWidth="1.8"
-            strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-    </svg>
-  );
+  return <LiveGuardLogo size={22} />;
 }
 
 function LockIcon() {

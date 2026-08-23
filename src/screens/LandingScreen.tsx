@@ -17,6 +17,7 @@
 import { useState, useCallback, type ReactNode } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { LandingHeader } from '../components/LandingHeader';
+import { LiveGuardLogo } from '../components/LiveGuardLogo';
 import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 
 interface Props {
@@ -321,12 +322,7 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         <span className="landing-proof-pill">
           <span className="landing-proof-icons" aria-hidden="true">
             <span className="landing-proof-people">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M12 2.6 4.6 5.6v5.2c0 4.6 3.1 8.9 7.4 10.4 4.3-1.5 7.4-5.8 7.4-10.4V5.6L12 2.6Z"
-                      fill="#fff" fillOpacity=".95"/>
-                <path d="m8.7 11.6 2.3 2.3 4.3-4.5" stroke="#0da678" strokeWidth="2"
-                      strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              </svg>
+              <LiveGuardLogo size={16} />
             </span>
             <span className="landing-proof-unipay">U</span>
           </span>
