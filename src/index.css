@@ -2356,7 +2356,15 @@ body {
 }
 
 @media (min-width: 901px) {
-  /* Expand container for desktop */
+  /* Expand app-shell for desktop — the parent container of .landing-page.
+     Without this, .app-shell stays at max-width: 430px (its mobile default)
+     and constrains all content to a narrow left-aligned column even though
+     .landing-page itself expands to 1100px. */
+  .app-shell {
+    max-width: 1100px;
+  }
+
+  /* Expand content container for desktop */
   .landing-page {
     max-width: 1100px;
     padding: 0 40px calc(40px + env(safe-area-inset-bottom));
