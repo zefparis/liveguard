@@ -2359,24 +2359,29 @@ body {
   /* Expand app-shell for desktop — the parent container of .landing-page.
      Without this, .app-shell stays at max-width: 430px (its mobile default)
      and constrains all content to a narrow left-aligned column even though
-     .landing-page itself expands to 1100px. */
+     .landing-page itself expands to 1320px. */
   .app-shell {
     max-width: 1320px;
   }
 
-  /* Expand content container for desktop */
+  /* Expand content container for desktop.
+     Padding uses clamp() for fluid transition from tablet to ultra-wide. */
   .landing-page {
     max-width: 1320px;
-    padding: 0 48px calc(40px + env(safe-area-inset-bottom));
+    padding: 0 clamp(24px, 3vw, 48px) calc(40px + env(safe-area-inset-bottom));
   }
 
   /* Hero grid: 2 columns — hero (title+paragraph+CTA) on left,
      status accordion on right. On mobile, this wrapper is a simple
-     block container and children stack in natural order. */
+     block container and children stack in natural order.
+     Gap uses clamp() for fluid spacing across the desktop range.
+     At narrow desktop widths (901-1199px), use equal 1fr/1fr columns
+     so neither side feels crushed. Above 1200px, give hero slightly
+     more room (1.1fr/1fr). */
   .landing-hero-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 64px;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 4vw, 64px);
     align-items: start;
     margin-top: 20px;
   }
@@ -2393,27 +2398,28 @@ body {
     padding-top: 10px;
   }
 
-  /* Larger hero title on desktop */
+  /* Larger hero title on desktop — fluid from 30px (901px) to 44px (1467px+).
+     Wider range than before (was 34-42px) for better scaling. */
   .landing-hero h1 {
-    font-size: clamp(34px, 4vw, 42px);
+    font-size: clamp(30px, 3vw, 44px);
   }
   .landing-lede {
-    font-size: 17px;
+    font-size: clamp(15px, 1.1vw, 18px);
     max-width: 42ch;
   }
 
   /* Show the hero CTA on desktop */
   .landing-hero-cta {
     display: flex;
-    margin-top: 24px;
+    margin-top: clamp(18px, 2vw, 28px);
     min-height: 50px;
     max-width: 240px;
   }
 
-  /* Steps: 3-column grid on desktop */
+  /* Steps: 3-column grid on desktop with fluid gap */
   .landing-step-list {
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: clamp(16px, 2vw, 28px);
   }
   /* Step cards: stack content vertically on desktop (icon on top,
      number, then text) instead of horizontal row */
@@ -2423,24 +2429,24 @@ body {
     text-align: center;
     justify-items: center;
     gap: 12px;
-    padding: 24px 18px;
+    padding: clamp(20px, 1.8vw, 28px) clamp(16px, 1.4vw, 22px);
   }
   .landing-step-card p {
-    font-size: 14px;
+    font-size: clamp(13px, 0.9vw, 15px);
   }
 
-  /* Bottom CTAs: horizontal row on desktop */
+  /* Bottom CTAs: horizontal row on desktop with fluid gap */
   .landing-ctas {
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: clamp(12px, 1.5vw, 20px);
     max-width: 820px;
     margin-left: auto;
     margin-right: auto;
   }
 
-  /* Social proof: keep centered, add a bit more top spacing */
+  /* Social proof: keep centered, fluid top spacing */
   .landing-proof {
-    margin-top: 40px;
+    margin-top: clamp(32px, 3vw, 48px);
   }
 
   /* Scroll hint: hide on desktop (no scroll needed, content fits) */
@@ -2448,6 +2454,20 @@ body {
     display: none;
   }
 }
+
+/* ── Narrow desktop (901-1199px): equal hero columns ── is the default
+   above. Wider desktop (1200px+): give hero slightly more room. ── */
+@media (min-width: 1200px) {
+  .landing-hero-grid {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+/* ── Ultra-wide (1600px+): no layout changes needed.
+   max-width: 1320px keeps text readable. Background gradients
+   (.landing-page::before is position:fixed; inset:0) and body
+   background cover the full viewport regardless of container width.
+   No additional adjustments required. ── */
 
 /* ═══════════════════════════════════════════════════════════════
    DESKTOP-ONLY SECTIONS — hidden on mobile (display:none by default),
@@ -2466,7 +2486,7 @@ body {
   /* ── How it works: 3-card grid ── */
   .landing-howitworks {
     display: block;
-    margin-top: 56px;
+    margin-top: clamp(40px, 4vw, 64px);
   }
   .landing-howitworks-label {
     display: block;
@@ -2480,14 +2500,14 @@ body {
   .landing-howitworks-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: clamp(16px, 2vw, 28px);
   }
   .landing-howitworks-card {
     --a: 79 124 255;
     background: var(--l-surface);
     border: 1px solid var(--l-border);
     border-radius: 12px;
-    padding: 22px;
+    padding: clamp(18px, 1.8vw, 26px);
     box-shadow: var(--l-shadow-soft);
   }
   .landing-howitworks-card[data-accent="indigo"] { --a: 79 124 255; }
@@ -2503,13 +2523,13 @@ body {
   }
   .landing-howitworks-card h3 {
     margin: 0 0 8px;
-    font-size: 16px;
+    font-size: clamp(15px, 1.1vw, 17px);
     font-weight: 700;
     color: var(--l-text);
   }
   .landing-howitworks-card p {
     margin: 0;
-    font-size: 14px;
+    font-size: clamp(13px, 0.9vw, 15px);
     line-height: 1.5;
     color: var(--l-text-soft);
   }
@@ -2518,10 +2538,10 @@ body {
   .landing-domain {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    gap: 40px;
+    gap: clamp(28px, 3vw, 48px);
     align-items: center;
-    margin-top: 56px;
-    padding: 32px;
+    margin-top: clamp(40px, 4vw, 64px);
+    padding: clamp(24px, 2.5vw, 40px);
     border-radius: 14px;
     border: 1px solid var(--l-border-strong);
     background: linear-gradient(135deg, var(--l-surface-soft), var(--l-surface));
@@ -2543,7 +2563,7 @@ body {
   }
   .landing-domain h2 {
     margin: 0;
-    font-size: 22px;
+    font-size: clamp(19px, 1.6vw, 24px);
     font-weight: 750;
     letter-spacing: -.02em;
     line-height: 1.25;
@@ -2551,7 +2571,7 @@ body {
   }
   .landing-domain p {
     margin: 0;
-    font-size: 15px;
+    font-size: clamp(14px, 1vw, 16px);
     line-height: 1.55;
     color: var(--l-text-soft);
   }
@@ -2565,9 +2585,9 @@ body {
   .landing-domain-terminal {
     background: #0d1220;
     border-radius: 10px;
-    padding: 20px 22px;
+    padding: clamp(16px, 1.6vw, 24px) clamp(18px, 1.8vw, 26px);
     font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
-    font-size: 12.5px;
+    font-size: clamp(11.5px, 0.85vw, 13.5px);
     line-height: 1.9;
     color: #a5b4d4;
   }
@@ -2583,8 +2603,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 48px;
-    padding-top: 24px;
+    margin-top: clamp(36px, 3.5vw, 56px);
+    padding-top: clamp(20px, 2vw, 32px);
     border-top: 0.5px solid var(--l-border-strong);
     font-size: 13px;
     color: var(--l-text-faint);
@@ -2601,7 +2621,7 @@ body {
   }
   .landing-footer-links {
     display: flex;
-    gap: 28px;
+    gap: clamp(20px, 2vw, 36px);
   }
 }
 
