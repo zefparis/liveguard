@@ -198,7 +198,6 @@
 
   "demo.title": "Scénarios de démonstration",
   "demo.description": "Simulez des attaques et observez la détection comportementale en temps réel.",
-  "demo.demoModeWarning": "Mode démo — les signaux sont simulés pour la démonstration.",
   "demo.scenario": "Scénario",
   "demo.recipient": "Bénéficiaire",
   "demo.recipientPlaceholder": "Nom du bénéficiaire",

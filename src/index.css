@@ -2226,13 +2226,35 @@ body {
   color: #60a5fa; font-size: 13px;
   margin-bottom: 12px; cursor: pointer;
 }
-.demo-warning {
-  background: rgba(255, 200, 0, 0.1);
-  border: 1px solid rgba(255, 200, 0, 0.3);
-  border-radius: 8px; padding: 8px 12px;
-  margin-bottom: 16px; font-size: 12px; color: #fbbf24;
-}
 .demo-page-title { font-size: 24px; margin-bottom: 8px; }
+
+/* ── Scenario 1: live away-timer ── */
+.demo-s1-timer {
+  width: 90%; max-width: 340px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px; padding: 14px 16px;
+}
+.demo-s1-timer-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: #60a5fa;
+  margin-bottom: 10px;
+}
+.demo-s1-timer-icon { font-size: 16px; }
+.demo-s1-timer-track {
+  height: 6px; border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.demo-s1-timer-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.1s linear, background 0.3s ease;
+}
+.demo-s1-timer-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: rgba(255, 255, 255, 0.4);
+  margin-top: 6px; font-family: 'SF Mono', monospace;
+}
 .demo-page-desc { font-size: 13px; margin-bottom: 20px; }
 .demo-card-grid { display: flex; flex-direction: column; gap: 12px; }
 .demo-card {

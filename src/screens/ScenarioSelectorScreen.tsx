@@ -56,10 +56,6 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
         ← {t('demo.backToScenarios')}
       </button>
 
-      <div className="demo-warning">
-        ⚠️ {t('demo.demoModeWarning')}
-      </div>
-
       <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>
         {t('demo.title')}
       </h1>

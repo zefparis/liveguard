@@ -201,10 +201,12 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const [consecutiveBreaches, setConsecutiveBreaches] = useState(0);
   const [scenario1Active, setScenario1Active] = useState(false);
   const [scenario1HiddenAt, setScenario1HiddenAt] = useState<number | null>(null);
+  const [scenario1AwayMs, setScenario1AwayMs] = useState(0);
   const [buttonPulsing, setButtonPulsing] = useState(false);
 
   const suspendedRef = useRef(false);
   const scenario1HiddenAtRef = useRef<number | null>(null);
+  const scenario1ActiveRef = useRef(false);
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const signalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastBeaconResponse = useRef<{ divergence?: number; consecutiveBreaches?: number; networkRiskScore?: number; featureBreakdown?: SuspensionData['featureBreakdown'] }>({});
@@ -227,6 +229,8 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       },
       {
         onInvalidation: () => {
+          // Scenario 1 (blur/focus) is purely client-side — ignore beacon invalidations
+          if (scenario1ActiveRef.current) return;
           if (!suspendedRef.current) {
             suspendedRef.current = true;
             onSuspended({
@@ -276,13 +280,16 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       if (document.hidden) {
         scenario1HiddenAtRef.current = Date.now();
         setScenario1HiddenAt(Date.now());
+        setScenario1AwayMs(0);
         setPhase('analyzing');
       } else {
         const hiddenAt = scenario1HiddenAtRef.current;
         if (hiddenAt !== null) {
           const awayMs = Date.now() - hiddenAt;
+          console.info('[S1] visibilitychange: returned, awayMs=', awayMs, 'threshold=3000');
           if (awayMs > 3000) {
             // Detected
+            console.info('[S1] awayMs > 3000 → triggering suspension');
             setPhase('detected');
             setTimeout(() => {
               if (!suspendedRef.current) {
@@ -297,11 +304,13 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
               }
             }, 800);
           } else {
+            console.info('[S1] awayMs <= 3000 → back to idle');
             setPhase('idle');
           }
         }
         scenario1HiddenAtRef.current = null;
         setScenario1HiddenAt(null);
+        setScenario1AwayMs(0);
       }
     };
 
@@ -310,6 +319,21 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [scenario1Active, onSuspended]);
+
+  // ─── Live away-timer for scenario 1 ───────────────────────────────
+  // Updates scenario1AwayMs every 100ms while the tab is hidden.
+  // Browser throttles JS in hidden tabs, so this may not fire reliably
+  // while away — but it will catch up on return, showing the real elapsed
+  // time before the visibilitychange handler processes it.
+  useEffect(() => {
+    if (scenario1HiddenAt === null) return;
+    const interval = setInterval(() => {
+      if (scenario1HiddenAtRef.current !== null) {
+        setScenario1AwayMs(Date.now() - scenario1HiddenAtRef.current);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [scenario1HiddenAt]);
 
   // ─── Cleanup timers on unmount ────────────────────────────────────
   useEffect(() => {
@@ -354,6 +378,8 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     setDivergence(0);
     setConsecutiveBreaches(0);
     setScenario1Active(false);
+    scenario1ActiveRef.current = false;
+    scenario1HiddenAtRef.current = null;
 
     // Button pulse for 0.7s
     setButtonPulsing(true);
@@ -363,6 +389,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     // Scenario 1: blur/focus — instruct user to switch tabs
     if (scenario.id === 1) {
       setScenario1Active(true);
+      scenario1ActiveRef.current = true;
       setPhase('idle');
       return;
     }
@@ -468,6 +495,8 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   // ─── Reset state ──────────────────────────────────────────────────
   const resetState = useCallback(() => {
     setScenario1Active(false);
+    scenario1ActiveRef.current = false;
+    scenario1HiddenAtRef.current = null;
     setDemoSimulationMode('none');
     setActiveScenario(null);
     setPhase('idle');
@@ -553,10 +582,26 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         </div>
       )}
 
-      {/* Scenario 1: hidden timer */}
+      {/* Scenario 1: live away-timer with progress bar */}
       {scenario.id === 1 && phase === 'analyzing' && scenario1HiddenAt !== null && (
-        <div className="demo-instruction demo-instruction-warn">
-          ⏱️ Onglet caché — minuteur de tolérance en cours…
+        <div className="demo-s1-timer">
+          <div className="demo-s1-timer-header">
+            <span className="demo-s1-timer-icon">⏱️</span>
+            <span>Onglet caché — surveillance active…</span>
+          </div>
+          <div className="demo-s1-timer-track">
+            <div
+              className="demo-s1-timer-fill"
+              style={{
+                width: `${Math.min(100, (scenario1AwayMs / 3000) * 100)}%`,
+                background: scenario1AwayMs >= 3000 ? '#ef4444' : scenario1AwayMs >= 1500 ? '#f59e0b' : '#3b82f6',
+              }}
+            />
+          </div>
+          <div className="demo-s1-timer-labels">
+            <span>{(scenario1AwayMs / 1000).toFixed(1)}s</span>
+            <span>seuil: 3.0s</span>
+          </div>
         </div>
       )}
 

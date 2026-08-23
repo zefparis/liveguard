@@ -198,7 +198,6 @@
 
   "demo.title": "Demo Scenarios",
   "demo.description": "Simulate attacks and observe real-time behavioral detection.",
-  "demo.demoModeWarning": "Demo mode — signals are simulated for demonstration.",
   "demo.scenario": "Scenario",
   "demo.recipient": "Recipient",
   "demo.recipientPlaceholder": "Recipient name",
