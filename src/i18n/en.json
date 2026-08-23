@@ -241,6 +241,8 @@
   "demo.suspendedBehavioral": "Behavioral anomaly detected. Re-verification required.",
   "demo.reverifyButton": "Re-verify",
   "demo.backToScenarios": "Back to scenarios",
+  "demo.viewScenario": "View scenario",
+  "demo.hideScenario": "Hide",
   "demo.scenario1.title": "Focus Loss",
   "demo.scenario1.description": "Leave the tab and come back — the session suspends after tolerance.",
   "demo.scenario1.button": "Simulate focus loss",

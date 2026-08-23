@@ -241,6 +241,8 @@
   "demo.suspendedBehavioral": "Anomalie comportementale détectée. Une re-vérification est nécessaire.",
   "demo.reverifyButton": "Re-vérifier",
   "demo.backToScenarios": "Retour aux scénarios",
+  "demo.viewScenario": "Voir le scénario",
+  "demo.hideScenario": "Masquer",
   "demo.scenario1.title": "Perte de focus",
   "demo.scenario1.description": "Quittez l'onglet et revenez — la session se suspend après la tolérance.",
   "demo.scenario1.button": "Simuler la perte de focus",

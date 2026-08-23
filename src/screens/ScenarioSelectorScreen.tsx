@@ -6,10 +6,11 @@
  * header — the list is never unmounted, so scroll position is preserved
  * and there is no double-tap issue from scroll-inertia/remount conflicts.
  *
- * The previous architecture (phase: scenario_selector → scenario_demo)
- * unmounted this screen and mounted ScenarioDemoScreen separately, causing:
- *   1. Double-tap on mobile (first tap consumed by scroll-inertia stop)
- *   2. Scroll position lost on return (list remounted at scrollTop=0)
+ * Affordance: the entire card header (image + badge + title + description
+ * + chevron) is clickable. The chevron sits in a round circle (same visual
+ * spirit as the .landing-status-icon badges on the home page) with a
+ * discrete "Voir le scénario" label when collapsed. A subtle background
+ * change + the chevron rotation give immediate tap feedback.
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -69,18 +70,15 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
             <div
               key={scenario.id}
               data-scenario-id={scenario.id}
-              style={{
-                background: 'var(--surface, #1a1a2e)',
-                border: `1px solid ${isExpanded ? 'var(--accent, #3b82f6)' : 'var(--surface-2, #2a2a4e)'}`,
-                borderRadius: '12px',
-                overflow: 'hidden',
-                transition: 'border-color 0.2s ease',
-              }}
+              data-expanded={isExpanded}
+              className="scenario-accordion-card"
             >
-              {/* Card header — always visible, tap to expand/collapse */}
+              {/* Card header — entire surface is clickable */}
               <div
                 role="button"
                 tabIndex={0}
+                aria-expanded={isExpanded}
+                aria-label={`${t(`demo.scenario${scenario.id}.title`)} — ${isExpanded ? t('demo.hideScenario') : t('demo.viewScenario')}`}
                 onClick={() => handleToggle(scenario.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -88,7 +86,7 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
                     handleToggle(scenario.id);
                   }
                 }}
-                style={{ cursor: 'pointer' }}
+                className="scenario-accordion-header"
               >
                 <div style={{
                   height: '130px',
@@ -107,25 +105,13 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
                     }}
                   />
                   {isExpanded && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      background: 'rgba(59, 130, 246, 0.9)',
-                      color: '#fff',
-                      fontSize: '10px',
-                      fontWeight: 'bold',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                    }}>
-                      ●
-                    </div>
+                    <div className="scenario-active-badge">●</div>
                   )}
                 </div>
 
                 <div style={{ padding: '14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
+                    <div style={{ minWidth: 0 }}>
                       <span style={{
                         display: 'inline-block',
                         fontSize: '10px',
@@ -142,13 +128,16 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
                         {t(`demo.scenario${scenario.id}.title`)}
                       </span>
                     </div>
-                    <span style={{
-                      fontSize: '12px',
-                      color: isExpanded ? '#60a5fa' : '#666',
-                      transition: 'transform 0.2s ease, color 0.2s ease',
-                      transform: isExpanded ? 'rotate(180deg)' : 'none',
-                    }}>
-                      ▼
+                    {/* Chevron in a round circle + discrete label — same
+                        visual spirit as .landing-status-icon on the home
+                        page. The whole wrap is decorative (the entire
+                        header is clickable), this is just an affordance
+                        indicator. */}
+                    <span className="scenario-chevron-wrap">
+                      <span className="scenario-chevron-label">
+                        {t('demo.viewScenario')}
+                      </span>
+                      <span className="scenario-chevron-circle">▼</span>
                     </span>
                   </div>
                   <p style={{ fontSize: '12px', color: '#888', marginBottom: '0', lineHeight: 1.4 }}>

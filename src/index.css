@@ -2399,6 +2399,82 @@ body {
 .demo-card-desc { font-size: 12px; color: #888; margin-bottom: 10px; line-height: 1.4; }
 .demo-card-btn { width: 100%; font-size: 13px; padding: 8px; }
 
+/* ── Accordion scenario cards (in-place expansion) ── */
+.scenario-accordion-card {
+  background: var(--surface, #1a1a2e);
+  border: 1px solid var(--surface-2, #2a2a4e);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.scenario-accordion-card[data-expanded="true"] {
+  border-color: var(--accent, #3b82f6);
+}
+.scenario-accordion-header {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+.scenario-accordion-header:active {
+  background: rgba(255, 255, 255, 0.03);
+}
+.scenario-accordion-header:focus-visible {
+  outline: 2px solid var(--accent, #3b82f6);
+  outline-offset: -2px;
+}
+/* Chevron in a round circle — same spirit as .landing-status-icon */
+.scenario-chevron-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 0.2s ease;
+}
+.scenario-accordion-header:active .scenario-chevron-wrap {
+  background: rgba(59, 130, 246, 0.18);
+}
+.scenario-chevron-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  font-size: 11px;
+  line-height: 1;
+  transition: transform 0.25s ease, background 0.2s ease, color 0.2s ease;
+}
+.scenario-accordion-card[data-expanded="true"] .scenario-chevron-circle {
+  transform: rotate(180deg);
+  background: rgba(59, 130, 246, 0.35);
+  color: #bfdbfe;
+}
+.scenario-chevron-label {
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+.scenario-accordion-card[data-expanded="true"] .scenario-chevron-label {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+}
+/* Active badge on expanded card image */
+.scenario-active-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(59, 130, 246, 0.9);
+  color: #fff;
+  font-size: 10px; font-weight: bold;
+  padding: 2px 8px; border-radius: 4px;
+}
+
 /* ── Simulation page ── */
 .demo-sim-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .demo-sim-badge {
