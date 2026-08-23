@@ -1,8 +1,14 @@
 /**
- * LiveGuard — Scenario Demo Screen (6 scenarios)
+ * LiveGuard — Scenario Demo Content (accordion inline panel)
  *
- * 4-state visual system per scenario:
- *   idle → analyzing → detected → transitioning
+ * Extracted from ScenarioDemoScreen so it can be rendered IN PLACE inside
+ * an expanded scenario card (accordion architecture) instead of a separate
+ * full-screen page. This eliminates the unmount/remount of the scenario list
+ * that caused the scroll-position loss and double-tap bugs.
+ *
+ * The behavioral collection, beacon, simulation, and suspension logic is
+ * IDENTICAL to the previous ScenarioDemoScreen — only the rendering shell
+ * changed.
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -23,7 +29,7 @@ import type { DemoSimulationMode, SuspensionData } from '../liveguard/behavior/t
 
 // ─── Types ───────────────────────────────────────────────────────────
 
-interface ScenarioInfo {
+export interface ScenarioInfo {
   id: number;
   key: string;
   image: string;
@@ -33,7 +39,7 @@ interface ScenarioInfo {
   graphMode: 'human' | 'other_user' | 'bot' | 'mass';
 }
 
-const SCENARIOS: ScenarioInfo[] = [
+export const SCENARIOS: ScenarioInfo[] = [
   { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg', contextLabel: 'Transfert de 250,00 € vers Compte ****4471', graphMode: 'human' },
   { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg', simulationMode: 'other_user', contextLabel: 'Transfert de 1 200,00 € vers Compte ****8823', graphMode: 'other_user' },
   { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg', simulationMode: 'bot', contextLabel: 'Transfert de 500,00 € vers Compte ****1192', graphMode: 'bot' },
@@ -45,9 +51,10 @@ const SCENARIOS: ScenarioInfo[] = [
 type Phase = 'idle' | 'analyzing' | 'detected' | 'transitioning';
 
 interface Props {
+  scenarioId: number;
   sessionPublicId: string;
   onSuspended: (data: SuspensionData) => void;
-  onBack: () => void;
+  onClose: () => void;
 }
 
 // ─── ActivityGraph: living SVG line chart ─────────────────────────────
@@ -103,31 +110,24 @@ function generatePoints(mode: ScenarioInfo['graphMode'], phase: Phase, count: nu
 
 function generateNext(mode: ScenarioInfo['graphMode'], phase: Phase, last: number): number {
   if (phase === 'idle') {
-    // gentle organic wandering
     const delta = (Math.random() - 0.5) * 12;
     return clamp(last + delta, 15, 65);
   }
   if (phase === 'analyzing') {
     if (mode === 'bot') {
-      // perfectly regular, near-flat with tiny mechanical jitter
       return clamp(40 + Math.sin(Date.now() / 200) * 1.5, 35, 45);
     }
     if (mode === 'mass') {
-      // sharp spikes
       return Math.random() > 0.5 ? clamp(last + 25, 10, 75) : clamp(last - 20, 10, 75);
     }
     if (mode === 'other_user') {
-      // visibly different pattern — bigger swings, shifted baseline
       return clamp(last + (Math.random() - 0.5) * 30, 10, 75);
     }
-    // default: more active
     return clamp(last + (Math.random() - 0.5) * 18, 10, 70);
   }
   if (phase === 'detected') {
-    // erratic, alarming
     return clamp(last + (Math.random() - 0.5) * 35, 5, 75);
   }
-  // transitioning: calming down
   return clamp(last + (Math.random() - 0.5) * 8, 20, 60);
 }
 
@@ -189,9 +189,9 @@ function LockedAction({ scenario, phase }: { scenario: ScenarioInfo; phase: Phas
 
 // ─── Main Component ───────────────────────────────────────────────────
 
-export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Props) {
+export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, onClose }: Props) {
   const { t } = useI18n();
-  const [activeScenario, setActiveScenario] = useState<number | null>(null);
+  const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
   const [phase, setPhase] = useState<Phase>('idle');
   const [signalCount, setSignalCount] = useState(0);
   const [countdown, setCountdown] = useState(0);
@@ -202,6 +202,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   const [scenario1HiddenAt, setScenario1HiddenAt] = useState<number | null>(null);
   const [scenario1AwayMs, setScenario1AwayMs] = useState(0);
   const [buttonPulsing, setButtonPulsing] = useState(false);
+  const [simulationStarted, setSimulationStarted] = useState(false);
 
   const suspendedRef = useRef(false);
   const scenario1HiddenAtRef = useRef<number | null>(null);
@@ -228,7 +229,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       },
       {
         onInvalidation: () => {
-          // Scenario 1 (blur/focus) is purely client-side — ignore beacon invalidations
           if (scenario1ActiveRef.current) return;
           if (!suspendedRef.current) {
             suspendedRef.current = true;
@@ -255,24 +255,19 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
 
   // ─── Signal counter: increments continuously ──────────────────────
   useEffect(() => {
-    if (!activeScenario) {
+    if (!simulationStarted) {
       signalTimerRef.current = setInterval(() => {
         setSignalCount((c) => c + Math.floor(Math.random() * 3) + 1);
       }, 800);
     } else {
-      // faster during analysis
       signalTimerRef.current = setInterval(() => {
         setSignalCount((c) => c + Math.floor(Math.random() * 5) + 2);
       }, 400);
     }
     return () => { if (signalTimerRef.current) clearInterval(signalTimerRef.current); };
-  }, [activeScenario]);
+  }, [simulationStarted]);
 
   // ─── Visibility handler for scenario 1 (blur/focus) ───────────────
-  // Uses a ref for scenario1HiddenAtRef to avoid stale closures:
-  // when the tab is hidden, the browser pauses JS, so React state updates
-  // and effect re-runs don't happen. The old listener keeps the old state
-  // value in its closure. A ref is mutable and always current.
   useEffect(() => {
     const onVisibilityChange = () => {
       if (!scenario1Active) return;
@@ -287,7 +282,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           const awayMs = Date.now() - hiddenAt;
           console.info('[S1] visibilitychange: returned, awayMs=', awayMs, 'threshold=3000');
           if (awayMs > 3000) {
-            // Detected — but only if not already triggered by the timer
             if (!suspendedRef.current) {
               console.info('[S1] awayMs > 3000 → triggering suspension (visibilitychange)');
               suspendedRef.current = true;
@@ -320,12 +314,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, [scenario1Active, onSuspended]);
 
   // ─── Live away-timer for scenario 1 ───────────────────────────────
-  // Updates scenario1AwayMs every 100ms while the tab is hidden.
-  // ALSO checks the threshold: as soon as awayMs > 3000, triggers
-  // suspension immediately — does NOT wait for visibilitychange return.
-  // This fixes the case where visibilitychange fires on hide but not on
-  // return (e.g. user switches to another app, or browser quirks),
-  // leaving the timer running forever without triggering suspension.
   useEffect(() => {
     if (scenario1HiddenAt === null) return;
     const interval = setInterval(() => {
@@ -387,8 +375,8 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
   }, [onSuspended]);
 
   // ─── Handle simulation button click ───────────────────────────────
-  const handleSimulate = useCallback(async (scenario: ScenarioInfo) => {
-    setActiveScenario(scenario.id);
+  const handleSimulate = useCallback(async () => {
+    setSimulationStarted(true);
     setPhase('idle');
     setNetworkRiskScore(0);
     setDivergence(0);
@@ -397,12 +385,10 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     scenario1ActiveRef.current = false;
     scenario1HiddenAtRef.current = null;
 
-    // Button pulse for 0.7s
     setButtonPulsing(true);
     await new Promise((r) => setTimeout(r, 700));
     setButtonPulsing(false);
 
-    // Scenario 1: blur/focus — instruct user to switch tabs
     if (scenario.id === 1) {
       setScenario1Active(true);
       scenario1ActiveRef.current = true;
@@ -410,11 +396,9 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       return;
     }
 
-    // ─── Phase: analyzing ──────────────────────────────────────────
     setPhase('analyzing');
 
     if (scenario.massAttempt) {
-      // Scenario 6: Mass attempts — send rapid pings with visible counter
       let serverRiskScore = 0;
       for (let i = 0; i < 10; i++) {
         const response = await forceBeaconNow();
@@ -446,7 +430,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         }
         await new Promise((r) => setTimeout(r, 250));
       }
-      // If server didn't invalidate, trigger locally
       triggerSuspension({
         reason: 'mass_attempts_blocked',
         networkRiskScore: serverRiskScore || 8,
@@ -456,16 +439,10 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
     }
 
     if (scenario.simulationMode) {
-      // Scenarios 2,3,4,5: set demo simulation mode
       setDemoSimulationMode(scenario.simulationMode);
-
-      // Bot (scenario 3): faster detection — 5s countdown
-      // Others: 15s countdown (demo reference window)
       const countdownSec = scenario.graphMode === 'bot' ? 5 : 15;
 
-      // Start visible countdown
       startCountdown(countdownSec, async () => {
-        // Countdown finished — send beacons and check for invalidation
         for (let i = 0; i < 5; i++) {
           const response = await forceBeaconNow();
           if (response) {
@@ -490,7 +467,6 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           }
           await new Promise((r) => setTimeout(r, 300));
         }
-        // If server didn't invalidate, trigger locally for demo
         setDemoSimulationMode('none');
         triggerSuspension({
           reason: 'behavioral_divergence',
@@ -501,76 +477,12 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
         });
       });
 
-      // Also send a beacon immediately to start server-side processing
       await forceBeaconNow();
     }
-  }, [startCountdown, triggerSuspension]);
-
-  const activeScenarioInfo = SCENARIOS.find((s) => s.id === activeScenario);
-
-  // ─── Reset state ──────────────────────────────────────────────────
-  const resetState = useCallback(() => {
-    setScenario1Active(false);
-    scenario1ActiveRef.current = false;
-    scenario1HiddenAtRef.current = null;
-    setDemoSimulationMode('none');
-    setActiveScenario(null);
-    setPhase('idle');
-    setNetworkRiskScore(0);
-    setDivergence(0);
-    setConsecutiveBreaches(0);
-    setSignalCount(0);
-    setCountdown(0);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-    onBack();
-  }, [onBack]);
-
-  // ─── Mode sélection : grille des 6 cartes ───────────────────────────
-  if (!activeScenario) {
-    return (
-      <div className="landing-page" style={{ paddingTop: '20px' }}>
-        <button type="button" onClick={onBack} className="demo-back-btn">
-          ← {t('demo.backToScenarios')}
-        </button>
-
-        <h1 className="demo-page-title">{t('demo.title')}</h1>
-        <p className="muted demo-page-desc">{t('demo.description')}</p>
-
-        <div className="demo-card-grid">
-          {SCENARIOS.map((scenario) => (
-            <div key={scenario.id} className="demo-card">
-              <div className="demo-card-img">
-                <img src={scenario.image} alt={t(`demo.scenario${scenario.id}.title`)} loading="lazy" />
-              </div>
-              <div className="demo-card-body">
-                <div className="demo-card-header">
-                  <span className="demo-card-badge">{t('demo.scenario')} {scenario.id}</span>
-                  <span className="demo-card-title">{t(`demo.scenario${scenario.id}.title`)}</span>
-                </div>
-                <p className="demo-card-desc">{t(`demo.scenario${scenario.id}.description`)}</p>
-                <button type="button" className="btn demo-card-btn" onClick={() => void handleSimulate(scenario)}>
-                  {t(`demo.scenario${scenario.id}.button`)}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Mode simulation : page dédiée plein écran ──────────────────────
-  const scenario = activeScenarioInfo!;
+  }, [scenario, startCountdown, triggerSuspension]);
 
   return (
-    <div className="landing-page demo-sim-page" style={{ paddingTop: '20px' }}>
-      {/* Header */}
-      <div className="demo-sim-header">
-        <button type="button" onClick={resetState} className="demo-back-btn">← {t('demo.backToScenarios')}</button>
-        <span className="demo-sim-badge">{t('demo.scenario')} {activeScenario}</span>
-        <span className="demo-sim-title">{t(`demo.scenario${activeScenario}.title`)}</span>
-      </div>
-
+    <div className="demo-sim-content" style={{ paddingTop: '12px', borderTop: '1px solid var(--surface-2, #2a2a4e)' }}>
       {/* Status dot */}
       <StatusDot phase={phase} />
 
@@ -592,7 +504,7 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       )}
 
       {/* Scenario 1 instruction */}
-      {scenario.id === 1 && phase === 'idle' && (
+      {scenario.id === 1 && phase === 'idle' && !simulationStarted && (
         <div className="demo-instruction">
           📋 Changez d'onglet pendant 3+ secondes, puis revenez pour déclencher la détection.
         </div>
@@ -650,14 +562,14 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
       )}
 
       {/* Action button */}
-      {phase === 'idle' && (
+      {phase === 'idle' && !simulationStarted && (
         <button
           type="button"
           className={`btn demo-action-btn ${buttonPulsing ? 'demo-btn-pulse' : ''}`}
-          onClick={() => void handleSimulate(scenario)}
+          onClick={() => void handleSimulate()}
           disabled={buttonPulsing}
         >
-          {buttonPulsing ? '● ● ●' : t(`demo.scenario${activeScenario}.button`)}
+          {buttonPulsing ? '● ● ●' : t(`demo.scenario${scenarioId}.button`)}
         </button>
       )}
 
@@ -683,6 +595,18 @@ export function ScenarioDemoScreen({ sessionPublicId, onSuspended, onBack }: Pro
           <span className="demo-spinner" />
           <span>Redirection vers la vérification…</span>
         </div>
+      )}
+
+      {/* Close button (collapse accordion) */}
+      {phase === 'idle' && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="demo-back-btn"
+          style={{ marginTop: '12px' }}
+        >
+          ← {t('demo.backToScenarios')}
+        </button>
       )}
     </div>
   );

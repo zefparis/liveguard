@@ -1,62 +1,42 @@
 /**
- * LiveGuard — Scenario Selector Screen
+ * LiveGuard — Scenario Selector Screen (accordion architecture)
  *
- * Shows 6 demo scenario cards. When a scenario is selected, transitions
- * to scenario_demo phase with the LiveGuard session.
+ * Shows 6 demo scenario cards. When a scenario card is tapped, it expands
+ * IN PLACE (accordion) revealing the demo content directly below the card
+ * header — the list is never unmounted, so scroll position is preserved
+ * and there is no double-tap issue from scroll-inertia/remount conflicts.
  *
- * Adapted from pulseguard-app but:
- *   - No linkToken (LiveGuard is public)
- *   - Uses LiveGuard i18n keys
- *   - Dispatches reducer action instead of local state
+ * The previous architecture (phase: scenario_selector → scenario_demo)
+ * unmounted this screen and mounted ScenarioDemoScreen separately, causing:
+ *   1. Double-tap on mobile (first tap consumed by scroll-inertia stop)
+ *   2. Scroll position lost on return (list remounted at scrollTop=0)
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
  */
 
-import { useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useI18n } from '../i18n/I18nContext';
-
-interface ScenarioInfo {
-  id: number;
-  key: string;
-  image: string;
-}
-
-const SCENARIOS: ScenarioInfo[] = [
-  { id: 1, key: 'blur_focus', image: '/scenarios/1.jpeg' },
-  { id: 2, key: 'mouse_behavior', image: '/scenarios/2.jpeg' },
-  { id: 3, key: 'bot_detection', image: '/scenarios/3.jpeg' },
-  { id: 4, key: 'touch_pattern', image: '/scenarios/4.jpeg' },
-  { id: 5, key: 'session_continuity', image: '/scenarios/5.jpeg' },
-  { id: 6, key: 'mass_attempts', image: '/scenarios/6.jpeg' },
-];
+import { ScenarioDemoContent, SCENARIOS } from './ScenarioDemoContent';
+import type { SuspensionData } from '../liveguard/behavior/telemetryTypes';
 
 interface Props {
   sessionPublicId: string;
-  onSelectScenario: () => void;
+  onSuspended: (data: SuspensionData) => void;
   onBack: () => void;
 }
 
-export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSelectScenario, onBack }: Props) {
+export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }: Props) {
   const { t } = useI18n();
-  const listRef = useRef<HTMLDivElement>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  // Scroll the previously clicked card back into view after remount
-  useEffect(() => {
-    const lastId = sessionStorage.getItem('lg_last_scenario');
-    if (lastId && listRef.current) {
-      sessionStorage.removeItem('lg_last_scenario');
-      const card = listRef.current.querySelector(`[data-scenario-id="${lastId}"]`);
-      if (card) {
-        card.scrollIntoView({ block: 'center', behavior: 'instant' });
-      }
-    }
+  const handleToggle = useCallback((id: number) => {
+    setExpandedId((prev) => (prev === id ? null : id));
   }, []);
 
-  const handleSelect = (id: number) => {
-    sessionStorage.setItem('lg_last_scenario', String(id));
-    onSelectScenario();
-  };
+  const handleClose = useCallback(() => {
+    setExpandedId(null);
+  }, []);
 
   return (
     <div className="landing-page" style={{ paddingTop: '20px' }}>
@@ -82,74 +62,115 @@ export function ScenarioSelectorScreen({ sessionPublicId: _sessionPublicId, onSe
         {t('demo.description')}
       </p>
 
-      <div ref={listRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {SCENARIOS.map((scenario) => (
-          <div
-            key={scenario.id}
-            data-scenario-id={scenario.id}
-            style={{
-              background: 'var(--surface, #1a1a2e)',
-              border: '1px solid var(--surface-2, #2a2a4e)',
-              borderRadius: '12px',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{
-              height: '130px',
-              overflow: 'hidden',
-              position: 'relative',
-            }}>
-              <img
-                src={scenario.image}
-                alt={t(`demo.scenario${scenario.id}.title`)}
-                loading="lazy"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {SCENARIOS.map((scenario) => {
+          const isExpanded = expandedId === scenario.id;
+          return (
+            <div
+              key={scenario.id}
+              data-scenario-id={scenario.id}
+              style={{
+                background: 'var(--surface, #1a1a2e)',
+                border: `1px solid ${isExpanded ? 'var(--accent, #3b82f6)' : 'var(--surface-2, #2a2a4e)'}`,
+                borderRadius: '12px',
+                overflow: 'hidden',
+                transition: 'border-color 0.2s ease',
+              }}
+            >
+              {/* Card header — always visible, tap to expand/collapse */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleToggle(scenario.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleToggle(scenario.id);
+                  }
                 }}
-              />
-            </div>
+                style={{ cursor: 'pointer' }}
+              >
+                <div style={{
+                  height: '130px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}>
+                  <img
+                    src={scenario.image}
+                    alt={t(`demo.scenario${scenario.id}.title`)}
+                    loading="lazy"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                  {isExpanded && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      background: 'rgba(59, 130, 246, 0.9)',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                    }}>
+                      ●
+                    </div>
+                  )}
+                </div>
 
-            <div style={{ padding: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                <div>
-                  <span style={{
-                    display: 'inline-block',
-                    fontSize: '10px',
-                    fontWeight: 'bold',
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    color: '#60a5fa',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    marginRight: '8px',
-                  }}>
-                    {t('demo.scenario')} {scenario.id}
-                  </span>
-                  <span style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t(`demo.scenario${scenario.id}.title`)}
-                  </span>
+                <div style={{ padding: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div>
+                      <span style={{
+                        display: 'inline-block',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        color: '#60a5fa',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        marginRight: '8px',
+                      }}>
+                        {t('demo.scenario')} {scenario.id}
+                      </span>
+                      <span style={{ fontSize: '14px', fontWeight: 600 }}>
+                        {t(`demo.scenario${scenario.id}.title`)}
+                      </span>
+                    </div>
+                    <span style={{
+                      fontSize: '12px',
+                      color: isExpanded ? '#60a5fa' : '#666',
+                      transition: 'transform 0.2s ease, color 0.2s ease',
+                      transform: isExpanded ? 'rotate(180deg)' : 'none',
+                    }}>
+                      ▼
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#888', marginBottom: '0', lineHeight: 1.4 }}>
+                    {t(`demo.scenario${scenario.id}.description`)}
+                  </p>
                 </div>
               </div>
-              <p style={{ fontSize: '12px', color: '#888', marginBottom: '10px', lineHeight: 1.4 }}>
-                {t(`demo.scenario${scenario.id}.description`)}
-              </p>
-              <button
-                type="button"
-                className="btn"
-                onClick={() => handleSelect(scenario.id)}
-                style={{
-                  width: '100%',
-                  fontSize: '13px',
-                  padding: '8px',
-                }}
-              >
-                {t(`demo.scenario${scenario.id}.button`)}
-              </button>
+
+              {/* Accordion content — rendered inline, no remount of the list */}
+              {isExpanded && (
+                <div style={{ padding: '0 14px 14px' }}>
+                  <ScenarioDemoContent
+                    scenarioId={scenario.id}
+                    sessionPublicId={sessionPublicId}
+                    onSuspended={onSuspended}
+                    onClose={handleClose}
+                  />
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

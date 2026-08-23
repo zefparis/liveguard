@@ -38,7 +38,6 @@ import { SubmittingScreen } from './screens/SubmittingScreen';
 import { DoneScreen } from './screens/DoneScreen';
 import { ErrorScreen } from './screens/ErrorScreen';
 import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
-import { ScenarioDemoScreen } from './screens/ScenarioDemoScreen';
 import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
 import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
@@ -95,10 +94,6 @@ export default function App() {
   const handleShowScenarios = useCallback((sessionPublicId: string) => {
     dispatch({ type: 'SHOW_SCENARIO_SELECTOR', sessionPublicId });
   }, []);
-
-  const handleStartScenarioDemo = useCallback(() => {
-    dispatch({ type: 'START_SCENARIO_DEMO', sessionPublicId: state.sessionPublicId });
-  }, [state.sessionPublicId]);
 
   const handleScenarioSuspended = useCallback((data: SuspensionData) => {
     dispatch({ type: 'SCENARIO_DEMO_SUSPENDED', reason: data.reason, suspensionData: data });
@@ -323,16 +318,8 @@ export default function App() {
         {state.phase === 'scenario_selector' && (
           <ScenarioSelectorScreen
             sessionPublicId={state.sessionPublicId}
-            onSelectScenario={handleStartScenarioDemo}
-            onBack={() => dispatch({ type: 'SHOW_LANDING' })}
-          />
-        )}
-
-        {state.phase === 'scenario_demo' && (
-          <ScenarioDemoScreen
-            sessionPublicId={state.sessionPublicId}
             onSuspended={handleScenarioSuspended}
-            onBack={() => dispatch({ type: 'SHOW_SCENARIO_SELECTOR', sessionPublicId: state.sessionPublicId })}
+            onBack={() => dispatch({ type: 'SHOW_LANDING' })}
           />
         )}
 
