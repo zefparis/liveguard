@@ -202,64 +202,82 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
       {/* ── 1. Header ── */}
       <LandingHeader />
 
-      {/* ── 2. Protection status accordion ── */}
-      <section className="landing-status-block">
-        <StatusSection
-          icon={ICONS.brain}
-          labelKey="landing.status.section.cognitive"
-          descKey="landing.status.section.cognitive.desc"
-          status="active"
-          accent="cognitive"
-          expanded={!!expanded.cognitive}
-          onToggle={() => toggleSection('cognitive')}
-        >
-          <ul className="landing-status-list">
-            <li>{t('landing.status.cognitive.stroop')}</li>
-            <li>{t('landing.status.cognitive.nback')}</li>
-            <li>{t('landing.status.cognitive.reflex')}</li>
-            <li>{t('landing.status.cognitive.digitSpan')}</li>
-            <li>{t('landing.status.cognitive.trailTap')}</li>
-          </ul>
-        </StatusSection>
+      {/* ── 2+3. Hero grid (status accordion + hero title/CTA) ── */}
+      {/* On mobile: stacks vertically (status block, then hero).
+          On desktop (min-width: 901px): 2-column grid, hero on left,
+          status block on right. Single JSX tree, CSS controls layout. */}
+      <div className="landing-hero-grid">
+        {/* ── 2. Protection status accordion ── */}
+        <section className="landing-status-block">
+          <StatusSection
+            icon={ICONS.brain}
+            labelKey="landing.status.section.cognitive"
+            descKey="landing.status.section.cognitive.desc"
+            status="active"
+            accent="cognitive"
+            expanded={!!expanded.cognitive}
+            onToggle={() => toggleSection('cognitive')}
+          >
+            <ul className="landing-status-list">
+              <li>{t('landing.status.cognitive.stroop')}</li>
+              <li>{t('landing.status.cognitive.nback')}</li>
+              <li>{t('landing.status.cognitive.reflex')}</li>
+              <li>{t('landing.status.cognitive.digitSpan')}</li>
+              <li>{t('landing.status.cognitive.trailTap')}</li>
+            </ul>
+          </StatusSection>
 
-        <StatusSection
-          icon={ICONS.activity}
-          labelKey="landing.status.section.behavioral"
-          descKey="landing.status.section.behavioral.desc"
-          status="active"
-          accent="behavioral"
-          partialBadge
-          expanded={!!expanded.behavioral}
-          onToggle={() => toggleSection('behavioral')}
-        >
-          <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
-          <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
-          <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
-        </StatusSection>
+          <StatusSection
+            icon={ICONS.activity}
+            labelKey="landing.status.section.behavioral"
+            descKey="landing.status.section.behavioral.desc"
+            status="active"
+            accent="behavioral"
+            partialBadge
+            expanded={!!expanded.behavioral}
+            onToggle={() => toggleSection('behavioral')}
+          >
+            <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
+            <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
+            <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
+          </StatusSection>
 
-        <StatusSection
-          icon={ICONS.wifi}
-          labelKey="landing.status.section.network"
-          descKey="landing.status.section.network.desc"
-          status="active"
-          accent="network"
-          expanded={!!expanded.network}
-          onToggle={() => toggleSection('network')}
-        >
-          <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
-          <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
-          <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
-          <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
-        </StatusSection>
-      </section>
+          <StatusSection
+            icon={ICONS.wifi}
+            labelKey="landing.status.section.network"
+            descKey="landing.status.section.network.desc"
+            status="active"
+            accent="network"
+            expanded={!!expanded.network}
+            onToggle={() => toggleSection('network')}
+          >
+            <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
+            <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
+            <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
+            <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
+          </StatusSection>
+        </section>
 
-      {/* ── 3. Hero ── */}
-      <section className="landing-hero">
-        <div className="landing-hero-content">
-          <h1>{t('landing.heroTitle')}</h1>
-          <p className="landing-lede">{t('landing.heroSub')}</p>
-        </div>
-      </section>
+        {/* ── 3. Hero ── */}
+        <section className="landing-hero">
+          <div className="landing-hero-content">
+            <h1>{t('landing.heroTitle')}</h1>
+            <p className="landing-lede">{t('landing.heroSub')}</p>
+            {/* CTA "Voir la démo" — visible on desktop in the hero left column.
+                Uses the same handleShowScenarios as the bottom CTA. */}
+            {onShowScenarios && (
+              <button
+                className="landing-btn landing-btn-primary landing-hero-cta"
+                onClick={handleShowScenarios}
+                disabled={loading}
+              >
+                <span>{loading ? '…' : t('landing.heroCta')}</span>
+                {!loading && <span aria-hidden="true">→</span>}
+              </button>
+            )}
+          </div>
+        </section>
+      </div>
 
       {/* ── 4. Three steps ── */}
       <section className="landing-steps" id="steps">
