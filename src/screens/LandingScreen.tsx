@@ -173,34 +173,6 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         </div>
       </section>
 
-      {/* ── 3b. Scenarios showcase ── */}
-      {onShowScenarios && (
-        <section className="landing-scenarios" id="scenarios">
-          <div className="landing-scenarios-header">
-            <div className="landing-scenarios-mosaic" aria-hidden="true">
-              <span style={{ background: 'linear-gradient(135deg, #4f7cff, #22c8ee)' }}>1</span>
-              <span style={{ background: 'linear-gradient(135deg, #22c8ee, #8b5cf6)' }}>2</span>
-              <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #4f7cff)' }}>3</span>
-              <span style={{ background: 'linear-gradient(135deg, #4f7cff, #22c8ee)' }}>4</span>
-              <span style={{ background: 'linear-gradient(135deg, #22c8ee, #8b5cf6)' }}>5</span>
-              <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #4f7cff)' }}>6</span>
-            </div>
-            <div>
-              <h2 className="landing-scenarios-title">{t('landing.scenariosTitle')}</h2>
-              <p className="landing-scenarios-sub">{t('landing.scenariosSub')}</p>
-            </div>
-          </div>
-          <button
-            className="landing-scenarios-btn"
-            onClick={handleShowScenarios}
-            disabled={loading}
-          >
-            <span>{loading ? '…' : t('landing.scenariosCta')}</span>
-            {!loading && <span aria-hidden="true">→</span>}
-          </button>
-        </section>
-      )}
-
       {/* ── 4. Three steps ── */}
       <section className="landing-steps" id="steps">
         <ol className="landing-step-list">
@@ -285,6 +257,12 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
           <span>{t('landing.ctaSecondary')}</span>
           <span aria-hidden="true">→</span>
         </button>
+        {onShowScenarios && (
+          <button className="landing-btn landing-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
+            <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+            {!loading && <span aria-hidden="true">→</span>}
+          </button>
+        )}
       </div>
 
       {/* ── Partner link ── */}
