@@ -2356,19 +2356,21 @@ body {
 }
 
 @media (min-width: 901px) {
-  /* Expand app-shell for desktop — the parent container of .landing-page.
-     Without this, .app-shell stays at max-width: 430px (its mobile default)
-     and constrains all content to a narrow left-aligned column even though
-     .landing-page itself expands to 1320px. */
+  /* Expand app-shell for desktop — full width, no max-width cap.
+     Content fills the entire window at all desktop resolutions. */
   .app-shell {
-    max-width: 1320px;
+    max-width: none;
+    width: 100%;
   }
 
-  /* Expand content container for desktop.
-     Padding uses clamp() for fluid transition from tablet to ultra-wide. */
+  /* Content container fills full width with fluid horizontal padding.
+     clamp(32px, 5vw, 120px) gives comfortable side spacing that scales
+     from ~45px at 901px to 120px at 2400px+, preventing content from
+     touching the raw window edges while filling all available width. */
   .landing-page {
-    max-width: 1320px;
-    padding: 0 clamp(24px, 3vw, 48px) calc(40px + env(safe-area-inset-bottom));
+    max-width: none;
+    width: 100%;
+    padding: 0 clamp(32px, 5vw, 120px) calc(40px + env(safe-area-inset-bottom));
   }
 
   /* Hero grid: 2 columns — hero (title+paragraph+CTA) on left,
@@ -2435,13 +2437,11 @@ body {
     font-size: clamp(13px, 0.9vw, 15px);
   }
 
-  /* Bottom CTAs: horizontal row on desktop with fluid gap */
+  /* Bottom CTAs: horizontal row on desktop with fluid gap.
+     No max-width cap — buttons fill the available width proportionally. */
   .landing-ctas {
     grid-template-columns: repeat(3, 1fr);
     gap: clamp(12px, 1.5vw, 20px);
-    max-width: 820px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   /* Social proof: keep centered, fluid top spacing */
@@ -2463,11 +2463,53 @@ body {
   }
 }
 
-/* ── Ultra-wide (1600px+): no layout changes needed.
-   max-width: 1320px keeps text readable. Background gradients
-   (.landing-page::before is position:fixed; inset:0) and body
-   background cover the full viewport regardless of container width.
-   No additional adjustments required. ── */
+/* ── Ultra-wide (1920px+): add more columns to prevent text stretching.
+   At full width with no max-width cap, 3-card grids would have very wide
+   cards with short text. Adding a 4th column to "How it works" keeps
+   cards readable. Hero gets a 3-column layout (hero | spacer | status)
+   to avoid the hero text spanning 900px+ wide. ── */
+@media (min-width: 1920px) {
+  /* Hero: 3 columns — hero content (col 1), spacer (col 2, empty),
+     status block (col 3). Explicit grid-column assignment prevents
+     the empty middle column from being skipped by grid auto-placement. */
+  .landing-hero-grid {
+    grid-template-columns: 1fr 0.6fr 1fr;
+  }
+  .landing-hero-grid .landing-hero {
+    order: 1;
+    grid-column: 1;
+  }
+  .landing-hero-grid .landing-status-block {
+    order: 2;
+    grid-column: 3;
+  }
+
+  /* "How it works": 4 columns instead of 3 to keep cards compact */
+  .landing-howitworks-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Domain section: equal columns at ultra-wide */
+  .landing-domain {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── 2560px+: cap text width inside hero and domain content so
+   paragraphs don't stretch beyond ~60ch even on huge screens.
+   The containers still fill full width — only the text blocks
+   get a max-width for readability. ── */
+@media (min-width: 2560px) {
+  .landing-hero-content {
+    max-width: 620px;
+  }
+  .landing-domain-content {
+    max-width: 720px;
+  }
+  .landing-lede {
+    max-width: 52ch;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    DESKTOP-ONLY SECTIONS — hidden on mobile (display:none by default),
