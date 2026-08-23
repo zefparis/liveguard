@@ -44,6 +44,11 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:3001',
   // LiveGuard production deployment
   'https://liveguard-topaz.vercel.app',
+  // LiveGuard custom production domain (liveguards.app)
+  'https://liveguards.app',
+  'https://www.liveguards.app',
+  // HCS-U7 protected proxy subdomain for liveguards.app
+  'https://secure.liveguards.app',
 ];
 
 // Vercel preview deployment pattern: liveguard-<branch>-<hash>.vercel.app
@@ -52,7 +57,9 @@ const VERCEL_PREVIEW_PATTERN = /^https:\/\/liveguard-[a-z0-9-]+\.vercel\.app$/;
 
 function getAllowedOrigins(): Set<string> {
   const set = new Set<string>(DEFAULT_ALLOWED_ORIGINS);
-  const envOrigins = process.env.PAYGUARD_ALLOWED_ORIGINS;
+  // Support both LIVEGUARD_ALLOWED_ORIGINS (canonical) and PAYGUARD_ALLOWED_ORIGINS
+  // (legacy name from when the app was called PayGuard) for backward compat.
+  const envOrigins = process.env.LIVEGUARD_ALLOWED_ORIGINS || process.env.PAYGUARD_ALLOWED_ORIGINS;
   if (envOrigins) {
     for (const o of envOrigins.split(',')) {
       const trimmed = o.trim();
