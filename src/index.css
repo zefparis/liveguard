@@ -2501,6 +2501,53 @@ body {
     min-height: clamp(420px, 40vw, 560px);
   }
 
+  /* ── Light mode overrides ──
+     1. Remove the dark hero glow behind the title/text (left column).
+        In dark mode this glow adds depth; in light mode it looks like
+        a residual dark stain on the clean light background.
+     2. Stack the 3 status cards vertically below the shield image
+        instead of floating them as overlays. In light mode the shield
+        image + halo already provide visual richness; overlapping cards
+        create visual clutter. Cards stack cleanly below the image,
+        full width of the column, as they were before the shield was
+        added. ── */
+  [data-theme="light"] .landing-hero::before {
+    background: none;
+  }
+  [data-theme="light"] .landing-hero-visual .landing-status-section {
+    position: relative;
+    width: 100%;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+  }
+  [data-theme="light"] .landing-hero-visual .landing-status-block {
+    margin-top: clamp(16px, 2vw, 28px);
+  }
+  [data-theme="light"] .landing-hero-visual {
+    min-height: auto;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .landing-hero::before {
+      background: none;
+    }
+    :root:not([data-theme="dark"]) .landing-hero-visual .landing-status-section {
+      position: relative;
+      width: 100%;
+      top: auto;
+      bottom: auto;
+      left: auto;
+      right: auto;
+    }
+    :root:not([data-theme="dark"]) .landing-hero-visual .landing-status-block {
+      margin-top: clamp(16px, 2vw, 28px);
+    }
+    :root:not([data-theme="dark"]) .landing-hero-visual {
+      min-height: auto;
+    }
+  }
+
   /* Larger hero title on desktop — fluid from 30px (901px) to 44px (1467px+).
      Wider range than before (was 34-42px) for better scaling. */
   .landing-hero h1 {
