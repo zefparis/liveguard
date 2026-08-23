@@ -290,6 +290,15 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
                 {!loading && <span aria-hidden="true">→</span>}
               </button>
             )}
+            {/* Mini-stats row — 3 key facts under the CTA.
+                Visible on both mobile and desktop. */}
+            <div className="landing-hero-stats">
+              <span className="landing-hero-stat">{t('landing.heroStats.exercises')}</span>
+              <span className="landing-hero-stat-sep" aria-hidden="true">·</span>
+              <span className="landing-hero-stat">{t('landing.heroStats.patents')}</span>
+              <span className="landing-hero-stat-sep" aria-hidden="true">·</span>
+              <span className="landing-hero-stat">{t('landing.heroStats.privacy')}</span>
+            </div>
           </div>
         </section>
       </div>
