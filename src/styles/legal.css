@@ -136,9 +136,6 @@
   flex-direction: column;
   gap: 28px;
 }
-.legal-block {
-  /* Each block is a section */
-}
 .legal-heading {
   margin: 0 0 12px;
   font-size: 19px;
