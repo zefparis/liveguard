@@ -45,7 +45,7 @@ export interface LegalDocument {
 const frMeta: LegalMeta = {
   publisher: 'IA Solution — 30350 Alès, France',
   contact: 'contact@ia-solution.fr — +33 7 63 49 47 78',
-  lastUpdated: '[à compléter à la mise en ligne]',
+  lastUpdated: '24 août 2026',
 };
 
 const frTerms: LegalDocument = {
@@ -104,7 +104,7 @@ const frCookies: LegalDocument = {
 const enMeta: LegalMeta = {
   publisher: 'IA Solution — 30350 Alès, France',
   contact: 'contact@ia-solution.fr — +33 7 63 49 47 78',
-  lastUpdated: '[to be filled in at launch]',
+  lastUpdated: '24 August 2026',
 };
 
 const enTerms: LegalDocument = {
