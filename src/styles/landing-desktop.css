@@ -541,34 +541,6 @@
   z-index: 2;
 }
 
-/* ── Glow effect behind icon ── */
-.ld-step-glow {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── Icon: large, centered in upper zone ── */
-.ld-step-icon {
-  display: grid;
-  place-items: center;
-  padding: 56px 24px 24px;
-  position: relative;
-  z-index: 1;
-}
-.ld-step-icon svg {
-  width: 48px;
-  height: 48px;
-  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.3));
-}
-
 /* ── Text zone: bottom of card with gradient overlay for readability ── */
 .ld-step-title-zone {
   padding: 20px 24px 8px;

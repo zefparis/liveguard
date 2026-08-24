@@ -187,23 +187,11 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
         </div>
       </section>
 
-      {/* ── Three steps — premium gradient cards ── */}
+      {/* ── Three steps — premium image-background cards ── */}
       <section className="ld-steps" id="steps">
         <ol className="ld-step-list">
           <li className="ld-step-card" data-accent="violet">
             <span className="ld-step-num">1</span>
-            <div className="ld-step-glow" aria-hidden="true" />
-            <span className="ld-step-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32" fill="none" width="48" height="48">
-                <defs>
-                  <linearGradient id="ld-g-puzzle" x1="6" y1="6" x2="26" y2="26">
-                    <stop stopColor="#ffffff"/><stop offset="1" stopColor="#e0d4ff"/>
-                  </linearGradient>
-                </defs>
-                <path d="M13.6 6.4a2.9 2.9 0 0 1 5.8 0v1.1h3.2a2.4 2.4 0 0 1 2.4 2.4v3h1.1a2.9 2.9 0 0 1 0 5.8H25v3.2a2.4 2.4 0 0 1-2.4 2.4h-3v-1.1a2.9 2.9 0 0 0-5.8 0v1.1h-3.2a2.4 2.4 0 0 1-2.4-2.4v-3H7.3a2.9 2.9 0 0 1 0-5.8h1.1v-3A2.4 2.4 0 0 1 10.8 7.5h2.8V6.4Z"
-                      fill="url(#ld-g-puzzle)" transform="translate(-2.5 -1.5)"/>
-              </svg>
-            </span>
             <div className="ld-step-title-zone">
               <h3 className="ld-step-title">{t('landing.desktop.step1.title')}</h3>
             </div>
@@ -211,20 +199,6 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
           </li>
           <li className="ld-step-card" data-accent="blue">
             <span className="ld-step-num">2</span>
-            <div className="ld-step-glow" aria-hidden="true" />
-            <span className="ld-step-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32" fill="none" width="48" height="48">
-                <defs>
-                  <linearGradient id="ld-g-nocam" x1="6" y1="8" x2="26" y2="26">
-                    <stop stopColor="#ffffff"/><stop offset="1" stopColor="#d0deff"/>
-                  </linearGradient>
-                </defs>
-                <rect x="4.5" y="10" width="15" height="12" rx="3" fill="url(#ld-g-nocam)"/>
-                <circle cx="12" cy="16" r="2.6" fill="#1a2f5c"/>
-                <path d="M19.5 14.5 25 11v10l-5.5-3.5" stroke="url(#ld-g-nocam)" strokeWidth="2.2" strokeLinejoin="round" fill="none"/>
-                <line x1="5" y1="6.5" x2="27" y2="25.5" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round"/>
-              </svg>
-            </span>
             <div className="ld-step-title-zone">
               <h3 className="ld-step-title">{t('landing.desktop.step2.title')}</h3>
             </div>
@@ -232,21 +206,6 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
           </li>
           <li className="ld-step-card" data-accent="teal">
             <span className="ld-step-num">3</span>
-            <div className="ld-step-glow" aria-hidden="true" />
-            <span className="ld-step-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32" fill="none" width="48" height="48">
-                <defs>
-                  <linearGradient id="ld-g-eye" x1="5" y1="9" x2="27" y2="23">
-                    <stop stopColor="#ffffff"/><stop offset="1" stopColor="#d0f0f0"/>
-                  </linearGradient>
-                </defs>
-                <path d="M3.5 16S8 8.5 16 8.5 28.5 16 28.5 16 24 23.5 16 23.5 3.5 16 3.5 16Z"
-                      stroke="url(#ld-g-eye)" strokeWidth="2" fill="none" strokeLinejoin="round"/>
-                <path d="M16 12.2a3.8 3.8 0 0 1 3.8 3.8c0 1.5-.9 2.8-2.2 3.4" stroke="url(#ld-g-eye)" strokeWidth="1.7" strokeLinecap="round" fill="none"/>
-                <path d="M16 14.2a1.8 1.8 0 0 1 1.8 1.8" stroke="url(#ld-g-eye)" strokeWidth="1.7" strokeLinecap="round" fill="none"/>
-                <circle cx="16" cy="16" r=".9" fill="url(#ld-g-eye)"/>
-              </svg>
-            </span>
             <div className="ld-step-title-zone">
               <h3 className="ld-step-title">{t('landing.desktop.step3.title')}</h3>
             </div>
