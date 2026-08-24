@@ -488,10 +488,11 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THREE STEPS — premium gradient cards
-   Each card has a full gradient background, large icon with glow,
-   uppercase title at the bottom of the colored zone, and a
-   description below in the card's surface area.
+   THREE STEPS — premium image-background cards
+   Each card uses a full-bleed background image (card-{n}-bg.jpg)
+   with the icon centered in the upper zone and the title +
+   description overlaid at the bottom on a gradient overlay that
+   guarantees text readability in both dark and light themes.
    ═══════════════════════════════════════════════════════════════ */
 .ld-steps { margin-top: 64px; }
 .ld-step-list {
@@ -509,39 +510,33 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  min-height: 280px;
+  min-height: 320px;
+  background-size: cover;
+  background-position: center;
 }
 
-/* ── Gradient backgrounds per card ── */
+/* ── Background images per card (same in dark + light) ── */
 .ld-step-card[data-accent="violet"] {
-  background: linear-gradient(135deg, #6a3fc0 0%, #c17fe0 100%);
+  background-image: url('/images/card-1-bg.jpg');
+  background-color: #6a3fc0;
 }
 .ld-step-card[data-accent="blue"] {
-  background: linear-gradient(135deg, #1a2f5c 0%, #2d4a7a 100%);
+  background-image: url('/images/card-2-bg.jpg');
+  background-color: #1a2f5c;
 }
 .ld-step-card[data-accent="teal"] {
-  background: linear-gradient(135deg, #1a4a4a 0%, #2d6a6a 100%);
+  background-image: url('/images/card-3-bg.jpg');
+  background-color: #1a4a4a;
 }
 
-/* Light theme: slightly brighter gradients */
-[data-theme="light"] .ld-step-card[data-accent="violet"] {
-  background: linear-gradient(135deg, #7b4fd0 0%, #d08fe8 100%);
-}
-[data-theme="light"] .ld-step-card[data-accent="blue"] {
-  background: linear-gradient(135deg, #243a6c 0%, #3a5a8e 100%);
-}
-[data-theme="light"] .ld-step-card[data-accent="teal"] {
-  background: linear-gradient(135deg, #1f5a5a 0%, #357a7a 100%);
-}
-
-/* ── Number: discreet, top-left ── */
+/* ── Number: discreet, top-left, white on image ── */
 .ld-step-num {
   position: absolute;
   top: 18px;
   left: 22px;
   font-size: 20px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.5);
   letter-spacing: -.02em;
   z-index: 2;
 }
@@ -549,13 +544,13 @@
 /* ── Glow effect behind icon ── */
 .ld-step-glow {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
-  transform: translate(-50%, -60%);
+  transform: translate(-50%, -50%);
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
 }
@@ -564,24 +559,28 @@
 .ld-step-icon {
   display: grid;
   place-items: center;
-  padding: 48px 24px 32px;
+  padding: 56px 24px 24px;
   position: relative;
   z-index: 1;
 }
 .ld-step-icon svg {
   width: 48px;
   height: 48px;
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.25));
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.3));
 }
 
-/* ── Title zone: bottom of colored area with overlay ── */
+/* ── Text zone: bottom of card with gradient overlay for readability ── */
 .ld-step-title-zone {
-  padding: 16px 24px 20px;
-  background: rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(4px);
+  padding: 20px 24px 8px;
   position: relative;
   z-index: 1;
   margin-top: auto;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.45) 30%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
 }
 .ld-step-title {
   margin: 0;
@@ -591,18 +590,20 @@
   letter-spacing: .02em;
   color: #ffffff;
   line-height: 1.2;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Description: below the colored zone, on surface ── */
+/* ── Description: overlaid on the image's dark bottom band ── */
 .ld-step-desc {
   margin: 0;
-  padding: 16px 24px 20px;
+  padding: 4px 24px 22px;
   font-size: 15px;
-  line-height: 1.55;
-  color: var(--ld-text-soft);
-  background: var(--ld-surface);
-  border-bottom-left-radius: 18px;
-  border-bottom-right-radius: 18px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.78);
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* ═══════════════════════════════════════════════════════════════
