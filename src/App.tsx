@@ -25,6 +25,7 @@ import { IdleScreen } from './screens/IdleScreen';
 import { LandingScreen } from './screens/LandingScreen';
 import { LandingScreenDesktop } from './screens/LandingScreenDesktop';
 import { HowItWorksScreen } from './screens/HowItWorksScreen';
+import { HowItWorksScreenDesktop } from './screens/HowItWorksScreenDesktop';
 import { ImplementationScreen } from './screens/ImplementationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
@@ -201,12 +202,21 @@ export default function App() {
         )}
 
         {state.phase === 'how_it_works' && (
-          <HowItWorksScreen
-            onTryDemo={handleTryDemo}
-            onShowImplementation={handleShowImplementation}
-            onShowScenarios={handleShowScenarios}
-            onBackToLanding={handleBackToLanding}
-          />
+          isDesktop ? (
+            <HowItWorksScreenDesktop
+              onTryDemo={handleTryDemo}
+              onShowImplementation={handleShowImplementation}
+              onShowScenarios={handleShowScenarios}
+              onBackToLanding={handleBackToLanding}
+            />
+          ) : (
+            <HowItWorksScreen
+              onTryDemo={handleTryDemo}
+              onShowImplementation={handleShowImplementation}
+              onShowScenarios={handleShowScenarios}
+              onBackToLanding={handleBackToLanding}
+            />
+          )
         )}
 
         {state.phase === 'implementation' && (
