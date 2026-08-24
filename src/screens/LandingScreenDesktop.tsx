@@ -303,9 +303,24 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
           )}
         </div>
 
-        {/* ── Partner link ── */}
-        <div className="ld-partner-link">
-          <button onClick={onShowImplementation}>{t('landing.partnerLink')}</button>
+        {/* ── Partner card ── */}
+        <div className="ld-partner-card">
+          <div className="ld-partner-card-left">
+            <span className="ld-partner-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                <path d="M9 7l-4 4 4 4M15 7l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="11" r="1.5" fill="currentColor"/>
+              </svg>
+            </span>
+            <div className="ld-partner-card-text">
+              <span className="ld-partner-card-title">{locale === 'fr' ? 'Vous êtes un partenaire ?' : 'Are you a partner?'}</span>
+              <span className="ld-partner-card-sub">{locale === 'fr' ? 'Découvrez comment intégrer LiveGuard à votre produit' : 'Discover how to integrate LiveGuard into your product'}</span>
+            </div>
+          </div>
+          <button className="ld-btn ld-btn-outline ld-partner-card-btn" onClick={onShowImplementation}>
+            <span>{locale === 'fr' ? 'Voir l\'intégration' : 'See integration'}</span>
+            <span aria-hidden="true">→</span>
+          </button>
         </div>
 
         {/* ── Social proof ── */}
@@ -345,6 +360,9 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
         </div>
         <div className="ld-footer-bottom">
           <span className="ld-footer-copyright">
+            <span className="ld-footer-logo" aria-hidden="true">
+              <LiveGuardLogo size={16} />
+            </span>
             {t('landing.footer.copyright')}{' '}
             <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
               {t('landing.footer.company')}
