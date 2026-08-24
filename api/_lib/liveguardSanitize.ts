@@ -37,6 +37,36 @@ const FORBIDDEN_KEYS = new Set([
   'detail',
   'debug',
   'internal',
+  // Behavioral/cognitive sub-scores — must never reach the client (attackers
+  // could use them to reverse-engineer detection thresholds). The backend
+  // /demoguard/verify endpoint already strips these from its response, but
+  // this list acts as defense-in-depth in case the upstream shape changes.
+  'consistencyScore',
+  'motorConfidence',
+  'behaviorLikelihood',
+  'hesitationTotal',
+  'correctionTotal',
+  'avgRhythmMs',
+  'rhythmVariance',
+  'tasksObserved',
+  'totalInteractions',
+  'behaviorConsistency',
+  'behaviorSummary',
+  'touchDiagnosticsBehavior',
+  'touchDiagnostics',
+  'vocalDiagnostic',
+  'vocalStatus',
+  'cognitiveStatus',
+  'monitoringStatus',
+  'monitoringRecorded',
+  'behaviorStatus',
+  'trustLevel',
+  'quickGateStatus',
+  'quickGateReason',
+  'quickGateLatencyMs',
+  'hcsRelayAttempted',
+  'backendOfTruth',
+  'reasonSafe',
 ]);
 
 export function sanitizeValue(value: unknown): unknown {

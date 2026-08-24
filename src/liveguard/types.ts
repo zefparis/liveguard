@@ -9,7 +9,7 @@
  */
 
 import type { CognitiveSignals } from './cognitive/cognitiveTypes';
-import type { BehaviorPayload, BehaviorSummary, TouchDiagnosticsBehaviorSafe } from './behavior/behaviorTypes';
+import type { BehaviorPayload, TouchDiagnosticsBehaviorSafe } from './behavior/behaviorTypes';
 
 // ─── Device context ────────────────────────────────────────────────
 
@@ -157,14 +157,6 @@ export interface LiveGuardPayload {
 export interface LiveGuardHybridFusion {
   triggered: boolean;
   globalDecision?: string;
-  trustLevel?: string;
-  cognitiveStatus?: 'passed' | 'review' | 'failed';
-  monitoringRecorded?: boolean;
-  monitoringStatus?: 'recorded' | 'pending' | 'failed';
-  touchDiagnostics?: TouchDiagnosticsSafe;
-  behaviorStatus?: 'ok' | 'review' | 'failed' | 'missing';
-  behaviorSummary?: BehaviorSummary;
-  touchDiagnosticsBehavior?: TouchDiagnosticsBehaviorSafe;
 }
 
 export interface LiveGuardSafeResponse {
