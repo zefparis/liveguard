@@ -28,9 +28,12 @@ interface Props {
   onShowHowItWorks: () => void;
   onShowImplementation: () => void;
   onShowScenarios?: (sessionPublicId: string) => void;
+  onShowLegalTerms?: () => void;
+  onShowLegalPrivacy?: () => void;
+  onShowLegalCookies?: () => void;
 }
 
-export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios }: Props) {
+export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onShowLegalTerms, onShowLegalPrivacy, onShowLegalCookies }: Props) {
   const { t, locale, setLocale } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -348,9 +351,9 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
           </div>
           <div className="ld-footer-col">
             <span className="ld-footer-col-title">{locale === 'fr' ? 'Légal' : 'Legal'}</span>
-            <a href="/legal/terms">{locale === 'fr' ? "Conditions d'utilisation" : 'Terms of use'}</a>
-            <a href="/legal/privacy">{locale === 'fr' ? 'Politique de confidentialité' : 'Privacy policy'}</a>
-            <a href="/legal/cookies">{locale === 'fr' ? 'Politique de cookies' : 'Cookie policy'}</a>
+            <a href="/legal/terms" onClick={(e) => { if (onShowLegalTerms) { e.preventDefault(); onShowLegalTerms(); } }}>{locale === 'fr' ? "Conditions d'utilisation" : 'Terms of use'}</a>
+            <a href="/legal/privacy" onClick={(e) => { if (onShowLegalPrivacy) { e.preventDefault(); onShowLegalPrivacy(); } }}>{locale === 'fr' ? 'Politique de confidentialité' : 'Privacy policy'}</a>
+            <a href="/legal/cookies" onClick={(e) => { if (onShowLegalCookies) { e.preventDefault(); onShowLegalCookies(); } }}>{locale === 'fr' ? 'Politique de cookies' : 'Cookie policy'}</a>
           </div>
           <div className="ld-footer-col">
             <span className="ld-footer-col-title">{locale === 'fr' ? 'Société' : 'Company'}</span>

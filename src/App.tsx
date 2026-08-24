@@ -26,6 +26,7 @@ import { LandingScreen } from './screens/LandingScreen';
 import { LandingScreenDesktop } from './screens/LandingScreenDesktop';
 import { HowItWorksScreen } from './screens/HowItWorksScreen';
 import { HowItWorksScreenDesktop } from './screens/HowItWorksScreenDesktop';
+import { LegalScreen } from './screens/LegalScreen';
 import { ImplementationScreen } from './screens/ImplementationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
 import { PrepScreen } from './screens/PrepScreen';
@@ -91,6 +92,18 @@ export default function App() {
 
   const handleBackToLanding = useCallback(() => {
     dispatch({ type: 'SHOW_LANDING' });
+  }, []);
+
+  const handleShowLegalTerms = useCallback(() => {
+    dispatch({ type: 'SHOW_LEGAL_TERMS' });
+  }, []);
+
+  const handleShowLegalPrivacy = useCallback(() => {
+    dispatch({ type: 'SHOW_LEGAL_PRIVACY' });
+  }, []);
+
+  const handleShowLegalCookies = useCallback(() => {
+    dispatch({ type: 'SHOW_LEGAL_COOKIES' });
   }, []);
 
   const handleProtectionStart = useCallback((sessionPublicId: string, protectionCategory: string) => {
@@ -176,7 +189,9 @@ export default function App() {
         {state.phase !== 'idle' && state.phase !== 'landing'
           && state.phase !== 'how_it_works' && state.phase !== 'implementation'
           && state.phase !== 'scenario_selector' && state.phase !== 'scenario_demo'
-          && state.phase !== 'session_suspended' && (
+          && state.phase !== 'session_suspended'
+          && state.phase !== 'legal_terms' && state.phase !== 'legal_privacy'
+          && state.phase !== 'legal_cookies' && (
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
@@ -190,6 +205,9 @@ export default function App() {
               onShowHowItWorks={handleShowHowItWorks}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
+              onShowLegalTerms={handleShowLegalTerms}
+              onShowLegalPrivacy={handleShowLegalPrivacy}
+              onShowLegalCookies={handleShowLegalCookies}
             />
           ) : (
             <LandingScreen
@@ -224,6 +242,18 @@ export default function App() {
             onBack={handleBackToLanding}
             onBackToLanding={handleBackToLanding}
           />
+        )}
+
+        {state.phase === 'legal_terms' && (
+          <LegalScreen section="terms" onBackToLanding={handleBackToLanding} />
+        )}
+
+        {state.phase === 'legal_privacy' && (
+          <LegalScreen section="privacy" onBackToLanding={handleBackToLanding} />
+        )}
+
+        {state.phase === 'legal_cookies' && (
+          <LegalScreen section="cookies" onBackToLanding={handleBackToLanding} />
         )}
 
         {state.phase === 'idle' && (

@@ -35,7 +35,10 @@ export type Phase =
   | 'readiness'
   | 'submitting'
   | 'done'
-  | 'error';
+  | 'error'
+  | 'legal_terms'
+  | 'legal_privacy'
+  | 'legal_cookies';
 
 export interface LiveGuardState {
   phase: Phase;
@@ -93,6 +96,9 @@ export type Action =
   | { type: 'SHOW_LANDING' }
   | { type: 'SHOW_HOW_IT_WORKS' }
   | { type: 'SHOW_IMPLEMENTATION' }
+  | { type: 'SHOW_LEGAL_TERMS' }
+  | { type: 'SHOW_LEGAL_PRIVACY' }
+  | { type: 'SHOW_LEGAL_COOKIES' }
   | { type: 'START_DEMO'; sessionPublicId: string }
   | { type: 'SELECT_PROTECTION'; sessionPublicId: string }
   | { type: 'SHOW_SCENARIO_SELECTOR'; sessionPublicId: string }
@@ -117,9 +123,9 @@ export type Action =
   | { type: 'RESET' };
 
 const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
-  landing: ['idle', 'how_it_works', 'implementation', 'prep', 'scenario_selector'],
-  how_it_works: ['landing', 'implementation', 'idle', 'prep', 'scenario_selector'],
-  implementation: ['landing', 'how_it_works', 'idle'],
+  landing: ['idle', 'how_it_works', 'implementation', 'prep', 'scenario_selector', 'legal_terms', 'legal_privacy', 'legal_cookies'],
+  how_it_works: ['landing', 'implementation', 'idle', 'prep', 'scenario_selector', 'legal_terms', 'legal_privacy', 'legal_cookies'],
+  implementation: ['landing', 'how_it_works', 'idle', 'legal_terms', 'legal_privacy', 'legal_cookies'],
   idle: ['select_protection', 'landing', 'prep', 'scenario_selector'],
   select_protection: ['prep', 'idle', 'landing'],
   scenario_selector: ['scenario_demo', 'session_suspended', 'landing', 'how_it_works', 'idle'],
@@ -137,6 +143,9 @@ const VALID_TRANSITIONS: Record<Phase, Phase[]> = {
   submitting: ['done', 'error'],
   done: ['idle', 'landing', 'scenario_selector'],
   error: ['idle', 'landing'],
+  legal_terms: ['landing', 'how_it_works', 'implementation', 'legal_privacy', 'legal_cookies'],
+  legal_privacy: ['landing', 'how_it_works', 'implementation', 'legal_terms', 'legal_cookies'],
+  legal_cookies: ['landing', 'how_it_works', 'implementation', 'legal_terms', 'legal_privacy'],
 };
 
 function isValidTransition(from: Phase, to: Phase): boolean {
@@ -160,6 +169,21 @@ export function liveguardReducer(state: LiveGuardState, action: Action): LiveGua
     case 'SHOW_IMPLEMENTATION': {
       if (!isValidTransition(state.phase, 'implementation')) return state;
       return { ...state, phase: 'implementation' };
+    }
+
+    case 'SHOW_LEGAL_TERMS': {
+      if (!isValidTransition(state.phase, 'legal_terms')) return state;
+      return { ...state, phase: 'legal_terms' };
+    }
+
+    case 'SHOW_LEGAL_PRIVACY': {
+      if (!isValidTransition(state.phase, 'legal_privacy')) return state;
+      return { ...state, phase: 'legal_privacy' };
+    }
+
+    case 'SHOW_LEGAL_COOKIES': {
+      if (!isValidTransition(state.phase, 'legal_cookies')) return state;
+      return { ...state, phase: 'legal_cookies' };
     }
 
     case 'START_DEMO': {
