@@ -817,13 +817,13 @@
   gap: 48px;
   align-items: center;
   margin-top: 64px;
-  padding: 48px 40px;
-  min-height: 340px;
+  padding: 40px;
+  aspect-ratio: 3.6 / 1;
   border-radius: 16px;
   border: 1px solid var(--ld-border-strong);
   overflow: hidden;
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
 }
 
 /* ── Dark theme (default): dark background image ── */
