@@ -182,15 +182,59 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
       <section className="ld-steps" id="steps">
         <ol className="ld-step-list">
           <li className="ld-step-card" data-accent="violet">
-            <span className="ld-step-num">1</span>
+            <div className="ld-step-header">
+              <span className="ld-step-num">1</span>
+              <span className="ld-step-icon" data-accent="violet" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+                  <defs>
+                    <linearGradient id="ld-g-puzzle" x1="6" y1="6" x2="26" y2="26">
+                      <stop stopColor="#8b5cf6"/><stop offset="1" stopColor="#22c8ee"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M13.6 6.4a2.9 2.9 0 0 1 5.8 0v1.1h3.2a2.4 2.4 0 0 1 2.4 2.4v3h1.1a2.9 2.9 0 0 1 0 5.8H25v3.2a2.4 2.4 0 0 1-2.4 2.4h-3v-1.1a2.9 2.9 0 0 0-5.8 0v1.1h-3.2a2.4 2.4 0 0 1-2.4-2.4v-3H7.3a2.9 2.9 0 0 1 0-5.8h1.1v-3A2.4 2.4 0 0 1 10.8 7.5h2.8V6.4Z"
+                        fill="url(#ld-g-puzzle)" transform="translate(-2.5 -1.5)"/>
+                </svg>
+              </span>
+            </div>
             <p>{t('landing.step1')}</p>
           </li>
           <li className="ld-step-card" data-accent="blue">
-            <span className="ld-step-num">2</span>
+            <div className="ld-step-header">
+              <span className="ld-step-num">2</span>
+              <span className="ld-step-icon" data-accent="blue" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+                  <defs>
+                    <linearGradient id="ld-g-nocam" x1="6" y1="8" x2="26" y2="26">
+                      <stop stopColor="#4f7cff"/><stop offset="1" stopColor="#22c8ee"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x="4.5" y="10" width="15" height="12" rx="3" fill="url(#ld-g-nocam)"/>
+                  <circle cx="12" cy="16" r="2.6" fill="#fff"/>
+                  <path d="M19.5 14.5 25 11v10l-5.5-3.5" stroke="url(#ld-g-nocam)" strokeWidth="2.2" strokeLinejoin="round" fill="none"/>
+                  <line x1="5" y1="6.5" x2="27" y2="25.5" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/>
+                </svg>
+              </span>
+            </div>
             <p>{t('landing.step2')}</p>
           </li>
           <li className="ld-step-card" data-accent="cyan">
-            <span className="ld-step-num">3</span>
+            <div className="ld-step-header">
+              <span className="ld-step-num">3</span>
+              <span className="ld-step-icon" data-accent="cyan" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+                  <defs>
+                    <linearGradient id="ld-g-eye" x1="5" y1="9" x2="27" y2="23">
+                      <stop stopColor="#22c8ee"/><stop offset="1" stopColor="#8b5cf6"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M3.5 16S8 8.5 16 8.5 28.5 16 28.5 16 24 23.5 16 23.5 3.5 16 3.5 16Z"
+                        stroke="url(#ld-g-eye)" strokeWidth="2" fill="none" strokeLinejoin="round"/>
+                  <path d="M16 12.2a3.8 3.8 0 0 1 3.8 3.8c0 1.5-.9 2.8-2.2 3.4" stroke="url(#ld-g-eye)" strokeWidth="1.7" strokeLinecap="round" fill="none"/>
+                  <path d="M16 14.2a1.8 1.8 0 0 1 1.8 1.8" stroke="url(#ld-g-eye)" strokeWidth="1.7" strokeLinecap="round" fill="none"/>
+                  <circle cx="16" cy="16" r=".9" fill="url(#ld-g-eye)"/>
+                </svg>
+              </span>
+            </div>
             <p>{t('landing.step3')}</p>
           </li>
         </ol>
@@ -236,54 +280,74 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="ld-footer">
-        <span className="ld-footer-copyright">
-          {t('landing.footer.copyright')}{' '}
-          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
-            {t('landing.footer.company')}
-          </a>
-        </span>
-        <nav className="ld-footer-links">
-          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">{t('landing.footer.docs')}</a>
-          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">{t('landing.footer.integration')}</a>
-          <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">{t('landing.footer.contact')}</a>
-        </nav>
-      </footer>
-
-      {/* ── Bottom CTAs ── */}
-      <div className="ld-ctas">
-        <button className="ld-btn ld-btn-primary" onClick={handleTryDemo} disabled={loading}>
-          <span>{loading ? '…' : t('landing.ctaPrimary')}</span>
-          {!loading && <span aria-hidden="true">→</span>}
-        </button>
-        <button className="ld-btn ld-btn-secondary" onClick={onShowHowItWorks}>
-          <span>{t('landing.ctaSecondary')}</span>
-          <span aria-hidden="true">→</span>
-        </button>
-        {onShowScenarios && (
-          <button className="ld-btn ld-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
-            <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+      {/* ── Final CTA section (before footer) ── */}
+      <section className="ld-final-cta">
+        <div className="ld-ctas">
+          <button className="ld-btn ld-btn-primary" onClick={handleTryDemo} disabled={loading}>
+            <span>{loading ? '…' : t('landing.ctaPrimary')}</span>
             {!loading && <span aria-hidden="true">→</span>}
           </button>
-        )}
-      </div>
+          <button className="ld-btn ld-btn-secondary" onClick={onShowHowItWorks}>
+            <span>{t('landing.ctaSecondary')}</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          {onShowScenarios && (
+            <button className="ld-btn ld-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
+              <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+              {!loading && <span aria-hidden="true">→</span>}
+            </button>
+          )}
+        </div>
 
-      {/* ── Partner link ── */}
-      <div className="ld-partner-link">
-        <button onClick={onShowImplementation}>{t('landing.partnerLink')}</button>
-      </div>
+        {/* ── Partner link ── */}
+        <div className="ld-partner-link">
+          <button onClick={onShowImplementation}>{t('landing.partnerLink')}</button>
+        </div>
 
-      {/* ── Social proof ── */}
-      <div className="ld-proof">
-        <span className="ld-proof-pill">
-          <span className="ld-proof-icons" aria-hidden="true">
-            <span className="ld-proof-people"><LiveGuardLogo size={18} /></span>
-            <span className="ld-proof-unipay">U</span>
+        {/* ── Social proof ── */}
+        <div className="ld-proof">
+          <span className="ld-proof-pill">
+            <span className="ld-proof-icons" aria-hidden="true">
+              <span className="ld-proof-people"><LiveGuardLogo size={18} /></span>
+              <span className="ld-proof-unipay">U</span>
+            </span>
+            <span>{t('landing.proof')}</span>
           </span>
-          <span>{t('landing.proof')}</span>
-        </span>
-      </div>
+        </div>
+      </section>
+
+      {/* ── Multi-column footer ── */}
+      <footer className="ld-footer">
+        <div className="ld-footer-grid">
+          <div className="ld-footer-col">
+            <span className="ld-footer-col-title">{locale === 'fr' ? 'Produit' : 'Product'}</span>
+            <a href="#how-it-works" onClick={(e) => { e.preventDefault(); onShowHowItWorks(); }}>{t('landing.ctaSecondary')}</a>
+            {onShowScenarios && (
+              <a href="#scenarios" onClick={(e) => { e.preventDefault(); handleShowScenarios(); }}>{t('landing.scenariosCta')}</a>
+            )}
+            <a href="https://hcs-u7.com" target="_blank" rel="noopener noreferrer">{t('landing.domain.cta')}</a>
+          </div>
+          <div className="ld-footer-col">
+            <span className="ld-footer-col-title">{locale === 'fr' ? 'Légal' : 'Legal'}</span>
+            <a href="/legal/terms">{locale === 'fr' ? "Conditions d'utilisation" : 'Terms of use'}</a>
+            <a href="/legal/privacy">{locale === 'fr' ? 'Politique de confidentialité' : 'Privacy policy'}</a>
+            <a href="/legal/cookies">{locale === 'fr' ? 'Politique de cookies' : 'Cookie policy'}</a>
+          </div>
+          <div className="ld-footer-col">
+            <span className="ld-footer-col-title">{locale === 'fr' ? 'Société' : 'Company'}</span>
+            <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">{t('landing.footer.company')}</a>
+            <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">{t('landing.footer.contact')}</a>
+          </div>
+        </div>
+        <div className="ld-footer-bottom">
+          <span className="ld-footer-copyright">
+            {t('landing.footer.copyright')}{' '}
+            <a href="https://ia-solution.fr" target="_blank" rel="noopener noreferrer">
+              {t('landing.footer.company')}
+            </a>
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }

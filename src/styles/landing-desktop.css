@@ -437,6 +437,11 @@
 .ld-step-card[data-accent="violet"] { border-top: 3px solid var(--ld-accent-violet); }
 .ld-step-card[data-accent="blue"]   { border-top: 3px solid var(--ld-accent-blue); }
 .ld-step-card[data-accent="cyan"]   { border-top: 3px solid var(--ld-accent-cyan); }
+.ld-step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 .ld-step-num {
   font-size: 52px;
   font-weight: 800;
@@ -446,6 +451,16 @@
 .ld-step-card[data-accent="violet"] .ld-step-num { color: var(--ld-accent-violet); }
 .ld-step-card[data-accent="blue"]   .ld-step-num { color: var(--ld-accent-blue); }
 .ld-step-card[data-accent="cyan"]   .ld-step-num { color: var(--ld-accent-cyan); }
+.ld-step-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.ld-step-icon[data-accent="violet"] { background: rgba(139, 92, 246, .12); }
+.ld-step-icon[data-accent="blue"]   { background: rgba(79, 124, 255, .12); }
+.ld-step-icon[data-accent="cyan"]   { background: rgba(34, 200, 238, .12); }
+.ld-step-icon svg { width: 28px; height: 28px; }
 .ld-step-card p {
   margin: 0;
   font-size: 17px;
@@ -552,37 +567,19 @@
 .ld-domain-terminal-success { color: #34d399; }
 
 /* ═══════════════════════════════════════════════════════════════
-   FOOTER
+   FINAL CTA SECTION (before footer)
+   3 buttons + partner link + UniPay proof badge
+   Visually distinct from the footer below.
    ═══════════════════════════════════════════════════════════════ */
-.ld-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 56px;
-  padding-top: 28px;
-  border-top: 1px solid var(--ld-border-strong);
-  font-size: 14px;
-  color: var(--ld-text-faint);
+.ld-final-cta {
+  margin-top: 64px;
+  padding: 40px 0 0;
+  text-align: center;
 }
-.ld-footer a {
-  color: var(--ld-text-faint);
-  text-decoration: none;
-  transition: color .2s;
-}
-.ld-footer a:hover { color: var(--ld-accent-blue); }
-.ld-footer-links {
-  display: flex;
-  gap: 32px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   BOTTOM CTAs + PARTNER LINK + PROOF
-   ═══════════════════════════════════════════════════════════════ */
 .ld-ctas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-top: 48px;
 }
 .ld-partner-link {
   margin-top: 24px;
@@ -599,7 +596,7 @@
 }
 .ld-partner-link button:hover { color: var(--ld-text-soft); }
 .ld-proof {
-  margin-top: 32px;
+  margin-top: 28px;
   text-align: center;
 }
 .ld-proof-pill {
@@ -637,6 +634,57 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MULTI-COLUMN FOOTER
+   3 columns (Produit / Légal / Société) + bottom copyright line
+   Separated from the CTA section by a border-top.
+   ═══════════════════════════════════════════════════════════════ */
+.ld-footer {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--ld-border-strong);
+}
+.ld-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  padding-bottom: 32px;
+}
+.ld-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ld-footer-col-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ld-text-faint);
+  margin-bottom: 4px;
+}
+.ld-footer-col a {
+  font-size: 15px;
+  color: var(--ld-text-soft);
+  text-decoration: none;
+  transition: color .2s;
+  cursor: pointer;
+}
+.ld-footer-col a:hover { color: var(--ld-accent-blue); }
+.ld-footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid var(--ld-border);
+  font-size: 14px;
+  color: var(--ld-text-faint);
+}
+.ld-footer-bottom a {
+  color: var(--ld-text-faint);
+  text-decoration: none;
+  transition: color .2s;
+}
+.ld-footer-bottom a:hover { color: var(--ld-accent-blue); }
+.ld-footer-copyright { display: inline; }
 
 /* ═══════════════════════════════════════════════════════════════
    ULTRA-WIDE (1920px+): 4-column how-it-works, cap status cards
