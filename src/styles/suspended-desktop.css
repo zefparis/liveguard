@@ -203,22 +203,29 @@
   max-height: 420px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* Fixed base color for terminal text — NOT theme-dependent.
+     Ensures readable contrast on the dark terminal background
+     regardless of page theme (dark or light). */
+  color: #a5b4d4;
 }
 .ss-terminal-line {
   white-space: pre;
   min-height: 1.85em;
 }
-/* Terminal color types */
-.ss-terminal-comment { color: #4a5578; }
-.ss-terminal-metric { color: #6b93ff; font-weight: 600; }
-.ss-terminal-expected { color: #34d399; }
-.ss-terminal-observed { color: #fbbf24; }
-.ss-terminal-alert {
+/* Terminal color types — FIXED COLORS (not theme-dependent).
+   A real terminal always has dark bg + light text, regardless of
+   the page theme. These hex values are hardcoded to ensure consistent
+   contrast in both dark and light page themes. */
+.ss-term-comment { color: #6b7393; }
+.ss-term-metric { color: #6b93ff; font-weight: 600; }
+.ss-term-expected { color: #34d399; }
+.ss-term-observed { color: #fbbf24; }
+.ss-term-alert {
   color: #f87171;
   font-weight: 700;
   text-shadow: 0 0 8px rgba(248, 113, 113, 0.3);
 }
-.ss-terminal-info { color: #a5b4d4; }
+.ss-term-info { color: #a5b4d4; }
 .ss-terminal-cursor {
   display: inline-block;
   width: 8px;
