@@ -111,7 +111,7 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
       </header>
 
       {/* ── Hero: full-width banner with overlaid text ── */}
-      <section className="ld-hero-banner">
+      <section className="ld-hero-banner" data-theme={theme}>
         <div className="ld-hero-banner-overlay" aria-hidden="true" />
         <div className="ld-hero-banner-content">
           <h1>{t('landing.heroTitle')}</h1>

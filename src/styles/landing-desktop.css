@@ -175,20 +175,18 @@
   margin-top: 24px;
   border-radius: 20px;
   overflow: hidden;
-  background-image: url('/images/hero-bg-desktop.jpg');
   background-size: cover;
   background-position: center;
-  background-color: #0a0f1e;
   display: flex;
   align-items: flex-start;
 }
 
-/* Gradient overlay: darker on the left (where text sits), fades to
-   transparent on the right (where the shield visual is). Ensures
-   white text readability without denaturing the image. */
-.ld-hero-banner-overlay {
-  position: absolute;
-  inset: 0;
+/* ── Dark theme (default): dark background image + white text ── */
+.ld-hero-banner[data-theme="dark"] {
+  background-image: url('/images/hero-bg-desktop.jpg');
+  background-color: #0a0f1e;
+}
+.ld-hero-banner[data-theme="dark"] .ld-hero-banner-overlay {
   background: linear-gradient(
     90deg,
     rgba(6, 10, 24, 0.82) 0%,
@@ -196,10 +194,51 @@
     rgba(6, 10, 24, 0.15) 60%,
     transparent 80%
   );
+}
+.ld-hero-banner[data-theme="dark"] h1 {
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+.ld-hero-banner[data-theme="dark"] .ld-lede {
+  color: rgba(255, 255, 255, 0.82);
+}
+.ld-hero-banner[data-theme="dark"] .ld-hero-stats {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Light theme: light background image + dark text ── */
+.ld-hero-banner[data-theme="light"] {
+  background-image: url('/images/hero-bg-desktop-light.jpg');
+  background-color: #eef2fa;
+}
+.ld-hero-banner[data-theme="light"] .ld-hero-banner-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.50) 35%,
+    rgba(255, 255, 255, 0.12) 60%,
+    transparent 80%
+  );
+}
+.ld-hero-banner[data-theme="light"] h1 {
+  color: #0e1830;
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.4);
+}
+.ld-hero-banner[data-theme="light"] .ld-lede {
+  color: rgba(14, 24, 48, 0.72);
+}
+.ld-hero-banner[data-theme="light"] .ld-hero-stats {
+  color: rgba(14, 24, 48, 0.55);
+}
+
+/* Overlay base (position only — color set by theme rules above) */
+.ld-hero-banner-overlay {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
 }
 
-/* Text content — top-left, white, max-width for readability */
+/* Text content — top-left, max-width for readability */
 .ld-hero-banner-content {
   position: relative;
   z-index: 1;
@@ -212,15 +251,12 @@
   font-weight: 750;
   letter-spacing: -.03em;
   line-height: 1.12;
-  color: #ffffff;
   text-wrap: balance;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 .ld-hero-banner .ld-lede {
   margin: 20px 0 0;
   font-size: 18px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.82);
   max-width: 42ch;
   text-wrap: pretty;
 }
@@ -241,7 +277,6 @@
   gap: 10px;
   margin-top: 24px;
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.65);
   letter-spacing: -.01em;
 }
 
