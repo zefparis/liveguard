@@ -576,18 +576,38 @@
   z-index: 2;
 }
 
-/* ── Text zone: bottom of card with gradient overlay for readability ── */
+/* ── Soft gradient overlay on the whole card ──
+   A gentle dark-to-transparent gradient sits over the bottom 55% of
+   the card, creating a smooth transition from the illustrated part of
+   the image to the text zone. This replaces the hard solid black band
+   that was previously on .ld-step-desc. */
+.ld-step-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(10, 10, 20, 0.35) 35%,
+    rgba(10, 10, 20, 0.75) 65%,
+    rgba(10, 10, 20, 0.92) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+}
+
+/* ── Text zone: bottom of card, sits on the gradient overlay ── */
 .ld-step-title-zone {
   padding: 20px 24px 8px;
   position: relative;
   z-index: 1;
   margin-top: auto;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.45) 30%,
-    rgba(0, 0, 0, 0.65) 100%
-  );
+  background: none;
 }
 .ld-step-title {
   margin: 0;
@@ -597,20 +617,20 @@
   letter-spacing: .02em;
   color: #ffffff;
   line-height: 1.2;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 
-/* ── Description: overlaid on the image's dark bottom band ── */
+/* ── Description: transparent background, sits on the gradient ── */
 .ld-step-desc {
   margin: 0;
   padding: 4px 24px 22px;
   font-size: 15px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.82);
   position: relative;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.65);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  background: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ═══════════════════════════════════════════════════════════════
