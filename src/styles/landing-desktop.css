@@ -162,144 +162,124 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO — 2-column grid
-   Left: title (56-64px), paragraph (17-18px), CTA, mini-stats
-   Right: shield image + status cards stacked below
+   HERO — full-width banner with overlaid text
+   Background image: hero-bg-desktop.jpg (dark circuit texture
+   with shield + sound waves). Same banner in dark AND light theme.
+   Text is white, overlaid top-left with a gradient overlay for
+   contrast.
    ═══════════════════════════════════════════════════════════════ */
-.ld-hero-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: clamp(48px, 5vw, 80px);
-  align-items: start;
-  margin-top: 32px;
+.ld-hero-banner {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 32vw, 480px);
+  margin-top: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-image: url('/images/hero-bg-desktop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #0a0f1e;
+  display: flex;
+  align-items: flex-start;
 }
 
-/* ── Left column ── */
-.ld-hero h1 {
+/* Gradient overlay: darker on the left (where text sits), fades to
+   transparent on the right (where the shield visual is). Ensures
+   white text readability without denaturing the image. */
+.ld-hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(6, 10, 24, 0.82) 0%,
+    rgba(6, 10, 24, 0.55) 35%,
+    rgba(6, 10, 24, 0.15) 60%,
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+/* Text content — top-left, white, max-width for readability */
+.ld-hero-banner-content {
+  position: relative;
+  z-index: 1;
+  padding: clamp(36px, 3.5vw, 56px) clamp(32px, 4vw, 64px);
+  max-width: 620px;
+}
+.ld-hero-banner h1 {
   margin: 0;
-  font-size: clamp(56px, 4.5vw, 64px);
+  font-size: clamp(40px, 3.2vw, 52px);
   font-weight: 750;
   letter-spacing: -.03em;
-  line-height: 1.1;
+  line-height: 1.12;
+  color: #ffffff;
   text-wrap: balance;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
-.ld-lede {
-  margin: 24px 0 0;
+.ld-hero-banner .ld-lede {
+  margin: 20px 0 0;
   font-size: 18px;
   line-height: 1.55;
-  color: var(--ld-text-soft);
-  max-width: 44ch;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 42ch;
   text-wrap: pretty;
 }
-.ld-hero-cta {
+.ld-hero-banner .ld-hero-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 32px;
+  margin-top: 28px;
   padding: 14px 28px;
   font-size: 16px;
   font-weight: 600;
   min-height: 52px;
 }
-.ld-hero-stats {
+.ld-hero-banner .ld-hero-stats {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  margin-top: 28px;
+  margin-top: 24px;
   font-size: 15px;
-  color: var(--ld-text-faint);
+  color: rgba(255, 255, 255, 0.65);
   letter-spacing: -.01em;
 }
 
-/* ── Right column: shield + status cards ── */
-.ld-hero-visual {
-  position: relative;
-}
-.ld-shield-halo {
-  display: none;
-}
-.ld-shield-img {
-  display: block;
-  width: clamp(340px, 28vw, 440px);
-  height: clamp(340px, 28vw, 440px);
-  object-fit: contain;
-  margin: 0 auto 24px;
-  animation: ld-shield-float 6s ease-in-out infinite;
-  pointer-events: none;
-  user-select: none;
-}
-@keyframes ld-shield-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ld-shield-img { animation: none; }
+/* ═══════════════════════════════════════════════════════════════
+   STATUS CARDS — 3-column horizontal row below the banner
+   Each card: icon, title, description, badge at bottom.
+   Expandable (accordion) — same shared sub-components, styled
+   for the horizontal desktop layout.
+   ═══════════════════════════════════════════════════════════════ */
+.ld-status-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 24px;
 }
 
-/* Light mode: show soft halo behind shield for contrast */
-[data-theme="light"] .ld-shield-halo {
-  display: block;
-  position: absolute;
-  top: clamp(20px, 2vw, 40px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(480px, 40vw, 620px);
-  height: clamp(480px, 40vw, 620px);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(20, 26, 43, 0.5) 0%, rgba(20, 26, 43, 0.25) 35%, transparent 70%);
-  z-index: 0;
-  pointer-events: none;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .ld-shield-halo {
-    display: block;
-    position: absolute;
-    top: clamp(20px, 2vw, 40px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: clamp(480px, 40vw, 620px);
-    height: clamp(480px, 40vw, 620px);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(20, 26, 43, 0.5) 0%, rgba(20, 26, 43, 0.25) 35%, transparent 70%);
-    z-index: 0;
-    pointer-events: none;
-  }
-}
-.ld-shield-img { position: relative; z-index: 1; }
-
-/* ── Status block (shared sub-components, desktop styling) ── */
-.ld-status-block {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: relative;
-  z-index: 2;
-}
-.ld-status-section {
+/* NOTE: shared sub-components use landing-* class names.
+   Scoped under .ld-page so desktop sizing doesn't affect mobile. */
+.ld-page .landing-status-section {
   background: var(--ld-surface);
   border: 1px solid var(--ld-border);
   border-radius: 14px;
   overflow: hidden;
   box-shadow: var(--ld-shadow-soft);
+  display: flex;
+  flex-direction: column;
 }
-.ld-status-section[data-accent="cognitive"] .ld-status-icon { color: var(--ld-accent-blue); }
-.ld-status-section[data-accent="behavioral"] .ld-status-icon { color: var(--ld-accent-violet); }
-.ld-status-section[data-accent="network"] .ld-status-icon { color: var(--ld-accent-cyan); }
-
-/* NOTE: the shared sub-components use landing-* class names.
-   We style them here scoped under .ld-page so they get desktop
-   sizing without affecting the mobile LandingScreen (which is
-   never mounted at the same time). */
+.ld-page .landing-status-section[data-accent="cognitive"] .landing-status-icon { color: var(--ld-accent-blue); }
+.ld-page .landing-status-section[data-accent="behavioral"] .landing-status-icon { color: var(--ld-accent-violet); }
+.ld-page .landing-status-section[data-accent="network"] .landing-status-icon { color: var(--ld-accent-cyan); }
 .ld-page .landing-status-row {
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 16px 20px;
+  padding: 20px 22px;
   background: none;
   border: none;
-  border-bottom: 1px solid transparent;
   cursor: pointer;
   text-align: left;
   transition: background .2s;
@@ -307,12 +287,9 @@
 .ld-page .landing-status-row:hover {
   background: var(--ld-surface-soft);
 }
-.ld-page .landing-status-section[data-accent="cognitive"] .landing-status-icon { color: var(--ld-accent-blue); }
-.ld-page .landing-status-section[data-accent="behavioral"] .landing-status-icon { color: var(--ld-accent-violet); }
-.ld-page .landing-status-section[data-accent="network"] .landing-status-icon { color: var(--ld-accent-cyan); }
 .ld-page .landing-status-icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
+  width: 44px; height: 44px;
+  border-radius: 12px;
   display: grid; place-items: center;
   background: var(--ld-surface-soft);
   flex-shrink: 0;
@@ -321,23 +298,26 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  min-width: 0;
 }
 .ld-page .landing-status-label {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--ld-text);
 }
 .ld-page .landing-status-desc {
   font-size: 14px;
   color: var(--ld-text-faint);
+  line-height: 1.4;
 }
 .ld-page .landing-status-badge {
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 5px 11px;
   border-radius: 999px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .ld-page .landing-status-badge-active {
   background: rgba(34, 200, 238, .12);
@@ -367,7 +347,7 @@
   transform: rotate(180deg);
 }
 .ld-page .landing-status-content {
-  padding: 12px 20px 16px;
+  padding: 14px 22px 18px;
   border-top: 1px solid var(--ld-border);
 }
 .ld-page .landing-status-list {
@@ -659,10 +639,15 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ULTRA-WIDE (1920px+): 4-column how-it-works
+   ULTRA-WIDE (1920px+): 4-column how-it-works, cap status cards
    ═══════════════════════════════════════════════════════════════ */
 @media (min-width: 1920px) {
   .ld-howitworks-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+  .ld-status-row {
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

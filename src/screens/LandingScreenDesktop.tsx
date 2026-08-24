@@ -110,10 +110,10 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
         </div>
       </header>
 
-      {/* ── Hero: 2-column grid ── */}
-      <div className="ld-hero-grid">
-        {/* Left: title + text + CTA + mini-stats */}
-        <section className="ld-hero">
+      {/* ── Hero: full-width banner with overlaid text ── */}
+      <section className="ld-hero-banner">
+        <div className="ld-hero-banner-overlay" aria-hidden="true" />
+        <div className="ld-hero-banner-content">
           <h1>{t('landing.heroTitle')}</h1>
           <p className="ld-lede">{t('landing.heroSub')}</p>
           {onShowScenarios && (
@@ -130,57 +130,53 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
             <span aria-hidden="true">·</span>
             <span>{t('landing.heroStats.privacy')}</span>
           </div>
-        </section>
-
-        {/* Right: shield image + status cards stacked below */}
-        <div className="ld-hero-visual">
-          <div className="ld-shield-halo" aria-hidden="true" />
-          <img className="ld-shield-img" src="/images/shield-hero-dark.png" alt="" aria-hidden="true" />
-          <section className="ld-status-block">
-            <StatusSection
-              icon={ICONS.brain}
-              labelKey="landing.status.section.cognitive"
-              descKey="landing.status.section.cognitive.desc"
-              status="active" accent="cognitive"
-              expanded={!!expanded.cognitive}
-              onToggle={() => toggleSection('cognitive')}
-            >
-              <ul className="ld-status-list">
-                <li>{t('landing.status.cognitive.stroop')}</li>
-                <li>{t('landing.status.cognitive.nback')}</li>
-                <li>{t('landing.status.cognitive.reflex')}</li>
-                <li>{t('landing.status.cognitive.digitSpan')}</li>
-                <li>{t('landing.status.cognitive.trailTap')}</li>
-              </ul>
-            </StatusSection>
-            <StatusSection
-              icon={ICONS.activity}
-              labelKey="landing.status.section.behavioral"
-              descKey="landing.status.section.behavioral.desc"
-              status="active" accent="behavioral" partialBadge
-              expanded={!!expanded.behavioral}
-              onToggle={() => toggleSection('behavioral')}
-            >
-              <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
-              <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
-              <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
-            </StatusSection>
-            <StatusSection
-              icon={ICONS.wifi}
-              labelKey="landing.status.section.network"
-              descKey="landing.status.section.network.desc"
-              status="active" accent="network"
-              expanded={!!expanded.network}
-              onToggle={() => toggleSection('network')}
-            >
-              <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
-              <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
-              <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
-              <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
-            </StatusSection>
-          </section>
         </div>
-      </div>
+      </section>
+
+      {/* ── Status cards: 3-column horizontal row below the banner ── */}
+      <section className="ld-status-row">
+        <StatusSection
+          icon={ICONS.brain}
+          labelKey="landing.status.section.cognitive"
+          descKey="landing.status.section.cognitive.desc"
+          status="active" accent="cognitive"
+          expanded={!!expanded.cognitive}
+          onToggle={() => toggleSection('cognitive')}
+        >
+          <ul className="ld-status-list">
+            <li>{t('landing.status.cognitive.stroop')}</li>
+            <li>{t('landing.status.cognitive.nback')}</li>
+            <li>{t('landing.status.cognitive.reflex')}</li>
+            <li>{t('landing.status.cognitive.digitSpan')}</li>
+            <li>{t('landing.status.cognitive.trailTap')}</li>
+          </ul>
+        </StatusSection>
+        <StatusSection
+          icon={ICONS.activity}
+          labelKey="landing.status.section.behavioral"
+          descKey="landing.status.section.behavioral.desc"
+          status="active" accent="behavioral" partialBadge
+          expanded={!!expanded.behavioral}
+          onToggle={() => toggleSection('behavioral')}
+        >
+          <StatusSubRow icon={ICONS.keyboard} labelKey="landing.status.behavioral.keyboardMouse" status="active" />
+          <StatusSubRow icon={ICONS.touch} labelKey="landing.status.behavioral.touch" status="observation" />
+          <StatusSubRow icon={ICONS.sensors} labelKey="landing.status.behavioral.sensors" status="observation" />
+        </StatusSection>
+        <StatusSection
+          icon={ICONS.wifi}
+          labelKey="landing.status.section.network"
+          descKey="landing.status.section.network.desc"
+          status="active" accent="network"
+          expanded={!!expanded.network}
+          onToggle={() => toggleSection('network')}
+        >
+          <StatusSubRow icon={null} labelKey="landing.status.network.failedAuth" status="normal" />
+          <StatusSubRow icon={null} labelKey="landing.status.network.highFrequency" status="normal" />
+          <StatusSubRow icon={null} labelKey="landing.status.network.suspiciousPayload" status="normal" />
+          <StatusSubRow icon={null} labelKey="landing.status.network.replayPattern" status="normal" />
+        </StatusSection>
+      </section>
 
       {/* ── Three steps ── */}
       <section className="ld-steps" id="steps">
