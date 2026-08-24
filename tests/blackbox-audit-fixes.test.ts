@@ -145,3 +145,63 @@ describe('Fix 3 — liveguard session creation rate limit', () => {
     expect(SESSION_ROUTE_SRC).toMatch(/code\(429\)/);
   });
 });
+
+// ─── Fix 4: Reference window progress indicator (UX) ─────────────────
+const SCENARIO_DEMO_SRC = readFileSync(
+  join(process.cwd(), 'src/screens/ScenarioDemoContent.tsx'),
+  'utf-8',
+);
+const INDEX_CSS_SRC = readFileSync(
+  join(process.cwd(), 'src/index.css'),
+  'utf-8',
+);
+
+describe('Fix 4 — Reference window progress indicator (UX only)', () => {
+  it('captures referenceWindowActive from forceBeaconNow responses', () => {
+    // The handler must read response.referenceWindowActive and update state
+    expect(SCENARIO_DEMO_SRC).toMatch(/response\.referenceWindowActive/);
+    expect(SCENARIO_DEMO_SRC).toMatch(/response\.referenceWindowElapsedMs/);
+    expect(SCENARIO_DEMO_SRC).toMatch(/response\.referenceWindowMs/);
+  });
+
+  it('has a refWindow state variable', () => {
+    expect(SCENARIO_DEMO_SRC).toMatch(/setRefWindow/);
+    expect(SCENARIO_DEMO_SRC).toMatch(/refWindow\?\.active/);
+  });
+
+  it('renders a progress bar during the reference window phase', () => {
+    expect(SCENARIO_DEMO_SRC).toMatch(/demo-ref-window/);
+    expect(SCENARIO_DEMO_SRC).toMatch(/Constitution du profil de référence/);
+  });
+
+  it('only shows the indicator during the analyzing phase', () => {
+    // The indicator must be gated on phase === 'analyzing' so it doesn't
+    // appear during idle, detected, or transitioning phases
+    expect(SCENARIO_DEMO_SRC).toMatch(/phase === 'analyzing' && refWindow\?\.active/);
+  });
+
+  it('resets refWindow at the start of each simulation', () => {
+    expect(SCENARIO_DEMO_SRC).toMatch(/setRefWindow\(null\)/);
+  });
+
+  it('has CSS styles for the reference window indicator', () => {
+    expect(INDEX_CSS_SRC).toMatch(/\.demo-ref-window\b/);
+    expect(INDEX_CSS_SRC).toMatch(/\.demo-ref-window-track/);
+    expect(INDEX_CSS_SRC).toMatch(/\.demo-ref-window-fill/);
+    expect(INDEX_CSS_SRC).toMatch(/\.demo-ref-window-labels/);
+  });
+
+  it('does NOT modify BEACON_TIMEOUT_MS (must remain 15s)', () => {
+    // This is a UX-only change — the timeout fix from the previous commit
+    // must not be reverted
+    const beaconSrc = readFileSync(
+      join(process.cwd(), 'src/liveguard/behavior/behaviorBeacon.ts'),
+      'utf-8',
+    );
+    expect(beaconSrc).toMatch(/BEACON_TIMEOUT_MS\s*=\s*15[_\s]*000/);
+  });
+
+  it('does NOT modify the rate limit (must remain 5/min)', () => {
+    expect(SESSION_ROUTE_SRC).toMatch(/RATE_LIMIT_MAX\s*=\s*5\b/);
+  });
+});

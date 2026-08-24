@@ -203,6 +203,7 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
   const [scenario1AwayMs, setScenario1AwayMs] = useState(0);
   const [buttonPulsing, setButtonPulsing] = useState(false);
   const [simulationStarted, setSimulationStarted] = useState(false);
+  const [refWindow, setRefWindow] = useState<{ active: boolean; elapsedMs: number; totalMs: number } | null>(null);
 
   const suspendedRef = useRef(false);
   const scenario1HiddenAtRef = useRef<number | null>(null);
@@ -381,6 +382,7 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
     setNetworkRiskScore(0);
     setDivergence(0);
     setConsecutiveBreaches(0);
+    setRefWindow(null);
     setScenario1Active(false);
     scenario1ActiveRef.current = false;
     scenario1HiddenAtRef.current = null;
@@ -403,6 +405,15 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
       for (let i = 0; i < 10; i++) {
         const response = await forceBeaconNow();
         if (response) {
+          if (response.referenceWindowActive) {
+            setRefWindow({
+              active: true,
+              elapsedMs: response.referenceWindowElapsedMs ?? 0,
+              totalMs: response.referenceWindowMs ?? 15000,
+            });
+          } else {
+            setRefWindow(null);
+          }
           if (response.networkRiskScore !== undefined) {
             serverRiskScore = response.networkRiskScore;
             setNetworkRiskScore(serverRiskScore);
@@ -446,6 +457,15 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
         for (let i = 0; i < 5; i++) {
           const response = await forceBeaconNow();
           if (response) {
+            if (response.referenceWindowActive) {
+              setRefWindow({
+                active: true,
+                elapsedMs: response.referenceWindowElapsedMs ?? 0,
+                totalMs: response.referenceWindowMs ?? 15000,
+              });
+            } else {
+              setRefWindow(null);
+            }
             if (response.divergence !== undefined) setDivergence(response.divergence);
             if (response.consecutiveBreaches !== undefined) setConsecutiveBreaches(response.consecutiveBreaches);
             lastBeaconResponse.current = {
@@ -477,7 +497,14 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
         });
       });
 
-      await forceBeaconNow();
+      const initialResponse = await forceBeaconNow();
+      if (initialResponse?.referenceWindowActive) {
+        setRefWindow({
+          active: true,
+          elapsedMs: initialResponse.referenceWindowElapsedMs ?? 0,
+          totalMs: initialResponse.referenceWindowMs ?? 15000,
+        });
+      }
     }
   }, [scenario, startCountdown, triggerSuspension]);
 
@@ -578,6 +605,28 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
         <div className="demo-analyzing-indicator">
           <span className="demo-spinner" />
           <span>Analyse des signaux comportementaux…</span>
+        </div>
+      )}
+
+      {/* Reference window progress indicator (scenarios 2-6) */}
+      {phase === 'analyzing' && refWindow?.active && (
+        <div className="demo-ref-window">
+          <div className="demo-ref-window-header">
+            <span className="demo-ref-window-icon">🔬</span>
+            <span>Constitution du profil de référence…</span>
+          </div>
+          <div className="demo-ref-window-track">
+            <div
+              className="demo-ref-window-fill"
+              style={{
+                width: `${Math.min(100, (refWindow.elapsedMs / refWindow.totalMs) * 100)}%`,
+              }}
+            />
+          </div>
+          <div className="demo-ref-window-labels">
+            <span>{(refWindow.elapsedMs / 1000).toFixed(1)}s</span>
+            <span>{(refWindow.totalMs / 1000).toFixed(0)}s</span>
+          </div>
         </div>
       )}
 

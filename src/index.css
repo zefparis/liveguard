@@ -2885,6 +2885,36 @@ body {
   font-size: 11px; color: rgba(255, 255, 255, 0.4);
   margin-top: 6px; font-family: 'SF Mono', monospace;
 }
+
+/* ── Reference window progress indicator ── */
+.demo-ref-window {
+  width: 90%; max-width: 340px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 10px; padding: 14px 16px;
+  margin-top: 12px;
+}
+.demo-ref-window-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: #a78bfa;
+  margin-bottom: 10px;
+}
+.demo-ref-window-icon { font-size: 16px; }
+.demo-ref-window-track {
+  height: 6px; border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.demo-ref-window-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  transition: width 0.3s ease;
+}
+.demo-ref-window-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: rgba(255, 255, 255, 0.4);
+  margin-top: 6px; font-family: 'SF Mono', monospace;
+}
 .demo-page-desc { font-size: 13px; margin-bottom: 20px; }
 .demo-card-grid { display: flex; flex-direction: column; gap: 12px; }
 .demo-card {
