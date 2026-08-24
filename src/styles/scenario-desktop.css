@@ -1,0 +1,336 @@
+/* ═══════════════════════════════════════════════════════════════
+   SCENARIO SELECTOR — DESKTOP CSS
+   Dedicated desktop styles for ScenarioSelectorScreenDesktop.
+   All classes prefixed with sd- to avoid conflicts with mobile
+   scenario-* classes. This file is ONLY imported by
+   ScenarioSelectorScreenDesktop.tsx and is never loaded on mobile.
+
+   Typography scale is desktop-native:
+     H1: 36-40px
+     Card title: 20px
+     Card description: 15px
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop scrolling (same override as landing-desktop.css) ── */
+@media (min-width: 901px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+}
+
+/* ── Design tokens (scoped to .sd-page) ── */
+.sd-page {
+  --sd-bg: #f5f7fc;
+  --sd-surface: #ffffff;
+  --sd-surface-soft: #f8faff;
+  --sd-border: rgba(18, 30, 66, .08);
+  --sd-border-strong: rgba(18, 30, 66, .16);
+  --sd-text: #0e1830;
+  --sd-text-soft: #45537a;
+  --sd-text-faint: #8b97ba;
+  --sd-accent-blue: #4f7cff;
+  --sd-accent-violet: #8b5cf6;
+  --sd-accent-coral: #f07a63;
+  --sd-accent-green: #34d399;
+  --sd-shadow-card: 0 10px 30px rgba(18, 30, 66, .07);
+  --sd-shadow-soft: 0 4px 14px rgba(18, 30, 66, .05);
+  --sd-modal-bg: #ffffff;
+  --sd-overlay: rgba(10, 14, 28, 0.55);
+
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 clamp(32px, 5vw, 120px) 48px;
+  font-family: ui-rounded, -apple-system, BlinkMacSystemFont, SF Pro Rounded, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+  background: var(--sd-bg);
+  color: var(--sd-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s ease, color .3s ease;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] .sd-page {
+  --sd-bg: #080d1f;
+  --sd-surface: #121a36;
+  --sd-surface-soft: #0f1730;
+  --sd-border: rgba(148, 163, 216, .14);
+  --sd-border-strong: rgba(148, 163, 216, .28);
+  --sd-text: #edf1ff;
+  --sd-text-soft: #a9b3d6;
+  --sd-text-faint: #68739c;
+  --sd-accent-blue: #6b93ff;
+  --sd-accent-violet: #a07bff;
+  --sd-accent-coral: #f07a63;
+  --sd-accent-green: #34d399;
+  --sd-shadow-card: 0 12px 32px rgba(2, 6, 23, .45);
+  --sd-shadow-soft: 0 4px 16px rgba(2, 6, 23, .35);
+  --sd-modal-bg: #121a36;
+  --sd-overlay: rgba(4, 8, 20, 0.72);
+}
+
+/* ── Back link ── */
+.sd-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--sd-accent-blue);
+  cursor: pointer;
+  padding: 8px 0;
+  margin-top: 20px;
+  transition: color .2s;
+}
+.sd-back:hover { color: var(--sd-text); }
+
+/* ── Page header ── */
+.sd-header {
+  margin-top: 16px;
+  margin-bottom: 40px;
+}
+.sd-title {
+  margin: 0 0 10px;
+  font-size: clamp(32px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  color: var(--sd-text);
+}
+.sd-subtitle {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--sd-text-soft);
+  max-width: 640px;
+}
+
+/* ── Grid: 3 columns x 2 rows ── */
+.sd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ── Scenario card ── */
+.sd-card {
+  position: relative;
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--sd-shadow-soft);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.sd-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sd-shadow-card);
+  border-color: var(--sd-border-strong);
+}
+.sd-card:focus-visible {
+  outline: 2px solid var(--sd-accent-blue);
+  outline-offset: 2px;
+}
+.sd-card-active {
+  border-color: var(--sd-accent-blue);
+  box-shadow: var(--sd-shadow-card);
+}
+
+/* Colored top accent bar per scenario */
+.sd-card[data-accent="1"] { border-top: 3px solid var(--sd-accent-blue); }
+.sd-card[data-accent="2"] { border-top: 3px solid var(--sd-accent-violet); }
+.sd-card[data-accent="3"] { border-top: 3px solid var(--sd-accent-coral); }
+.sd-card[data-accent="4"] { border-top: 3px solid var(--sd-accent-blue); }
+.sd-card[data-accent="5"] { border-top: 3px solid var(--sd-accent-violet); }
+.sd-card[data-accent="6"] { border-top: 3px solid var(--sd-accent-green); }
+
+/* ── Card image ── */
+.sd-card-image {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+.sd-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .3s ease;
+}
+.sd-card:hover .sd-card-image img {
+  transform: scale(1.04);
+}
+.sd-card-num {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(10, 14, 28, 0.65);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ── Card body ── */
+.sd-card-body {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+.sd-card-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--sd-text);
+  line-height: 1.25;
+}
+.sd-card-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--sd-text-soft);
+  flex: 1;
+}
+.sd-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sd-accent-blue);
+  transition: gap .2s ease;
+}
+.sd-card:hover .sd-card-cta {
+  gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAL OVERLAY
+   The grid stays mounted; the scenario detail opens in a centered
+   modal. This avoids any unmount/remount of the grid and preserves
+   scroll position.
+   ═══════════════════════════════════════════════════════════════ */
+.sd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--sd-overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 5vh 5vw 5vh;
+  overflow-y: auto;
+  animation: sd-fade-in .2s ease;
+}
+@keyframes sd-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sd-modal {
+  background: var(--sd-modal-bg);
+  border: 1px solid var(--sd-border-strong);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 24px 64px rgba(2, 6, 23, .5);
+  overflow: hidden;
+  animation: sd-slide-up .25s ease;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+@keyframes sd-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sd-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--sd-border);
+  flex-shrink: 0;
+}
+.sd-modal-titles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.sd-modal-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(79, 124, 255, .15);
+  color: var(--sd-accent-blue);
+  flex-shrink: 0;
+}
+.sd-modal-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sd-text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sd-modal-close {
+  display: grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--sd-border);
+  background: var(--sd-surface-soft);
+  color: var(--sd-text-soft);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.sd-modal-close:hover {
+  background: var(--sd-surface);
+  color: var(--sd-text);
+  border-color: var(--sd-border-strong);
+}
+
+.sd-modal-body {
+  padding: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+/* ── Ultra-wide: keep 3 columns, cap width ── */
+@media (min-width: 1920px) {
+  .sd-grid {
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ── Narrow desktop (901-1100px): 2 columns ── */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .sd-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

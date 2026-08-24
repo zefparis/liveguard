@@ -40,6 +40,7 @@ import { SubmittingScreen } from './screens/SubmittingScreen';
 import { DoneScreen } from './screens/DoneScreen';
 import { ErrorScreen } from './screens/ErrorScreen';
 import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
+import { ScenarioSelectorScreenDesktop } from './screens/ScenarioSelectorScreenDesktop';
 import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
 import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
@@ -328,11 +329,19 @@ export default function App() {
         )}
 
         {state.phase === 'scenario_selector' && (
-          <ScenarioSelectorScreen
-            sessionPublicId={state.sessionPublicId}
-            onSuspended={handleScenarioSuspended}
-            onBack={() => dispatch({ type: 'SHOW_LANDING' })}
-          />
+          isDesktop ? (
+            <ScenarioSelectorScreenDesktop
+              sessionPublicId={state.sessionPublicId}
+              onSuspended={handleScenarioSuspended}
+              onBack={() => dispatch({ type: 'SHOW_LANDING' })}
+            />
+          ) : (
+            <ScenarioSelectorScreen
+              sessionPublicId={state.sessionPublicId}
+              onSuspended={handleScenarioSuspended}
+              onBack={() => dispatch({ type: 'SHOW_LANDING' })}
+            />
+          )
         )}
 
         {state.phase === 'session_suspended' && (
