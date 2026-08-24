@@ -515,7 +515,7 @@
   background-position: center;
 }
 
-/* ── Background images per card (same in dark + light) ── */
+/* ── Background images per card: dark theme (default) ── */
 .ld-step-card[data-accent="violet"] {
   background-image: url('/images/card-1-bg.jpg');
   background-color: #6a3fc0;
@@ -527,6 +527,17 @@
 .ld-step-card[data-accent="teal"] {
   background-image: url('/images/card-3-bg.jpg');
   background-color: #1a4a4a;
+}
+
+/* ── Light theme: swap to light variant images ── */
+[data-theme="light"] .ld-step-card[data-accent="violet"] {
+  background-image: url('/images/card-1-bg-light.jpg');
+}
+[data-theme="light"] .ld-step-card[data-accent="blue"] {
+  background-image: url('/images/card-2-bg-light.jpg');
+}
+[data-theme="light"] .ld-step-card[data-accent="teal"] {
+  background-image: url('/images/card-3-bg-light.jpg');
 }
 
 /* ── Number: discreet, top-left, white on image ── */
