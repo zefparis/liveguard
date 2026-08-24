@@ -11,6 +11,24 @@
      Spacing: generous, designed for wide screens
    ═══════════════════════════════════════════════════════════════ */
 
+/* ── Desktop scrolling override ──
+   index.css sets html,body { overflow:hidden } for mobile (prevents
+   rubber-band scrolling). On desktop the landing page is taller than
+   the viewport, so we re-enable vertical scrolling. This media query
+   only applies above 900px, so mobile is never affected. */
+@media (min-width: 901px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+  /* Ensure body and app-shell backgrounds match the theme on desktop */
+  [data-theme="light"] body,
+  [data-theme="light"] .app-shell { background: #f5f7fc; }
+  [data-theme="dark"] body,
+  [data-theme="dark"] .app-shell { background: #080d1f; }
+}
+
 /* ── Design tokens (scoped to .ld-page) ── */
 .ld-page {
   /* Light theme (default) */
@@ -99,6 +117,12 @@
     --ld-glow-3: rgba(34, 200, 238, .10);
   }
 }
+
+/* ── Explicit background per theme (belt-and-suspenders) ──
+   Ensures the .ld-page background always matches the active theme,
+   even if CSS variable cascade has a specificity issue. */
+[data-theme="light"] .ld-page { background: #f5f7fc; }
+[data-theme="dark"] .ld-page { background: #080d1f; }
 
 /* ═══════════════════════════════════════════════════════════════
    HEADER
