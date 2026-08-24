@@ -31,7 +31,10 @@ export interface LiveGuardResponse extends ServerResponse {
 
 // ─── Config ────────────────────────────────────────────────────────
 
-const UPSTREAM_TIMEOUT_MS = 10_000;
+// 15s — matches the client BEACON_TIMEOUT_MS and the verify.ts proxy timeout.
+// The upstream Worker + hybrid-vector-api chain can take 5-8s, especially on
+// cold starts. The previous 10s was too tight when combined with Vercel cold start.
+const UPSTREAM_TIMEOUT_MS = 15_000;
 
 const DEFAULT_ALLOWED_ORIGINS = [
   'capacitor://localhost',

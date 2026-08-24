@@ -20,7 +20,12 @@ import { getBehaviorSnapshot, isBehaviorCollecting } from './behaviorCollector';
 import type { BehaviorBeaconConfig, BehaviorPingResponse, DemoSimulationMode, DeviceContext } from './telemetryTypes';
 import { applyDemoSimulation } from './demoSimulator';
 
-const BEACON_TIMEOUT_MS = 5_000;
+// 15s timeout — matches the Vercel proxy's UPSTREAM_TIMEOUT_MS (15s in verify.ts).
+// The Vercel serverless function can cold-start in ~8-9s on the first call,
+// and the upstream Worker + hybrid-vector-api chain adds further latency.
+// The previous 5s timeout caused all behavior-pings to abort before the
+// proxy could respond, making the demo entirely client-side (502 + timeout).
+const BEACON_TIMEOUT_MS = 15_000;
 const MIN_EVENTS_FOR_BEACON = 3;
 
 const DEVICE_PROFILE_STORAGE_KEY = 'lg_device_profile_id';

@@ -98,6 +98,26 @@ describe('Fix 2 — session-behavior-ping upstream URL includes /api', () => {
   it('routes through the Cloudflare Worker (/hv prefix)', () => {
     expect(PING_PROXY_SRC).toMatch(/api\.hcs-u7\.org\/hv/);
   });
+
+  it('uses 15s upstream timeout (not 10s) to accommodate cold starts', () => {
+    expect(PING_PROXY_SRC).toMatch(/UPSTREAM_TIMEOUT_MS\s*=\s*15[_\s]*000/);
+    expect(PING_PROXY_SRC).not.toMatch(/UPSTREAM_TIMEOUT_MS\s*=\s*10[_\s]*000/);
+  });
+});
+
+// ─── Fix 2b: Client beacon timeout must match proxy timeout ──────────
+const BEACON_SRC = readFileSync(
+  join(process.cwd(), 'src/liveguard/behavior/behaviorBeacon.ts'),
+  'utf-8',
+);
+
+describe('Fix 2b — client beacon timeout matches proxy timeout', () => {
+  it('uses 15s beacon timeout (not 5s)', () => {
+    // The Vercel proxy can take 8-9s on cold starts. The old 5s timeout
+    // caused all behavior-pings to abort before the proxy could respond.
+    expect(BEACON_SRC).toMatch(/BEACON_TIMEOUT_MS\s*=\s*15[_\s]*000/);
+    expect(BEACON_SRC).not.toMatch(/BEACON_TIMEOUT_MS\s*=\s*5[_\s]*000/);
+  });
 });
 
 // ─── Fix 3: Rate limit lowered from 25 to 5 ──────────────────────────
