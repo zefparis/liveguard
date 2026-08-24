@@ -1,0 +1,241 @@
+/* ═══════════════════════════════════════════════════════════════
+   SESSION SUSPENDED — DESKTOP CSS
+   Dedicated desktop styles for SessionSuspendedScreenDesktop.
+   All classes prefixed with ss- to avoid conflicts with mobile.
+   This file is ONLY imported by SessionSuspendedScreenDesktop.tsx.
+
+   Layout: 2-column (message left, terminal right) on a full-width
+   page with desktop-native typography.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop scrolling (same override as landing-desktop.css) ── */
+@media (min-width: 901px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+}
+
+/* ── Design tokens ── */
+.ss-page {
+  --ss-bg: #f5f7fc;
+  --ss-surface: #ffffff;
+  --ss-surface-soft: #f8faff;
+  --ss-border: rgba(18, 30, 66, .08);
+  --ss-border-strong: rgba(18, 30, 66, .16);
+  --ss-text: #0e1830;
+  --ss-text-soft: #45537a;
+  --ss-text-faint: #8b97ba;
+  --ss-accent: #5b4fe8;
+  --ss-accent-light: #7f8ce0;
+  --ss-term-bg: #0d1220;
+  --ss-term-border: rgba(148, 163, 216, .14);
+  --ss-glow: rgba(91, 79, 232, 0.2);
+
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 clamp(32px, 5vw, 120px);
+  font-family: ui-rounded, -apple-system, BlinkMacSystemFont, SF Pro Rounded, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .3s ease, color .3s ease;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] .ss-page {
+  --ss-bg: #080d1f;
+  --ss-surface: #121a36;
+  --ss-surface-soft: #0f1730;
+  --ss-border: rgba(148, 163, 216, .14);
+  --ss-border-strong: rgba(148, 163, 216, .28);
+  --ss-text: #edf1ff;
+  --ss-text-soft: #a9b3d6;
+  --ss-text-faint: #68739c;
+  --ss-accent: #6b93ff;
+  --ss-accent-light: #7f8ce0;
+  --ss-term-bg: #0a0f1e;
+  --ss-term-border: rgba(148, 163, 216, .12);
+  --ss-glow: rgba(107, 147, 255, 0.25);
+}
+
+/* ── Container: 2-column grid ── */
+.ss-container {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 56px;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+  padding: 48px 0;
+}
+
+/* ── Left column: message + CTA ── */
+.ss-message-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* ── Shield badge with glow ── */
+.ss-shield-badge {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(91, 79, 232, 0.12) 0%, rgba(91, 79, 232, 0.04) 100%);
+  border: 1px solid rgba(91, 79, 232, 0.2);
+  box-shadow: 0 0 32px var(--ss-glow);
+  margin-bottom: 4px;
+}
+
+/* ── Title ── */
+.ss-title {
+  margin: 0;
+  font-size: clamp(28px, 3.5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  color: var(--ss-text);
+}
+
+/* ── Description ── */
+.ss-description {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ss-text-soft);
+  max-width: 440px;
+}
+
+/* ── Re-verify button — indigo gradient CTA ── */
+.ss-btn-reverify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6a5ff0 0%, #5b4fe8 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(91, 79, 232, 0.35);
+  transition: transform .15s, box-shadow .2s;
+  margin-top: 8px;
+}
+.ss-btn-reverify:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 32px rgba(91, 79, 232, 0.45);
+}
+
+/* ── Back link ── */
+.ss-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ss-accent);
+  cursor: pointer;
+  padding: 8px 0;
+  margin-top: 4px;
+  transition: color .2s;
+}
+.ss-back:hover { color: var(--ss-text); }
+
+/* ── Right column: terminal ── */
+.ss-terminal-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Terminal (console-style) ── */
+.ss-terminal {
+  background: var(--ss-term-bg);
+  border: 1px solid var(--ss-term-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(2, 6, 23, .35);
+}
+.ss-terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ss-terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ss-terminal-dot-red { background: #ff5f57; }
+.ss-terminal-dot-yellow { background: #febc2e; }
+.ss-terminal-dot-green { background: #28c840; }
+.ss-terminal-label {
+  margin-left: 8px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+  font-size: 12px;
+  color: #68739c;
+  font-weight: 500;
+}
+.ss-terminal-body {
+  padding: 18px 20px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+  font-size: 13.5px;
+  line-height: 1.85;
+  max-height: 420px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ss-terminal-line {
+  white-space: pre;
+  min-height: 1.85em;
+}
+/* Terminal color types */
+.ss-terminal-comment { color: #4a5578; }
+.ss-terminal-metric { color: #6b93ff; font-weight: 600; }
+.ss-terminal-expected { color: #34d399; }
+.ss-terminal-observed { color: #fbbf24; }
+.ss-terminal-alert {
+  color: #f87171;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(248, 113, 113, 0.3);
+}
+.ss-terminal-info { color: #a5b4d4; }
+.ss-terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: #6b93ff;
+  animation: ss-blink 1s step-end infinite;
+}
+@keyframes ss-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ── Narrow desktop: stack columns ── */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .ss-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 640px;
+  }
+}

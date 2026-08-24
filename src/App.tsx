@@ -42,6 +42,7 @@ import { ErrorScreen } from './screens/ErrorScreen';
 import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
 import { ScenarioSelectorScreenDesktop } from './screens/ScenarioSelectorScreenDesktop';
 import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
+import { SessionSuspendedScreenDesktop } from './screens/SessionSuspendedScreenDesktop';
 import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
 
@@ -345,12 +346,21 @@ export default function App() {
         )}
 
         {state.phase === 'session_suspended' && (
-          <SessionSuspendedScreen
-            reason={state.error ?? 'behavioral_divergence'}
-            suspensionData={state.suspensionData}
-            onReverify={handleReverify}
-            onBack={handleScenarioResume}
-          />
+          isDesktop ? (
+            <SessionSuspendedScreenDesktop
+              reason={state.error ?? 'behavioral_divergence'}
+              suspensionData={state.suspensionData}
+              onReverify={handleReverify}
+              onBack={handleScenarioResume}
+            />
+          ) : (
+            <SessionSuspendedScreen
+              reason={state.error ?? 'behavioral_divergence'}
+              suspensionData={state.suspensionData}
+              onReverify={handleReverify}
+              onBack={handleScenarioResume}
+            />
+          )
         )}
 
         {state.phase === 'error' && (
