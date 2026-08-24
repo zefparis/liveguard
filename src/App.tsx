@@ -17,11 +17,13 @@ import { LiveGuardProvider } from './state/liveguardContext';
 import { useBehaviorSession } from './hooks/useBehaviorSession';
 import { useLockedShell } from './hooks/useLockedShell';
 import { useContinuousSignals } from './hooks/useContinuousSignals';
+import { useDesktop } from './hooks/useDesktop';
 import { buildLiveGuardPayload } from './payload/buildLiveGuardPayload';
 import { submitLiveGuard } from './liveguard/api';
 
 import { IdleScreen } from './screens/IdleScreen';
 import { LandingScreen } from './screens/LandingScreen';
+import { LandingScreenDesktop } from './screens/LandingScreenDesktop';
 import { HowItWorksScreen } from './screens/HowItWorksScreen';
 import { ImplementationScreen } from './screens/ImplementationScreen';
 import { SelectProtectionScreen } from './screens/SelectProtectionScreen';
@@ -48,6 +50,7 @@ export default function App() {
   const { session, reset, getPayload, getTouchDiagnostics } = useBehaviorSession();
   const { lockedHeight, showRotateOverlay } = useLockedShell(state.phase);
   const continuousSignals = useContinuousSignals();
+  const isDesktop = useDesktop();
 
   // Track sessionPublicId from idle screen for select_protection
   const [pendingSessionId, setPendingSessionId] = useState<string>('');
@@ -177,12 +180,21 @@ export default function App() {
         )}
 
         {state.phase === 'landing' && (
-          <LandingScreen
-            onTryDemo={handleTryDemo}
-            onShowHowItWorks={handleShowHowItWorks}
-            onShowImplementation={handleShowImplementation}
-            onShowScenarios={handleShowScenarios}
-          />
+          isDesktop ? (
+            <LandingScreenDesktop
+              onTryDemo={handleTryDemo}
+              onShowHowItWorks={handleShowHowItWorks}
+              onShowImplementation={handleShowImplementation}
+              onShowScenarios={handleShowScenarios}
+            />
+          ) : (
+            <LandingScreen
+              onTryDemo={handleTryDemo}
+              onShowHowItWorks={handleShowHowItWorks}
+              onShowImplementation={handleShowImplementation}
+              onShowScenarios={handleShowScenarios}
+            />
+          )
         )}
 
         {state.phase === 'how_it_works' && (
