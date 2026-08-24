@@ -276,6 +276,8 @@
   "landing.howItWorks.card2.text": "A behavior change, loss of focus or suspicious IP pushes the risk score up in real time.",
   "landing.howItWorks.card3.title": "Suspension & verification",
   "landing.howItWorks.card3.text": "The session suspends beyond the tolerance threshold and requires cognitive re-verification before resuming.",
+  "landing.howItWorks.card4.title": "Seamless resumption",
+  "landing.howItWorks.card4.text": "Once verification succeeds, the session resumes exactly where you left it — nothing to redo.",
 
   "landing.domain.badge": "HCS-U7 · Multiple French patents",
   "landing.domain.title": "Protect any domain, not just LiveGuard",

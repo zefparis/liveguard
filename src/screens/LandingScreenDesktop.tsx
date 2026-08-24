@@ -250,6 +250,15 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
             <h3>{t('landing.howItWorks.card3.title')}</h3>
             <p>{t('landing.howItWorks.card3.text')}</p>
           </div>
+          <div className="ld-howitworks-card" data-accent="green">
+            <span className="ld-howitworks-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <path d="M5 12.5 10 17.5 19 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            <h3>{t('landing.howItWorks.card4.title')}</h3>
+            <p>{t('landing.howItWorks.card4.text')}</p>
+          </div>
         </div>
       </section>
 
