@@ -219,14 +219,34 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
         <span className="ld-howitworks-label">{t('landing.howItWorks.label')}</span>
         <div className="ld-howitworks-grid">
           <div className="ld-howitworks-card" data-accent="indigo">
+            <span className="ld-howitworks-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </span>
             <h3>{t('landing.howItWorks.card1.title')}</h3>
             <p>{t('landing.howItWorks.card1.text')}</p>
           </div>
           <div className="ld-howitworks-card" data-accent="violet">
+            <span className="ld-howitworks-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <path d="M12 3 2.5 19.5h19L12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                <path d="M12 10v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                <circle cx="12" cy="16.5" r="1" fill="currentColor"/>
+              </svg>
+            </span>
             <h3>{t('landing.howItWorks.card2.title')}</h3>
             <p>{t('landing.howItWorks.card2.text')}</p>
           </div>
           <div className="ld-howitworks-card" data-accent="coral">
+            <span className="ld-howitworks-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                <circle cx="12" cy="15.5" r="1.5" fill="currentColor"/>
+              </svg>
+            </span>
             <h3>{t('landing.howItWorks.card3.title')}</h3>
             <p>{t('landing.howItWorks.card3.text')}</p>
           </div>
@@ -234,7 +254,8 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
       </section>
 
       {/* ── Domain protection (HCS-U7) ── */}
-      <section className="ld-domain">
+      <section className="ld-domain" data-theme={theme}>
+        <div className="ld-domain-overlay" aria-hidden="true" />
         <div className="ld-domain-content">
           <span className="ld-domain-badge">{t('landing.domain.badge')}</span>
           <h2>{t('landing.domain.title')}</h2>
