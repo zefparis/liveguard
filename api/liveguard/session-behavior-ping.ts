@@ -63,8 +63,17 @@ function getAllowedOrigins(): Set<string> {
 }
 
 function getUpstreamUrl(): string {
+  // STEP 4 MIGRATION: route through the Cloudflare Worker (/hv/* prefix)
+  // instead of calling hybrid-vector-api directly on Render.
+  // The Worker applies WAF, rate limiting, bot detection, and injects
+  // X-HCS-Worker-Auth + x-origin-verify + X-Behavioral-Risk-Score.
+  // The /hv prefix is stripped by the Worker before forwarding to the upstream.
+  //
+  // IMPORTANT: the hybrid-vector-api mounts liveguard routes under /api
+  // (app.use('/api', liveguardBehaviorPingRouter)), so we must include /api
+  // in the path after the /hv prefix. The Worker strips /hv → /api/liveguard/...
   const base = process.env.HYBRID_VECTOR_API_URL || 'https://api.hcs-u7.org/hv';
-  return `${base.replace(/\/+$/, '')}/liveguard/session-behavior-ping`;
+  return `${base.replace(/\/+$/, '')}/api/liveguard/session-behavior-ping`;
 }
 
 function getClientIp(req: LiveGuardRequest): string {

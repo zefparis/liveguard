@@ -25,29 +25,34 @@ export function buildTerminalLines(data: SuspensionData | null, reason: string):
   lines.push({ text: '', type: 'comment' });
 
   if (reason === 'background_timeout' && data?.awayMs !== undefined) {
+    // SECURITY: Do not expose the real tolerance threshold value.
+    // Display only the fact that the threshold was exceeded, not the exact ms.
     lines.push({ text: '> visibility_event:', type: 'metric' });
     lines.push({ text: `  tab_hidden_duration: ${data.awayMs}ms`, type: 'observed' });
-    lines.push({ text: `  tolerance_threshold: ${data.toleranceMs ?? 3000}ms`, type: 'expected' });
-    lines.push({ text: `  exceeded_by: ${data.awayMs - (data.toleranceMs ?? 3000)}ms`, type: 'alert' });
+    lines.push({ text: '  tolerance_threshold: [redacted]', type: 'expected' });
+    lines.push({ text: '  status: EXCEEDED', type: 'alert' });
     lines.push({ text: '', type: 'comment' });
     lines.push({ text: '> session_state: INVALIDATED', type: 'alert' });
     lines.push({ text: '> trigger: background_timeout', type: 'info' });
   } else if (reason === 'mass_attempts_blocked' && data?.networkRiskScore !== undefined) {
+    // SECURITY: Do not expose the real risk threshold value.
+    // Display only the fact that the threshold was exceeded, not the exact score.
     lines.push({ text: '> network_analysis:', type: 'metric' });
-    lines.push({ text: `  risk_score: ${data.networkRiskScore} / 8`, type: 'observed' });
-    lines.push({ text: `  threshold: 8`, type: 'expected' });
-    lines.push({ text: `  status: ${data.networkRiskScore >= 8 ? 'BLOCKED' : 'EXCEEDED'}`, type: 'alert' });
+    lines.push({ text: '  risk_score: [redacted]', type: 'observed' });
+    lines.push({ text: '  threshold: [redacted]', type: 'expected' });
+    lines.push({ text: '  status: EXCEEDED', type: 'alert' });
     lines.push({ text: '', type: 'comment' });
     lines.push({ text: '> session_state: INVALIDATED', type: 'alert' });
     lines.push({ text: '> trigger: mass_attempts_blocked', type: 'info' });
   } else {
-    const div = data?.divergence ?? 0;
     const breaches = data?.consecutiveBreaches ?? 0;
 
+    // SECURITY: Do not expose the real EMA threshold or exact divergence score.
+    // Display only the fact that the threshold was exceeded and the breach count.
     lines.push({ text: '> behavioral_divergence:', type: 'metric' });
-    lines.push({ text: `  ema_score: ${(div * 100).toFixed(1)}%`, type: div > 0.45 ? 'observed' : 'expected' });
-    lines.push({ text: `  threshold: 45.0%`, type: 'expected' });
-    lines.push({ text: `  consecutive_breaches: ${breaches} / 3`, type: breaches >= 3 ? 'alert' : 'observed' });
+    lines.push({ text: '  ema_score: [redacted]', type: 'observed' });
+    lines.push({ text: '  threshold: [redacted]', type: 'expected' });
+    lines.push({ text: `  consecutive_breaches: ${breaches} / [redacted]`, type: breaches >= 3 ? 'alert' : 'observed' });
     lines.push({ text: '', type: 'comment' });
 
     if (data?.featureBreakdown && data.featureBreakdown.length > 0) {
@@ -55,7 +60,7 @@ export function buildTerminalLines(data: SuspensionData | null, reason: string):
       for (const f of data.featureBreakdown) {
         const fType = f.divergence > 0.5 ? 'alert' : f.divergence > 0.2 ? 'observed' : 'expected';
         lines.push({
-          text: `  ${f.name.padEnd(22)} ref=${f.reference ?? 'null'}  obs=${f.current ?? 'null'}  Δ=${(f.divergence * 100).toFixed(0)}%`,
+          text: `  ${f.name.padEnd(22)} Δ=${(f.divergence * 100).toFixed(0)}%`,
           type: fType as TerminalLine['type'],
         });
       }
@@ -63,7 +68,7 @@ export function buildTerminalLines(data: SuspensionData | null, reason: string):
     }
 
     lines.push({ text: '> session_state: INVALIDATED', type: 'alert' });
-    lines.push({ text: `> trigger: behavioral_divergence (EMA=${(div * 100).toFixed(1)}%)`, type: 'info' });
+    lines.push({ text: '> trigger: behavioral_divergence', type: 'info' });
   }
 
   return lines;
