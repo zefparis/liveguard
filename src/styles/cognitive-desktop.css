@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════════════════════════════
+   COGNITIVE TESTS — DESKTOP CSS OVERRIDES
+   Scoped under .ctd-wrapper so mobile is NEVER affected.
+   Only layout/typography changes — no logic, no timing, no scoring.
+   The original mobile components run identically inside this wrapper.
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (min-width: 901px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+}
+
+/* ── Wrapper: full-width page with desktop background ── */
+.ctd-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── .screen override: constrain width, center, desktop padding ── */
+.ctd-wrapper .screen {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 40px 48px;
+  flex: 1;
+}
+
+/* ── Phase header: desktop typography ── */
+.ctd-wrapper .phase-header {
+  padding: 12px 0 16px;
+  min-height: 52px;
+}
+.ctd-wrapper .phase-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.ctd-wrapper .phase-progress {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── Segment progress: slightly larger ── */
+.ctd-wrapper .segment-progress-bar {
+  height: 6px;
+}
+.ctd-wrapper .segment-progress-seg {
+  border-radius: 3px;
+}
+.ctd-wrapper .segment-progress-count {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Instruction cards: desktop sizing ── */
+.ctd-wrapper .camp-instruction-card,
+.ctd-wrapper .stroop-instruction-card {
+  font-size: 16px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.ctd-wrapper .camp-instruction-card strong,
+.ctd-wrapper .stroop-instruction-card strong {
+  font-weight: 700;
+}
+
+/* ── Reflex area: contained, centered, NOT full-width ── */
+.ctd-wrapper .reflex-area {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 380px;
+  border-radius: 18px;
+  font-size: 22px;
+}
+.ctd-wrapper .reflex-area p {
+  font-size: 20px;
+}
+
+/* ── Stroop: larger word, constrained options ── */
+.ctd-wrapper .stroop-word {
+  font-size: 56px;
+  font-weight: 800;
+  padding: 40px 0 32px;
+  text-align: center;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ctd-wrapper .stroop-options {
+  max-width: 480px;
+  margin: 0 auto;
+  gap: 12px;
+}
+.ctd-wrapper .stroop-option-campaign {
+  font-size: 18px;
+  font-weight: 700;
+  padding: 18px 24px;
+  border-radius: 12px;
+  min-height: 56px;
+}
+.ctd-wrapper .stroop-feedback-line {
+  font-size: 17px;
+  min-height: 32px;
+  margin: 16px 0;
+}
+.ctd-wrapper .stroop-feedback-ms {
+  font-size: 15px;
+}
+
+/* ── N-Back: larger letter, constrained buttons ── */
+.ctd-wrapper .nback-letter {
+  font-size: 88px;
+  font-weight: 800;
+  padding: 64px 0;
+  min-height: 220px;
+}
+.ctd-wrapper .nback-buttons {
+  max-width: 400px;
+  margin: 0 auto;
+  gap: 12px;
+}
+.ctd-wrapper .nback-instruction-campaign {
+  font-size: 17px;
+}
+.ctd-wrapper .nback-feedback-campaign {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ── N-Back intro: desktop layout ── */
+.ctd-wrapper .nback-intro-campaign {
+  max-width: 520px;
+  margin: 24px auto;
+  padding: 32px;
+  border-radius: 16px;
+}
+.ctd-wrapper .nback-intro-title-campaign {
+  font-size: 20px;
+  font-weight: 700;
+}
+.ctd-wrapper .nback-intro-subtitle-campaign {
+  font-size: 16px;
+}
+.ctd-wrapper .nback-example-campaign {
+  gap: 16px;
+}
+.ctd-wrapper .nback-example-letter-campaign {
+  font-size: 28px;
+}
+.ctd-wrapper .nback-example-badge-campaign {
+  font-size: 13px;
+  padding: 4px 12px;
+}
+
+/* ── Digit Span: larger display, constrained keypad ── */
+.ctd-wrapper .screen-center {
+  gap: 20px;
+}
+.ctd-wrapper .digit-span-input-pad-campaign {
+  max-width: 360px;
+  margin: 0 auto;
+  gap: 8px;
+}
+.ctd-wrapper .digit-span-input-pad-campaign button {
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 12px;
+  min-height: 52px;
+}
+.ctd-wrapper .camp-feedback-line {
+  font-size: 17px;
+  min-height: 32px;
+  margin: 16px 0;
+}
+.ctd-wrapper .camp-feedback-detail {
+  font-size: 15px;
+}
+
+/* ── Trail Tap: center the area, larger nodes ── */
+.ctd-wrapper .trail-area {
+  margin: 24px auto !important;
+  max-width: 400px;
+  min-height: 360px;
+  border-radius: 16px;
+}
+.ctd-wrapper .trail-node-campaign {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ── Buttons: desktop sizing ── */
+.ctd-wrapper .btn {
+  font-size: 17px;
+  padding: 16px 28px;
+  border-radius: 12px;
+  min-height: 52px;
+}
+.ctd-wrapper .btn-secondary {
+  font-size: 17px;
+}
+
+/* ── Muted text: slightly larger ── */
+.ctd-wrapper .muted {
+  font-size: 16px;
+}
+
+/* ── ErrorBoundary retry: desktop spacing ── */
+.ctd-wrapper .error-boundary {
+  max-width: 600px;
+  margin: 24px auto;
+}

@@ -43,6 +43,7 @@ import { ScenarioSelectorScreen } from './screens/ScenarioSelectorScreen';
 import { ScenarioSelectorScreenDesktop } from './screens/ScenarioSelectorScreenDesktop';
 import { SessionSuspendedScreen } from './screens/SessionSuspendedScreen';
 import { SessionSuspendedScreenDesktop } from './screens/SessionSuspendedScreenDesktop';
+import { CognitiveTestDesktopWrapper } from './components/CognitiveTestDesktopWrapper';
 import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
 
@@ -243,43 +244,93 @@ export default function App() {
         )}
 
         {state.phase === 'test_reflex' && (
-          <ReflexScreen
-            session={session}
-            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'reflex', signal })}
-            onError={(reason) => dispatch({ type: 'ERROR', reason })}
-          />
+          isDesktop ? (
+            <CognitiveTestDesktopWrapper>
+              <ReflexScreen
+                session={session}
+                onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'reflex', signal })}
+                onError={(reason) => dispatch({ type: 'ERROR', reason })}
+              />
+            </CognitiveTestDesktopWrapper>
+          ) : (
+            <ReflexScreen
+              session={session}
+              onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'reflex', signal })}
+              onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            />
+          )
         )}
 
         {state.phase === 'test_colors' && (
-          <StroopScreen
-            session={session}
-            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'stroop', signal })}
-            onError={(reason) => dispatch({ type: 'ERROR', reason })}
-          />
+          isDesktop ? (
+            <CognitiveTestDesktopWrapper>
+              <StroopScreen
+                session={session}
+                onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'stroop', signal })}
+                onError={(reason) => dispatch({ type: 'ERROR', reason })}
+              />
+            </CognitiveTestDesktopWrapper>
+          ) : (
+            <StroopScreen
+              session={session}
+              onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'stroop', signal })}
+              onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            />
+          )
         )}
 
         {state.phase === 'test_memory' && (
-          <DigitSpanScreen
-            session={session}
-            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'digit_span', signal })}
-            onError={(reason) => dispatch({ type: 'ERROR', reason })}
-          />
+          isDesktop ? (
+            <CognitiveTestDesktopWrapper>
+              <DigitSpanScreen
+                session={session}
+                onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'digit_span', signal })}
+                onError={(reason) => dispatch({ type: 'ERROR', reason })}
+              />
+            </CognitiveTestDesktopWrapper>
+          ) : (
+            <DigitSpanScreen
+              session={session}
+              onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'digit_span', signal })}
+              onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            />
+          )
         )}
 
         {state.phase === 'test_compare' && (
-          <NBackScreen
-            session={session}
-            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'n_back', signal })}
-            onError={(reason) => dispatch({ type: 'ERROR', reason })}
-          />
+          isDesktop ? (
+            <CognitiveTestDesktopWrapper>
+              <NBackScreen
+                session={session}
+                onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'n_back', signal })}
+                onError={(reason) => dispatch({ type: 'ERROR', reason })}
+              />
+            </CognitiveTestDesktopWrapper>
+          ) : (
+            <NBackScreen
+              session={session}
+              onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'n_back', signal })}
+              onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            />
+          )
         )}
 
         {state.phase === 'test_path' && (
-          <TrailTapScreen
-            session={session}
-            onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'trail_tap', signal })}
-            onError={(reason) => dispatch({ type: 'ERROR', reason })}
-          />
+          isDesktop ? (
+            <CognitiveTestDesktopWrapper>
+              <TrailTapScreen
+                session={session}
+                onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'trail_tap', signal })}
+                onError={(reason) => dispatch({ type: 'ERROR', reason })}
+              />
+            </CognitiveTestDesktopWrapper>
+          ) : (
+            <TrailTapScreen
+              session={session}
+              onComplete={(signal) => dispatch({ type: 'TEST_COMPLETED', testName: 'trail_tap', signal })}
+              onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            />
+          )
         )}
 
         {state.phase === 'review' && (
