@@ -55,6 +55,8 @@ interface Props {
   sessionPublicId: string;
   onSuspended: (data: SuspensionData) => void;
   onClose: () => void;
+  /** Notifies parent when simulation active state changes (to lock modal dismissal). */
+  onSimulationStateChange?: (active: boolean) => void;
 }
 
 // ─── ActivityGraph: living SVG line chart ─────────────────────────────
@@ -189,7 +191,7 @@ function LockedAction({ scenario, phase }: { scenario: ScenarioInfo; phase: Phas
 
 // ─── Main Component ───────────────────────────────────────────────────
 
-export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, onClose }: Props) {
+export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, onClose, onSimulationStateChange }: Props) {
   const { t } = useI18n();
   const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
   const [phase, setPhase] = useState<Phase>('idle');
@@ -253,6 +255,17 @@ export function ScenarioDemoContent({ scenarioId, sessionPublicId, onSuspended, 
       stopBehaviorCollection();
     };
   }, [sessionPublicId, onSuspended]);
+
+  // ─── Notify parent of simulation active state ────────────────────
+  // The simulation is "active" (and modal dismissal should be locked) when
+  // simulationStarted is true and the phase is idle (scenario 1 waiting for
+  // tab switch) or analyzing (countdown / signal collection running).
+  // Once the result is shown (detected/transitioning), the modal can be
+  // dismissed normally.
+  useEffect(() => {
+    const active = simulationStarted && (phase === 'idle' || phase === 'analyzing');
+    onSimulationStateChange?.(active);
+  }, [simulationStarted, phase, onSimulationStateChange]);
 
   // ─── Signal counter: increments continuously ──────────────────────
   useEffect(() => {

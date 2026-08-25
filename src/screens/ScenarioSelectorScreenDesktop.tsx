@@ -35,9 +35,26 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
   const { t } = useI18n();
   const { theme } = useTheme();
   const [openId, setOpenId] = useState<number | null>(null);
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const handleOpen = useCallback((id: number) => setOpenId(id), []);
-  const handleClose = useCallback(() => setOpenId(null), []);
+  const handleClose = useCallback(() => {
+    // Block backdrop/escape close while simulation is active — only the
+    // explicit ✕ button can close during that phase.
+    if (simulationActive) return;
+    setOpenId(null);
+  }, [simulationActive]);
+
+  // Explicit close (✕ button) — always allowed, even during simulation
+  const handleForceClose = useCallback(() => {
+    setSimulationActive(false);
+    setOpenId(null);
+  }, []);
+
+  // Reset simulation state when modal opens
+  const handleOpenWithReset = useCallback((id: number) => {
+    setSimulationActive(false);
+    setOpenId(id);
+  }, []);
 
   // Lock body scroll while modal is open
   useEffect(() => {
@@ -48,7 +65,7 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
     }
   }, [openId]);
 
-  // Close on Escape
+  // Close on Escape — but only when simulation is NOT active
   useEffect(() => {
     if (openId === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -87,11 +104,11 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
               tabIndex={0}
               aria-expanded={isOpen}
               aria-label={`${t(`demo.scenario${scenario.id}.title`)} — ${t('demo.viewScenario')}`}
-              onClick={() => handleOpen(scenario.id)}
+              onClick={() => handleOpenWithReset(scenario.id)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleOpen(scenario.id);
+                  handleOpenWithReset(scenario.id);
                 }
               }}
             >
@@ -119,7 +136,7 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
       {/* Modal overlay with ScenarioDemoContent */}
       {openScenario && (
         <div
-          className="sd-modal-overlay"
+          className={`sd-modal-overlay${simulationActive ? ' sd-modal-overlay-locked' : ''}`}
           onClick={handleClose}
           role="dialog"
           aria-modal="true"
@@ -136,7 +153,7 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
               <button
                 type="button"
                 className="sd-modal-close"
-                onClick={handleClose}
+                onClick={handleForceClose}
                 aria-label={t('demo.hideScenario')}
               >
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
@@ -149,7 +166,8 @@ export function ScenarioSelectorScreenDesktop({ sessionPublicId, onSuspended, on
                 scenarioId={openScenario.id}
                 sessionPublicId={sessionPublicId}
                 onSuspended={onSuspended}
-                onClose={handleClose}
+                onClose={handleForceClose}
+                onSimulationStateChange={setSimulationActive}
               />
             </div>
           </div>

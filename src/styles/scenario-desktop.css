@@ -237,6 +237,12 @@
   overflow-y: auto;
   animation: sd-fade-in .2s ease;
 }
+
+/* When simulation is active, backdrop click is disabled (handleClose is a no-op).
+   Add a subtle visual cue that clicking outside won't close the modal. */
+.sd-modal-overlay-locked {
+  cursor: not-allowed;
+}
 @keyframes sd-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
