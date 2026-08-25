@@ -243,6 +243,13 @@ export default function App() {
           <div className="lg-header">
             <div className="lg-header-dot" />
             <span className="lg-header-text">Vérification de session</span>
+            <button
+              type="button"
+              className="lg-header-back"
+              onClick={handleBackToLanding}
+            >
+              ← {t('app.backToHome')}
+            </button>
           </div>
         )}
 

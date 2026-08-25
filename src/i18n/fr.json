@@ -4,6 +4,7 @@
   "app.start": "Commencer",
   "app.langSwitch": "EN",
   "app.rotatePortrait": "Veuillez garder votre appareil en mode portrait",
+  "app.backToHome": "Retour à l'accueil",
   "app.chip.duration": "5 défis · environ 60 secondes",
   "app.chip.noCamera": "Sans caméra, sans micro",
 

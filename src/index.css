@@ -1533,6 +1533,25 @@ body {
   font-weight: 500;
 }
 
+.lg-header-back {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color .15s ease, background .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lg-header-back:hover {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+
 /* ─── Shield icon (idle screen) ─────────────────────────────────── */
 
 .shield-icon {
