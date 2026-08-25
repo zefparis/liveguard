@@ -102,6 +102,11 @@
   "prep.collecting": "Collecte des informations appareil…",
   "prep.ready": "Appareil prêt. Autorisez l'accès aux capteurs pour continuer.",
   "prep.continue": "Continuer",
+  "prep.consent.title": "Cette session contribue à entraîner notre modèle de détection comportementale.",
+  "prep.consent.body": "Vos interactions (souris, clavier, tactile, défilement) sont analysées en temps réel pour affiner la détection d'anomalies. Aucune donnée personnelle n'est collectée — seuls des motifs comportementaux agrégés.",
+  "prep.consent.accept": "J'accepte et continue",
+  "prep.consent.decline": "Annuler",
+  "prep.consent.learnMore": "En savoir plus",
 
   "reflex.title": "Réflexe",
   "reflex.round": "Round",

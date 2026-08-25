@@ -148,8 +148,16 @@ async function sendBeacon(): Promise<void> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), BEACON_TIMEOUT_MS);
 
+    // Real test pings go to the dedicated /test/ endpoint so the server can
+    // persist them for Label Studio. Demo pings go to the regular endpoint
+    // and are never persisted. The endpoint URL is the sole authority —
+    // the client-supplied isDemo flag is not trusted for persistence.
+    const endpoint = beaconConfig.isDemo
+      ? '/api/liveguard/session-behavior-ping'
+      : '/api/liveguard/test/session-behavior-ping';
+
     try {
-      const res = await fetch('/api/liveguard/session-behavior-ping', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -221,8 +229,12 @@ export async function forceBeaconNow(): Promise<BehaviorPingResponse | null> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), BEACON_TIMEOUT_MS);
 
+    const endpoint = beaconConfig.isDemo
+      ? '/api/liveguard/session-behavior-ping'
+      : '/api/liveguard/test/session-behavior-ping';
+
     try {
-      const res = await fetch('/api/liveguard/session-behavior-ping', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

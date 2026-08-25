@@ -102,6 +102,11 @@
   "prep.collecting": "Collecting device information…",
   "prep.ready": "Device ready. Allow sensor access to continue.",
   "prep.continue": "Continue",
+  "prep.consent.title": "This session helps train our behavioral detection model.",
+  "prep.consent.body": "Your interactions (mouse, keyboard, touch, scroll) are analyzed in real time to refine anomaly detection. No personal data is collected — only aggregated behavioral patterns.",
+  "prep.consent.accept": "I agree and continue",
+  "prep.consent.decline": "Cancel",
+  "prep.consent.learnMore": "Learn more",
 
   "reflex.title": "Reflex",
   "reflex.round": "Round",

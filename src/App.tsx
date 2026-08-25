@@ -48,6 +48,16 @@ import { SessionSuspendedScreenDesktop } from './screens/SessionSuspendedScreenD
 import { CognitiveTestDesktopWrapper } from './components/CognitiveTestDesktopWrapper';
 import type { SuspensionData } from './liveguard/behavior/telemetryTypes';
 import { useI18n } from './i18n/I18nContext';
+import {
+  startBehaviorCollection,
+  stopBehaviorCollection,
+} from './liveguard/behavior/behaviorCollector';
+import {
+  startBehaviorBeacon,
+  stopBehaviorBeacon,
+  getOrCreateDeviceProfileId,
+  collectDeviceContext as collectBeaconDeviceContext,
+} from './liveguard/behavior/behaviorBeacon';
 
 export default function App() {
   const { t } = useI18n();
@@ -63,6 +73,42 @@ export default function App() {
   useEffect(() => {
     continuousSignals.setPhase(state.phase);
   }, [state.phase]);
+
+  // ── Behavior beacon for real test parcours ──
+  // Starts when the user enters the cognitive test phase (test_reflex) from
+  // prep, with isDemo: false and the dedicated /test/ endpoint — so the server
+  // knows with certainty this is a real test ping (not a demo ping).
+  // Skipped for demo (protectionCategory === 'demo') and reverify sessions.
+  // Stopped when the session ends (done, error, landing, reset).
+  const isRealTestParcours =
+    (state.protectionCategory !== 'demo' && state.protectionCategory !== 'reverify') &&
+    (state.phase === 'test_reflex' || state.phase === 'test_colors' ||
+     state.phase === 'test_memory' || state.phase === 'test_compare' ||
+     state.phase === 'test_path' || state.phase === 'review' ||
+     state.phase === 'device_signals' || state.phase === 'readiness' ||
+     state.phase === 'submitting');
+
+  useEffect(() => {
+    if (isRealTestParcours && state.sessionPublicId) {
+      const deviceProfileId = getOrCreateDeviceProfileId();
+      const deviceContext = collectBeaconDeviceContext();
+      startBehaviorCollection();
+      startBehaviorBeacon(
+        {
+          intervalMs: 7000,
+          sessionPublicId: state.sessionPublicId,
+          source: 'liveguard',
+          isDemo: false,
+          deviceProfileId,
+          deviceContext,
+        },
+      );
+      return () => {
+        stopBehaviorBeacon();
+        stopBehaviorCollection();
+      };
+    }
+  }, [isRealTestParcours, state.sessionPublicId]);
 
   // Deep links: /#how-it-works, /#implementation (old /#integration redirects to /#implementation)
   useEffect(() => {
@@ -280,6 +326,8 @@ export default function App() {
             }}
             onReady={() => dispatch({ type: 'PREP_READY' })}
             onError={(reason) => dispatch({ type: 'ERROR', reason })}
+            onShowLegalPrivacy={handleShowLegalPrivacy}
+            skipConsent={state.protectionCategory === 'demo' || state.protectionCategory === 'reverify'}
           />
         )}
 

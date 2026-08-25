@@ -13,6 +13,13 @@
  * still works — requestSensorPermissions() returns immediately and start()
  * registers listeners with permission='granted'.
  *
+ * Consent screen: before the sensor "Continue" button, a consent screen is
+ * shown informing the user that behavioral data from this session is used to
+ * train the detection model. The user must explicitly accept before
+ * collection starts. A "Learn more" link opens the privacy policy page.
+ * The consent screen is skipped for demo and reverify sessions
+ * (protectionCategory === 'demo' or 'reverify').
+ *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
  */
@@ -35,12 +42,28 @@ interface Props {
   onUserContinue: (perms: LiveGuardPermissions) => Promise<void>;
   onReady: () => void;
   onError: (reason: string) => void;
+  /** Navigate to the privacy policy legal page. */
+  onShowLegalPrivacy?: () => void;
+  /** Called when the user accepts the consent screen. */
+  onConsentAccepted?: () => void;
+  /** Skip consent for demo/reverify sessions. */
+  skipConsent?: boolean;
 }
 
-export function PrepScreen({ onDeviceCollected, onPermissionsCollected, onUserContinue, onReady, onError }: Props) {
+export function PrepScreen({
+  onDeviceCollected,
+  onPermissionsCollected,
+  onUserContinue,
+  onReady,
+  onError,
+  onShowLegalPrivacy,
+  onConsentAccepted,
+  skipConsent,
+}: Props) {
   const { t } = useI18n();
   const [perms, setPerms] = useState<LiveGuardPermissions | null>(null);
   const [starting, setStarting] = useState(false);
+  const [consentAccepted, setConsentAccepted] = useState(skipConsent ?? false);
 
   // Phase 1: auto-collect device + permission status (read-only, no gesture needed)
   useEffect(() => {
@@ -75,11 +98,63 @@ export function PrepScreen({ onDeviceCollected, onPermissionsCollected, onUserCo
     }
   };
 
+  const handleAcceptConsent = () => {
+    setConsentAccepted(true);
+    onConsentAccepted?.();
+  };
+
   return (
     <div className="screen">
       <PhaseHeader title={t('prep.title')} progress={t('prep.progress')} progressPct={0} />
       <div className="screen-center">
-        {perms ? (
+        {perms && !consentAccepted ? (
+          <>
+            <div style={{ fontSize: 32 }}>🧠</div>
+            <p style={{ fontWeight: 600, maxWidth: 320, lineHeight: 1.5 }}>
+              {t('prep.consent.title')}
+            </p>
+            <p className="muted" style={{ maxWidth: 320, lineHeight: 1.5 }}>
+              {t('prep.consent.body')}
+            </p>
+            {onShowLegalPrivacy && (
+              <button
+                type="button"
+                onClick={onShowLegalPrivacy}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--lg-accent, #6366f1)',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  padding: 0,
+                }}
+              >
+                {t('prep.consent.learnMore')}
+              </button>
+            )}
+            <button
+              className="prep-continue-btn"
+              onClick={handleAcceptConsent}
+            >
+              {t('prep.consent.accept')}
+            </button>
+            <button
+              type="button"
+              onClick={() => onError('consent_declined')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--lg-muted, #94a3b8)',
+                cursor: 'pointer',
+                fontSize: 14,
+                marginTop: 4,
+              }}
+            >
+              {t('prep.consent.decline')}
+            </button>
+          </>
+        ) : perms ? (
           <>
             <div style={{ fontSize: 32 }}>⚙️</div>
             <p className="muted">{t('prep.ready')}</p>
