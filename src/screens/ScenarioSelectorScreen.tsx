@@ -30,12 +30,19 @@ interface Props {
 export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }: Props) {
   const { t } = useI18n();
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [simulationActive, setSimulationActive] = useState(false);
 
   const handleToggle = useCallback((id: number) => {
+    // Block toggling (collapse or switch) while a simulation is active.
+    // The only way to close during simulation is the explicit close button
+    // inside ScenarioDemoContent (which calls handleForceClose).
+    if (simulationActive) return;
     setExpandedId((prev) => (prev === id ? null : id));
-  }, []);
+  }, [simulationActive]);
 
-  const handleClose = useCallback(() => {
+  // Explicit close — always allowed (used by the ✕ / "Fermer" button inside the content)
+  const handleForceClose = useCallback(() => {
+    setSimulationActive(false);
     setExpandedId(null);
   }, []);
 
@@ -73,11 +80,12 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
               data-expanded={isExpanded}
               className="scenario-accordion-card"
             >
-              {/* Card header — entire surface is clickable */}
+              {/* Card header — entire surface is clickable (disabled during active simulation) */}
               <div
                 role="button"
-                tabIndex={0}
+                tabIndex={simulationActive && isExpanded ? -1 : 0}
                 aria-expanded={isExpanded}
+                aria-disabled={simulationActive && isExpanded}
                 aria-label={`${t(`demo.scenario${scenario.id}.title`)} — ${isExpanded ? t('demo.hideScenario') : t('demo.viewScenario')}`}
                 onClick={() => handleToggle(scenario.id)}
                 onKeyDown={(e) => {
@@ -153,7 +161,8 @@ export function ScenarioSelectorScreen({ sessionPublicId, onSuspended, onBack }:
                     scenarioId={scenario.id}
                     sessionPublicId={sessionPublicId}
                     onSuspended={onSuspended}
-                    onClose={handleClose}
+                    onClose={handleForceClose}
+                    onSimulationStateChange={setSimulationActive}
                   />
                 </div>
               )}
