@@ -26,9 +26,11 @@ interface Props {
   onShowHowItWorks: () => void;
   onShowImplementation: () => void;
   onShowScenarios?: (sessionPublicId: string) => void;
+  /** Start the real test parcours (idle → select_protection → prep → tests). */
+  onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios }: Props) {
+export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onStartRealTest }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -82,6 +84,16 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
     setLoading(false);
     onShowScenarios?.(id);
   }, [ensureSession, onShowScenarios]);
+
+  const handleStartRealTest = useCallback(async () => {
+    setLoading(true);
+    let id = await ensureSession();
+    if (!id) {
+      id = `lg_${Date.now().toString(36)}`;
+    }
+    setLoading(false);
+    onStartRealTest?.(id);
+  }, [ensureSession, onStartRealTest]);
 
   return (
     <div className="landing-page">
@@ -354,6 +366,12 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
         {onShowScenarios && (
           <button className="landing-btn landing-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
             <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+            {!loading && <span aria-hidden="true">→</span>}
+          </button>
+        )}
+        {onStartRealTest && (
+          <button className="landing-btn landing-btn-secondary" onClick={handleStartRealTest} disabled={loading}>
+            <span>{loading ? '…' : t('landing.realTestCta')}</span>
             {!loading && <span aria-hidden="true">→</span>}
           </button>
         )}

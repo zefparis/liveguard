@@ -31,9 +31,11 @@ interface Props {
   onShowLegalTerms?: () => void;
   onShowLegalPrivacy?: () => void;
   onShowLegalCookies?: () => void;
+  /** Start the real test parcours (idle → select_protection → prep → tests). */
+  onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onShowLegalTerms, onShowLegalPrivacy, onShowLegalCookies }: Props) {
+export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onShowLegalTerms, onShowLegalPrivacy, onShowLegalCookies, onStartRealTest }: Props) {
   const { t, locale, setLocale } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -79,6 +81,14 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
     setLoading(false);
     onShowScenarios?.(id);
   }, [ensureSession, onShowScenarios]);
+
+  const handleStartRealTest = useCallback(async () => {
+    setLoading(true);
+    let id = await ensureSession();
+    if (!id) id = `lg_${Date.now().toString(36)}`;
+    setLoading(false);
+    onStartRealTest?.(id);
+  }, [ensureSession, onStartRealTest]);
 
   return (
     <div className="ld-page">
@@ -301,6 +311,12 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
           {onShowScenarios && (
             <button className="ld-btn ld-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
               <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+              {!loading && <span aria-hidden="true">→</span>}
+            </button>
+          )}
+          {onStartRealTest && (
+            <button className="ld-btn ld-btn-secondary" onClick={handleStartRealTest} disabled={loading}>
+              <span>{loading ? '…' : t('landing.realTestCta')}</span>
               {!loading && <span aria-hidden="true">→</span>}
             </button>
           )}

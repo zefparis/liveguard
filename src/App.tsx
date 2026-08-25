@@ -128,6 +128,14 @@ export default function App() {
     dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory: 'demo' });
   }, [reset]);
 
+  // Real test parcours → go to idle (session resolution) → select_protection → prep → tests
+  // This is the path that triggers the behavior beacon with isDemo: false
+  // and the consent screen in PrepScreen.
+  const handleStartRealTest = useCallback((sessionPublicId: string) => {
+    reset();
+    dispatch({ type: 'START_DEMO', sessionPublicId });
+  }, [reset]);
+
   const handleShowHowItWorks = useCallback(() => {
     dispatch({ type: 'SHOW_HOW_IT_WORKS' });
   }, []);
@@ -254,6 +262,7 @@ export default function App() {
               onShowLegalTerms={handleShowLegalTerms}
               onShowLegalPrivacy={handleShowLegalPrivacy}
               onShowLegalCookies={handleShowLegalCookies}
+              onStartRealTest={handleStartRealTest}
             />
           ) : (
             <LandingScreen
@@ -261,6 +270,7 @@ export default function App() {
               onShowHowItWorks={handleShowHowItWorks}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
+              onStartRealTest={handleStartRealTest}
             />
           )
         )}
@@ -272,6 +282,7 @@ export default function App() {
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
               onBackToLanding={handleBackToLanding}
+              onStartRealTest={handleStartRealTest}
             />
           ) : (
             <HowItWorksScreen
@@ -279,6 +290,7 @@ export default function App() {
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
               onBackToLanding={handleBackToLanding}
+              onStartRealTest={handleStartRealTest}
             />
           )
         )}

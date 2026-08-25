@@ -30,9 +30,11 @@ interface Props {
   onShowImplementation: () => void;
   onShowScenarios: (sessionPublicId: string) => void;
   onBackToLanding: () => void;
+  /** Start the real test parcours (idle → select_protection → prep → tests). */
+  onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onShowScenarios, onBackToLanding }: Props) {
+export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onShowScenarios, onBackToLanding, onStartRealTest }: Props) {
   const { t } = useI18n();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -70,6 +72,14 @@ export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onSho
     setLoading(false);
     onTryDemo(id);
   }, [ensureSession, onTryDemo]);
+
+  const handleStartRealTest = useCallback(async () => {
+    setLoading(true);
+    let id = await ensureSession();
+    if (!id) id = `lg_${Date.now().toString(36)}`;
+    setLoading(false);
+    onStartRealTest?.(id);
+  }, [ensureSession, onStartRealTest]);
 
   return (
     <div className="hiwd-page" data-theme={theme}>
@@ -240,6 +250,12 @@ export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onSho
           <span>{t('hiw.ctaSecondary')}</span>
           <span aria-hidden="true">→</span>
         </button>
+        {onStartRealTest && (
+          <button className="hiwd-btn hiwd-btn-outline" onClick={handleStartRealTest} disabled={loading}>
+            <span>{loading ? '…' : t('landing.realTestCta')}</span>
+            {!loading && <span aria-hidden="true">→</span>}
+          </button>
+        )}
       </div>
     </div>
   );
