@@ -24,7 +24,6 @@ import { StatusSection, StatusSubRow, STATUS_ICONS as ICONS } from '../component
 import '../styles/landing-desktop.css';
 
 interface Props {
-  onTryDemo: (sessionPublicId: string) => void;
   onShowHowItWorks: () => void;
   onShowImplementation: () => void;
   onShowScenarios?: (sessionPublicId: string) => void;
@@ -35,7 +34,7 @@ interface Props {
   onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onShowLegalTerms, onShowLegalPrivacy, onShowLegalCookies, onStartRealTest }: Props) {
+export function LandingScreenDesktop({ onShowHowItWorks, onShowImplementation, onShowScenarios, onShowLegalTerms, onShowLegalPrivacy, onShowLegalCookies, onStartRealTest }: Props) {
   const { t, locale, setLocale } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -65,14 +64,6 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
       return '';
     }
   }, []);
-
-  const handleTryDemo = useCallback(async () => {
-    setLoading(true);
-    let id = await ensureSession();
-    if (!id) id = `lg_${Date.now().toString(36)}`;
-    setLoading(false);
-    onTryDemo(id);
-  }, [ensureSession, onTryDemo]);
 
   const handleShowScenarios = useCallback(async () => {
     setLoading(true);
@@ -300,11 +291,7 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
       {/* ── Final CTA section (before footer) ── */}
       <section className="ld-final-cta">
         <div className="ld-ctas">
-          <button className="ld-btn ld-btn-primary" onClick={handleTryDemo} disabled={loading}>
-            <span>{loading ? '…' : t('landing.ctaPrimary')}</span>
-            {!loading && <span aria-hidden="true">→</span>}
-          </button>
-          <button className="ld-btn ld-btn-secondary" onClick={onShowHowItWorks}>
+          <button className="ld-btn ld-btn-primary" onClick={onShowHowItWorks}>
             <span>{t('landing.ctaSecondary')}</span>
             <span aria-hidden="true">→</span>
           </button>
@@ -315,7 +302,7 @@ export function LandingScreenDesktop({ onTryDemo, onShowHowItWorks, onShowImplem
             </button>
           )}
           {onStartRealTest && (
-            <button className="ld-btn ld-btn-secondary" onClick={handleStartRealTest} disabled={loading}>
+            <button className="ld-btn ld-btn-primary" onClick={handleStartRealTest} disabled={loading}>
               <span>{loading ? '…' : t('landing.realTestCta')}</span>
               {!loading && <span aria-hidden="true">→</span>}
             </button>

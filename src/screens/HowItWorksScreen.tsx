@@ -8,9 +8,10 @@
  * Tone: warm, pedagogical, reassuring. Never clinical or scary.
  * No specific duration mentioned.
  *
- * Two CTAs at bottom:
- *   - Primary: "Essayer maintenant" → onTryDemo → cognitive tests
- *   - Secondary: "Vous êtes une entreprise ?" → onShowImplementation
+ * Three CTAs at bottom:
+ *   - "Vous êtes une entreprise ?" → onShowImplementation
+ *   - "Voir les scénarios de démonstration" → onShowScenarios
+ *   - Primary: "Parcours de test réel" → onStartRealTest → cognitive tests
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
  * Patents Pending FR2514274 | FR2514546
@@ -22,15 +23,14 @@ import { LandingHeader } from '../components/LandingHeader';
 import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 
 interface Props {
-  onTryDemo: (sessionPublicId: string) => void;
   onShowImplementation: () => void;
-  onShowScenarios: (sessionPublicId: string) => void;
+  onShowScenarios?: (sessionPublicId: string) => void;
   onBackToLanding: () => void;
   /** Start the real test parcours (idle → select_protection → prep → tests). */
   onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenarios, onBackToLanding, onStartRealTest }: Props) {
+export function HowItWorksScreen({ onShowImplementation, onShowScenarios, onBackToLanding, onStartRealTest }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
@@ -57,16 +57,8 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenar
     let id = await ensureSession();
     if (!id) id = `lg_${Date.now().toString(36)}`;
     setLoading(false);
-    onShowScenarios(id);
+    onShowScenarios?.(id);
   }, [ensureSession, onShowScenarios]);
-
-  const handleTryDemo = useCallback(async () => {
-    setLoading(true);
-    let id = await ensureSession();
-    if (!id) id = `lg_${Date.now().toString(36)}`;
-    setLoading(false);
-    onTryDemo(id);
-  }, [ensureSession, onTryDemo]);
 
   const handleStartRealTest = useCallback(async () => {
     setLoading(true);
@@ -264,16 +256,18 @@ export function HowItWorksScreen({ onTryDemo, onShowImplementation, onShowScenar
 
       {/* ── CTAs ── */}
       <div className="landing-ctas">
-        <button className="landing-btn landing-btn-primary" onClick={handleTryDemo} disabled={loading}>
-          <span>{loading ? '…' : t('hiw.ctaPrimary')}</span>
-          {!loading && <span aria-hidden="true">→</span>}
-        </button>
         <button className="landing-btn landing-btn-secondary" onClick={onShowImplementation}>
           <span>{t('hiw.ctaSecondary')}</span>
           <span aria-hidden="true">→</span>
         </button>
+        {onShowScenarios && (
+          <button className="landing-btn landing-btn-secondary" onClick={handleShowScenarios} disabled={loading}>
+            <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+            {!loading && <span aria-hidden="true">→</span>}
+          </button>
+        )}
         {onStartRealTest && (
-          <button className="landing-btn landing-btn-secondary" onClick={handleStartRealTest} disabled={loading}>
+          <button className="landing-btn landing-btn-primary" onClick={handleStartRealTest} disabled={loading}>
             <span>{loading ? '…' : t('landing.realTestCta')}</span>
             {!loading && <span aria-hidden="true">→</span>}
           </button>

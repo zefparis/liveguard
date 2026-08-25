@@ -122,12 +122,6 @@ export default function App() {
     dispatch({ type: 'SELECT_PROTECTION', sessionPublicId });
   }, []);
 
-  // Showcase → start demo directly (skip select_protection)
-  const handleTryDemo = useCallback((sessionPublicId: string) => {
-    reset();
-    dispatch({ type: 'START', sessionPublicId, testScope: 'cognitive-only', protectionCategory: 'demo' });
-  }, [reset]);
-
   // Real test parcours → go to idle (session resolution) → select_protection → prep → tests
   // This is the path that triggers the behavior beacon with isDemo: false
   // and the consent screen in PrepScreen.
@@ -255,7 +249,6 @@ export default function App() {
         {state.phase === 'landing' && (
           isDesktop ? (
             <LandingScreenDesktop
-              onTryDemo={handleTryDemo}
               onShowHowItWorks={handleShowHowItWorks}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
@@ -266,7 +259,6 @@ export default function App() {
             />
           ) : (
             <LandingScreen
-              onTryDemo={handleTryDemo}
               onShowHowItWorks={handleShowHowItWorks}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
@@ -278,7 +270,6 @@ export default function App() {
         {state.phase === 'how_it_works' && (
           isDesktop ? (
             <HowItWorksScreenDesktop
-              onTryDemo={handleTryDemo}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
               onBackToLanding={handleBackToLanding}
@@ -286,7 +277,6 @@ export default function App() {
             />
           ) : (
             <HowItWorksScreen
-              onTryDemo={handleTryDemo}
               onShowImplementation={handleShowImplementation}
               onShowScenarios={handleShowScenarios}
               onBackToLanding={handleBackToLanding}

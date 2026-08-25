@@ -5,9 +5,10 @@
  * adaptive light/dark, hierarchical status accordion, radial gradient hero,
  * 3 numbered steps, UniPay social proof, partner link.
  *
- * Two CTAs:
- *   - "Essayer" → onTryDemo (resolves session, dispatches START → 5 cognitive tests)
+ * Three CTAs:
  *   - "Comment ça fonctionne" → onShowHowItWorks (HowItWorksScreen)
+ *   - "Voir les scénarios de démonstration" → onShowScenarios (scenario selector)
+ *   - "Parcours de test réel" → onStartRealTest (idle → select_protection → prep → tests)
  * Partner link → onShowImplementation (ImplementationScreen)
  *
  * @copyright (c) 2026 Benjamin BARRERE / IA SOLUTION
@@ -22,7 +23,6 @@ import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 import { StatusSection, StatusSubRow, STATUS_ICONS as ICONS } from '../components/landingStatus';
 
 interface Props {
-  onTryDemo: (sessionPublicId: string) => void;
   onShowHowItWorks: () => void;
   onShowImplementation: () => void;
   onShowScenarios?: (sessionPublicId: string) => void;
@@ -30,7 +30,7 @@ interface Props {
   onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementation, onShowScenarios, onStartRealTest }: Props) {
+export function LandingScreen({ onShowHowItWorks, onShowImplementation, onShowScenarios, onStartRealTest }: Props) {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -64,16 +64,6 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
       return '';
     }
   }, []);
-
-  const handleTryDemo = useCallback(async () => {
-    setLoading(true);
-    let id = await ensureSession();
-    if (!id) {
-      id = `lg_${Date.now().toString(36)}`;
-    }
-    setLoading(false);
-    onTryDemo(id);
-  }, [ensureSession, onTryDemo]);
 
   const handleShowScenarios = useCallback(async () => {
     setLoading(true);
@@ -355,11 +345,7 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
 
       {/* ── 6–7. CTAs ── */}
       <div className="landing-ctas">
-        <button className="landing-btn landing-btn-primary" onClick={handleTryDemo} disabled={loading}>
-          <span>{loading ? '…' : t('landing.ctaPrimary')}</span>
-          {!loading && <span aria-hidden="true">→</span>}
-        </button>
-        <button className="landing-btn landing-btn-secondary" onClick={onShowHowItWorks}>
+        <button className="landing-btn landing-btn-primary" onClick={onShowHowItWorks}>
           <span>{t('landing.ctaSecondary')}</span>
           <span aria-hidden="true">→</span>
         </button>
@@ -370,7 +356,7 @@ export function LandingScreen({ onTryDemo, onShowHowItWorks, onShowImplementatio
           </button>
         )}
         {onStartRealTest && (
-          <button className="landing-btn landing-btn-secondary" onClick={handleStartRealTest} disabled={loading}>
+          <button className="landing-btn landing-btn-primary" onClick={handleStartRealTest} disabled={loading}>
             <span>{loading ? '…' : t('landing.realTestCta')}</span>
             {!loading && <span aria-hidden="true">→</span>}
           </button>

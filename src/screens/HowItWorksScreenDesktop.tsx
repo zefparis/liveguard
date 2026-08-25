@@ -26,15 +26,14 @@ import { LIVEGUARD_SESSION_ENDPOINT } from '../liveguard/constants';
 import '../styles/howitworks-desktop.css';
 
 interface Props {
-  onTryDemo: (sessionPublicId: string) => void;
   onShowImplementation: () => void;
-  onShowScenarios: (sessionPublicId: string) => void;
+  onShowScenarios?: (sessionPublicId: string) => void;
   onBackToLanding: () => void;
   /** Start the real test parcours (idle → select_protection → prep → tests). */
   onStartRealTest?: (sessionPublicId: string) => void;
 }
 
-export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onShowScenarios, onBackToLanding, onStartRealTest }: Props) {
+export function HowItWorksScreenDesktop({ onShowImplementation, onShowScenarios, onBackToLanding, onStartRealTest }: Props) {
   const { t } = useI18n();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -62,16 +61,8 @@ export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onSho
     let id = await ensureSession();
     if (!id) id = `lg_${Date.now().toString(36)}`;
     setLoading(false);
-    onShowScenarios(id);
+    onShowScenarios?.(id);
   }, [ensureSession, onShowScenarios]);
-
-  const handleTryDemo = useCallback(async () => {
-    setLoading(true);
-    let id = await ensureSession();
-    if (!id) id = `lg_${Date.now().toString(36)}`;
-    setLoading(false);
-    onTryDemo(id);
-  }, [ensureSession, onTryDemo]);
 
   const handleStartRealTest = useCallback(async () => {
     setLoading(true);
@@ -242,16 +233,18 @@ export function HowItWorksScreenDesktop({ onTryDemo, onShowImplementation, onSho
 
       {/* ── CTAs ── */}
       <div className="hiwd-ctas">
-        <button className="hiwd-btn hiwd-btn-primary" onClick={handleTryDemo} disabled={loading}>
-          <span>{loading ? '…' : t('hiw.ctaPrimary')}</span>
-          {!loading && <span aria-hidden="true">→</span>}
-        </button>
         <button className="hiwd-btn hiwd-btn-outline" onClick={onShowImplementation}>
           <span>{t('hiw.ctaSecondary')}</span>
           <span aria-hidden="true">→</span>
         </button>
+        {onShowScenarios && (
+          <button className="hiwd-btn hiwd-btn-outline" onClick={handleShowScenarios} disabled={loading}>
+            <span>{loading ? '…' : t('landing.scenariosCta')}</span>
+            {!loading && <span aria-hidden="true">→</span>}
+          </button>
+        )}
         {onStartRealTest && (
-          <button className="hiwd-btn hiwd-btn-outline" onClick={handleStartRealTest} disabled={loading}>
+          <button className="hiwd-btn hiwd-btn-primary" onClick={handleStartRealTest} disabled={loading}>
             <span>{loading ? '…' : t('landing.realTestCta')}</span>
             {!loading && <span aria-hidden="true">→</span>}
           </button>
